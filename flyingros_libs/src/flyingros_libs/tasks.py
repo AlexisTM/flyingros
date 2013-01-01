@@ -165,7 +165,7 @@ def rostask_to_pythontask(ros_task):
     #    pass
 
 class UAV:
-    def __init__(self, setpoint_rate=10, raw_setpoint=False, test=False):
+    def __init__(self, setpoint_rate=10, raw_setpoint=False, test=False, yaw_bug=0.0):
         # Configurations :
         self.type_mask_Fly = 2552 # 2552 - 0000 1001 1111 1000, position setpoint + Pxyz Yaw
         self.type_mask_Takeoff = 6599 # 6599 - 0001 1001 1100 0111, Takeoff setpoint + Vxyz Yaw
@@ -184,6 +184,7 @@ class UAV:
         self.flying = True
         self.home = Point()
         self.quaternion = Quaternion()
+        self.yaw_bug = yaw_bug
 
         # Configurations
         self.landing_speed = -0.1 # 0.1 meters/s to go down
@@ -221,10 +222,10 @@ class UAV:
         self.setpoint_raw.type_mask = self.type_mask_Fly
         self.setpoint_raw.velocity = Vector3()
         self.setpoint_raw.position = position
-        self.setpoint_raw.yaw = yaw
+        self.setpoint_raw.yaw = yaw+yaw_bug
 
         self.setpoint_local.pose.position = position
-        q = quaternion_from_euler(0,0, yaw,axes="sxyz")
+        q = quaternion_from_euler(0,0, yaw+self.yaw_bug,axes="sxyz")
         self.setpoint_local.pose.orientation.x = q[0]
         self.setpoint_local.pose.orientation.y = q[1]
         self.setpoint_local.pose.orientation.z = q[2]
@@ -350,14 +351,14 @@ class UAV:
 
 class taskController:
     """ The task controller handle a list with every tasks """
-    def __init__(self, rate=10, setpoint_rate=10, test=False, callback_current_task=None, raw_setpoint=False):
+    def __init__(self, rate=10, setpoint_rate=10, test=False, callback_current_task=None, raw_setpoint=False, yaw_bug=0.0):
         self.callback_current_task = callback_current_task
         self.tasks = list()
         self.count = 0
         self.current = 0
         self.setRate(rate)
         self.spinning = False
-        self.UAV = UAV(setpoint_rate=setpoint_rate, raw_setpoint=raw_setpoint, test=test)
+        self.UAV = UAV(setpoint_rate=setpoint_rate, raw_setpoint=raw_setpoint, test=test, yaw_bug=0.0)
 
     def __str__(self):
         controller_string = "Task Controller :\n"

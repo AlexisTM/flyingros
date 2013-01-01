@@ -156,7 +156,7 @@ def init():
     rate = rospy.get_param("flyingros/controller/rate",3)
     testMode = rospy.get_param("flyingros/controller/testMode",False)
     setpoint_rate = rospy.get_param("flyingros/controller/setpoint_rate",10)
-    Controller = taskController(rate=rate, setpoint_rate=setpoint_rate, callback_current_task=publish_current,test=testMode)
+    Controller = taskController(rate=rate, setpoint_rate=setpoint_rate, callback_current_task=publish_current,test=testMode, yaw_bug=1.57079632679)
 
 if __name__ == '__main__':
     rospy.loginfo("We are ready")
