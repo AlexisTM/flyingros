@@ -90,7 +90,7 @@ void lowFrequency_pub(){
 }
 
 bool laserFailing(int measure){
-  return measure > 900;
+  return (measure > 900) | (measure < 25);
 }
 
 void callback_laser_raw(const flyingros_msgs::MultiEcho::ConstPtr& msg){
@@ -103,6 +103,7 @@ void callback_laser_raw(const flyingros_msgs::MultiEcho::ConstPtr& msg){
   }
   yawfails[0] = fails[0] | fails[1];
   yawfails[1] = fails[2] | fails[3];
+  fails[5] = true; // Laser 5 (letter B) is buggin' for no reason.
 
   // Correct offset
   double measures[6];
@@ -125,7 +126,7 @@ void callback_laser_raw(const flyingros_msgs::MultiEcho::ConstPtr& msg){
   tf::Vector3 targety2 = lasers[3].project(measures[3], q_zero);
   double yaw_y = -getYawFromTargets(targety2, targety1, 1, 0);
 
-  double yaw_final =  (yaw_x+yaw_y)/2;
+  double yaw_final =  (yaw_x*0.3+yaw_y*0.7); // yaw_y is better
   if(yawfails[0] & yawfails[1]){
     yaw_final = 0.0;
   } else if (yawfails[0]) {

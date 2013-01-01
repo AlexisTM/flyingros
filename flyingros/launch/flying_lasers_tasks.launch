@@ -20,7 +20,12 @@
     <rosparam file="$(find flyingros_pose)/cfg/laser/6lasers.yaml"/>
   </node> 
 
+  <!-- Tasks node launch -->
+  <node name="task_node" pkg="flyingros_nav" type="task_node" output="screen">
+  </node>
+
   <!-- PX4 launch -->
+
   <node pkg="mavros" type="mavros_node" name="mavros" required="true" clear_params="true" output="screen">
     <param name="fcu_url" value="serial:///dev/ttySAC0:921600" />
     <param name="gcs_url" value="tcp-l://:14555" />
