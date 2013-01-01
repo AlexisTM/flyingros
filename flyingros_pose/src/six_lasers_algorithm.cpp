@@ -50,6 +50,7 @@ static tf::Vector3 lastPosition[3];
 static int lastPositionIndex = 0; // 0,1,2
 static geometry_msgs::PoseStamped UAVPose;
 static geometry_msgs::PoseStamped UAVPoseLowf;
+double yaw_diff2ned;
 
 void filterPosition(tf::Vector3 * p)
 {
@@ -136,10 +137,6 @@ void callback_laser_raw(const flyingros_msgs::MultiEcho::ConstPtr& msg){
     yaw_final = yaw_x;
   }
 
-  /* CAUTION Mavros 0.18.4 error in ENU -> NED fix BEGIN*/
-  yaw_final = 180 + yaw_final;
-  /* CAUTION Mavros 0.18.4 error in ENU -> NED fix END*/
-
   // Get position
   tf::Quaternion q_correct = tf::createQuaternionFromRPY(roll, pitch,yaw_final);
   tf::Vector3 targets[6];
@@ -148,9 +145,15 @@ void callback_laser_raw(const flyingros_msgs::MultiEcho::ConstPtr& msg){
   }
 
   // publish
+
+  /* CAUTION Mavros 0.18.4 error in ENU -> NED fix BEGIN*/
+  double yaw_rotated = yaw_diff2ned + yaw_final;
+  /* CAUTION Mavros 0.18.4 error in ENU -> NED fix END*/
+  tf::Quaternion q_correct_180deg = tf::createQuaternionFromRPY(roll, pitch,yaw_rotated);
+
   UAVPose.header.seq = sequence_count;
   UAVPose.header.stamp = ros::Time::now();
-  tf::quaternionTFToMsg(q_correct, UAVPose.pose.orientation);
+  tf::quaternionTFToMsg(q_correct_180deg, UAVPose.pose.orientation);
 
   lastPosition[lastPositionIndex].setX(-(targets[0].x() + targets[1].x())/2.0);
   if(fails[0] & fails[1]){
@@ -199,6 +202,9 @@ void reconfigure_lasers(){
     XmlRpc::XmlRpcValue p, v;
     int count;
     ros::param::get("/flyingros/lasers/count", count);
+    if(!ros::param::get("/flyingros/lasers/yaw_diff", yaw_diff2ned)){
+      yaw_diff2ned = 0.0;
+    }
     ROS_ASSERT(count == 6);
     ros::param::get("/flyingros/lasers/offsets", offsetsList);
     ROS_ASSERT(offsetsList.getType() == XmlRpc::XmlRpcValue::TypeArray);

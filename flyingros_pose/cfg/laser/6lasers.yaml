@@ -1,4 +1,7 @@
 lasers:
+  # Difference to measured yaw
+  # PI/2 = 1.5707963267948966192313216916398
+  yaw_diff: 1.5707963267948966192313216916398
   # Count of the lasers we use
   count: 6
   # Position of all the lasers on the copter.
