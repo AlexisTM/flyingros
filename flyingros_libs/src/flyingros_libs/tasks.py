@@ -357,10 +357,7 @@ class taskController:
         self.count = 0
         self.current = 0
         self.setRate(rate)
-<<<<<<< HEAD
-=======
         self.spinning = False
->>>>>>> c3facfd97226ce5e3e119e8eba1cc968bc04d79d
         self.UAV = UAV(setpoint_rate=setpoint_rate, raw_setpoint=raw_setpoint, test=test)
 
     def __str__(self):
@@ -436,16 +433,13 @@ class taskController:
         return self.UAV
 
     def spinOnce(self):
-        print self.current
-        print self.count
         if self.current < self.count :
             task = self.tasks[self.current]
             result = task.run(self.UAV)
-            print "running"
             if result: # returns True if done
                 self.notifyCurrentTask()
                 self.current = self.current + 1
-                self.runTaskMessage()
+                #self.runTaskMessage()
         return
 
     def spin(self):
