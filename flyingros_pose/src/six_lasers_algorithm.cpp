@@ -81,6 +81,7 @@ void callback_laser_raw(const flyingros_msgs::MultiEcho::ConstPtr& msg){
   // publish
   UAVPose.header.seq = sequence_count;
   UAVPose.header.stamp = ros::Time::now();
+  ROS_DEBUG_STREAM("some debug :" << targets[0].x() << "\t" << targets[1].x() << "\t" << -(targets[0].x() + targets[1].x())/2.0);
   tf::quaternionTFToMsg(q_correct, UAVPose.pose.orientation);
   UAVPose.pose.position.x = -(targets[0].x() + targets[1].x())/2.0;
   UAVPose.pose.position.y = -(targets[2].y() + targets[3].y())/2.0;

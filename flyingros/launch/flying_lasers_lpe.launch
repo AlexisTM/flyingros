@@ -22,6 +22,7 @@
     <rosparam file="$(find flyingros_pose)/cfg/laser/6lasers.yaml"/>
   </node> 
 
+  <node name="flyingros_switch" pkg="flyingros_pose" type="lasers_msf_yaw_switch" output="screen" />
   <!-- Tasks node launch -->
   <!--node name="task_node" pkg="flyingros_nav" type="task_node" output="screen" >
   </node-->
@@ -51,11 +52,11 @@
   <node name="rosapi" pkg="rosapi" type="rosapi_node" />-->
   <!--rosrun dynamic_reconfigure dynparam set /pose/pose_sensor core_init_filter true -->
 
-  <node name="pose" pkg="msf_updates" type="pose_sensor" clear_params="true" output="screen">
+  <!--node name="pose" pkg="msf_updates" type="pose_sensor" clear_params="true" output="screen">
       <remap from="msf_core/imu_state_input" to="/mavros/imu/data"/>
       <remap from="msf_updates/pose_sensor" to="/flyingros/lasers/pose" />
       <rosparam file="$(find flyingros_pose)/cfg/msf/px4_fix.yaml"/>
       <rosparam file="$(find flyingros_pose)/cfg/msf/lasers_pose_fix.yaml"/>
-  </node>
+  </node-->
 
 </launch>
