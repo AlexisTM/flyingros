@@ -14,14 +14,20 @@
       <arg name="tgt_component" value="$(arg tgt_component)" />
       <arg name="log_output" value="$(arg log_output)" />
     </include>
-    <!-- MSF config -->
+
+    <node name="rtk" pkg="flyingros_pose" type="rtk" clear_params="true" output="screen">
+    </node>
+
+    <node pkg="swiftnav_piksi" type="piksi_node" name="piksi_node" output="screen">
+     <param name="port" value="/dev/ttyUSB0" />
+   </node>
+   <!-- rosbag record /mavros/imu/data  /flyingros/rtk/position /gps/rtkfix /gps/fix /msf_core/pose_after_update  /msf_core/pose /msf_core/odometry /mavros/local_position/pose /mavros/mocap/pose msf_core/pose -->
+   <!-- MSF config -->
+   <!-- rosrun dynamic_reconfigure dynparam set /position/position_sensor core_init_filter true -->
     <node name="position" pkg="msf_updates" type="position_sensor" clear_params="true" output="screen">
         <remap from="msf_core/imu_state_input" to="/mavros/imu/data"/>
         <remap from="msf_updates/position_input" to="/flyingros/rtk/position" />
-        <remap from="msf_updates/navsatfix_input" to="/mavros/global_position/global" />
-        <remap from="msf_updates/pressure_height" to="/flyingros/lasers/altitude" />
         <rosparam file="$(find flyingros_pose)/cfg/msf/px4_fix.yaml"/>
-        <rosparam file="$(find flyingros_pose)/cfg/msf/pose_sensor.yaml"/>
         <rosparam file="$(find flyingros_pose)/cfg/msf/position_sensor.yaml"/>
     </node>
 </launch>
