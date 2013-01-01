@@ -100,7 +100,7 @@ def sendSetpoint():
     rate = rospy.Rate(5)
 
     while run:
-        q = quaternion_from_euler(0, 0, deg2radf(yawSetPoint), axes="sxyz")
+        q = quaternion_from_euler(0, 0, deg2radf(yawSetPoint+90), axes="sxyz")
 
 	#msg = PositionTarget()
         msg = PoseStamped()
