@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package>
-<name>flyingros_core</name>
+<name>flyingros_nav</name>
 <version>0.1.0</version>
-<description>FlyingROS core API</description>
+<description>FlyingROS navigation API</description>
 <maintainer email="alexis.paques@gmail.com">Alexis Paques</maintainer>
 <license>GNU GPLv3</license>
 <url type="website">http://alexistm.github.io/FlyingROS</url>
