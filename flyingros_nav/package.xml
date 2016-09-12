@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package>
+<name>flyingros_core</name>
+<version>0.1.0</version>
+<description>FlyingROS core API</description>
+<maintainer email="alexis.paques@gmail.com">Alexis Paques</maintainer>
+<license>GNU GPLv3</license>
+<url type="website">http://alexistm.github.io/FlyingROS</url>
+<author email="alexis.paques@gmail.com">Alexis Paques<</author>
+<buildtool_depend>catkin</buildtool_depend>
+<build_depend>roscpp</build_depend>
+<build_depend>rospy</build_depend>
+<build_depend>std_msgs</build_depend>
+<run_depend>roscpp</run_depend>
+<run_depend>rospy</run_depend>
+<run_depend>std_msgs</run_depend>
+</package>
