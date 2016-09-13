@@ -1,0 +1,14 @@
+---
+# rtk
+
+# laser configuration
+lasers:
+  serial: "/dev/ttyLasers"
+  count: 2
+  orientations: [[0,0,-1], [0,0,-1]]
+  positions: [[0,0,0], [0,0,0]]
+  xDirection : ~
+  yDirection : ~
+  zDirection : [0,1] # indexes of the lasers in the Z direction
+  
+ 
