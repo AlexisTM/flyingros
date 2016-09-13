@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package>
-  <name>flyingros_nav</name>
+  <name>flyingros</name>
   <version>0.0.0</version>
-  <description>The flyingros_nav package</description>
+  <description>The flyingros package</description>
 
   <maintainer email="alexis.paques@gmail.com">Alexis Paques</maintainer>
   <license>GPLv3</license>
