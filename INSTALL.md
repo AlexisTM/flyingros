@@ -24,6 +24,7 @@ sudo apt-get upgrade
 sudo apt-get install ros-kinetic-mavros-extras ros-kinetic-rosbridge-suite 
 
 # Prepare your catkin workspace
+mkdir ~/External
 mkdir ~/Workspace
 mkdir ~/Workspace/src
 cd Workspace/src
@@ -34,7 +35,7 @@ catkin_init_workspace
 git clone https://github.com/bosch-ros-pkg/usb_cam.git
 
 # [Swiftnav Piksi RTK](http://wiki.ros.org/swiftnav_piksi)
-cd ~/mysrc       # cd to a directory where you will download and build libsbp
+cd ~/External       # cd to a directory where you will download and build libsbp
 git clone https://github.com/swift-nav/libsbp.git
 cd libsbp/c
 mkdir build
@@ -55,6 +56,43 @@ git clone https://github.com/AlexisTM/flyingros.git
 cd ~/Workspace 
 catkin_make
 source ~/Workspace/devel/setup.bash
+```
 
+
+### Install SLAM capabilities
+
+```
+# prebuilt
+sudo apt-get install libblas-dev
+sudo apt-get install liblapack-dev
+
+# pangolin 
+sudo apt-get install libglew-dev
+sudo apt-get install ffmpeg libavcodec-dev libavutil-dev libavformat-dev libswscale-dev
+sudo apt-get install libdc1394-22-dev libraw1394-dev
+sudo apt-get install libjpeg-dev libpng12-dev libtiff5-dev libopenexr-dev
+
+cd ~/External
+git clone https://github.com/ktossell/libuvc
+cd libuvc
+mkdir build
+cd build
+cmake ..
+make && sudo make install
+
+cd ~/External
+git clone https://github.com/stevenlovegrove/Pangolin.git
+cd Pangolin
+git checkout -f v0.4
+mkdir build
+cd build
+cmake -DCPP11_NO_BOOST=1 ..
+make -j2
+
+cd ~/External
+git clone https://github.com/raulmur/ORB_SLAM2.git ORB_SLAM2
+cd ORB_SLAM2
+chmod +x build.sh
+./build.sh
 
 ```
