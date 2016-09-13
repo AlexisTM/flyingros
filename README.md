@@ -5,6 +5,11 @@ Around the Internet of robotics, there is a lot of open-source/open-hardware pro
 
 Flying Robot Operating System is designed to be the main **OPEN-SOURCE** package for your multicopter consumer application or closed-source commercial application.
 
+Installation
+------------
+
+See [INSTALL](tree/master/INSTALL.md)
+
 Hardware
 ------------
 
