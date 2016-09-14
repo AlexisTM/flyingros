@@ -13,6 +13,14 @@ or
 http://wiki.ros.org/indigo/Installation/Ubuntu
 ```
 
+### XU3-lite/XU3/XU4 only
+
+Improve compiled programs performances by adding CFLAGS at the end of your .bashrc
+
+```
+export CFLAGS="-march=armv8-a,crc -mtune=cortex-a53 -fexpensive-optimizations -fprefetch-loop-arrays -mfpu=neon-fp-armv8"
+```
+
 ### Install project dependencies 
 
 NOTE: You might need some more SWAP if on the Odroid
