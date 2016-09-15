@@ -18,7 +18,7 @@ http://wiki.ros.org/indigo/Installation/Ubuntu
 Improve compiled programs performances by adding CFLAGS at the end of your .bashrc
 
 ```
-export CFLAGS="-march=armv8-a,crc -mtune=cortex-a53 -fexpensive-optimizations -fprefetch-loop-arrays -mfpu=neon-fp-armv8"
+export CFLAGS="-march=armv8-a+crc -mtune=cortex-a53 -fexpensive-optimizations -fprefetch-loop-arrays -mfpu=neon-fp-armv8"
 ```
 
 ### Install project dependencies 
