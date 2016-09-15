@@ -21,6 +21,21 @@ Improve compiled programs performances by adding CFLAGS at the end of your .bash
 export CFLAGS="-march=armv8-a+crc -mtune=cortex-a53 -fexpensive-optimizations -fprefetch-loop-arrays -mfpu=neon-fp-armv8"
 ```
 
+Compile GCC6.2
+
+```
+wget http://gcc.parentingamerica.com/releases/gcc-6.2.0/gcc-6.2.0.tar.bz2
+tar xf gcc-6.2.0.tar.bz2
+cd gcc-6.2.0
+contrib/download_prerequisites
+mkdir build && cd build
+../configure -v --enable-languages=c,c++ --prefix=/usr/local/gcc-6 --program-suffix=-6 --with-arch=armv8hf-a+crc --with-fpu=vfp --with-float=hard --build=arm-linux-gnueabihf --host=arm-linux-gnueabihf --target=arm-linux-gnueabihf
+make -j8
+sudo make install
+# add to .bashrc
+export PATH=/usr/local/gcc-6/bin:$PATH
+```
+
 ### Install project dependencies 
 
 NOTE: You might need some more SWAP if on the Odroid
