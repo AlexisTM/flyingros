@@ -36,7 +36,7 @@ sudo make install
 export PATH=/usr/local/gcc-6/bin:$PATH
 ```
 
-### Install project dependencies 
+### Install project dependencies
 
 NOTE: You might need some more SWAP if on the Odroid
 
@@ -57,7 +57,7 @@ sudo apt-get update
 sudo apt-get upgrade
 
 # Prebuilt
-sudo apt-get install ros-kinetic-mavros-extras ros-kinetic-rosbridge-suite 
+sudo apt-get install ros-kinetic-mavros-extras ros-kinetic-rosbridge-suite
 
 # Prepare your catkin workspace
 mkdir ~/External
@@ -89,7 +89,7 @@ git clone https://github.com/AlexisTM/flyingros.git
 
 
 # make and source the workspace
-cd ~/Workspace 
+cd ~/Workspace
 catkin_make
 source ~/Workspace/devel/setup.bash
 ```
@@ -102,7 +102,7 @@ source ~/Workspace/devel/setup.bash
 sudo apt-get install libblas-dev libusb-dev
 sudo apt-get install liblapack-dev
 
-# pangolin 
+# pangolin
 sudo apt-get install libglew-dev
 sudo apt-get install ffmpeg libavcodec-dev libavutil-dev libavformat-dev libswscale-dev
 sudo apt-get install libdc1394-22-dev libraw1394-dev
@@ -124,7 +124,7 @@ mkdir build
 cd build
 cmake -DCPP11_NO_BOOST=1 Duvc_ICLUDE_DIRS=/usr/local/include;/usr/include/libusb-1.0..
 
-make -j3 
+make -j3
 
 cd ~/External
 git clone https://github.com/raulmur/ORB_SLAM2.git ORB_SLAM2

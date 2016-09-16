@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+  <!-- PX4 launch -->
+	<arg name="fcu_url" default="/dev/ttyPixHawk:57600" />
+	<arg name="gcs_url" default="udp://:14556@130.104.99.216:14550" />
+	<arg name="tgt_system" default="1" />
+	<arg name="tgt_component" default="1" />
+	<arg name="log_output" default="screen" />
+
+	<include file="$(find mavros)/launch/node.launch">
+		<arg name="pluginlists_yaml" value="$(find mavros)/launch/px4_pluginlists.yaml" />
+		<arg name="config_yaml" value="$(find mavros)/launch/px4_config.yaml" />
+		<arg name="fcu_url" value="$(arg fcu_url)" />
+		<arg name="gcs_url" value="$(arg gcs_url)" />
+		<arg name="tgt_system" value="$(arg tgt_system)" />
+		<arg name="tgt_component" value="$(arg tgt_component)" />
+		<arg name="log_output" value="$(arg log_output)" />
+	</include>
+
+  <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" output="screen" >
+    <param name="video_device" value="/dev/video0" />
+    <param name="image_width" value="640" />
+    <param name="image_height" value="360" />
+    <param name="pixel_format" value="yuyv" />
+    <param name="camera_frame_id" value="usb_cam" />
+    <param name="io_method" value="mmap"/>
+  </node>
+  <node name="image_proc" pkg="image_proc" type="image_proc">
+    <remap from="image_raw" to="/usb_cam/image_raw" />
+    <remap from="camera_info" to="/usb_cam/camera_info" />
+  </node>
+
+  <node pkg="rovio" type="rovio_node" name="rovio" output="screen">
+    <param name="cam0_topic_name" value="/usb_cam/image_raw"/>
+    <param name="camera0_config" value="$(find rovio)/cfg/odroid720p.yaml"/>
+    <param name="imu_topic_name" value="/imu0"/>
+    <param name="filter_config" value="$(find rovio)/cfg/rovio.info"/>
+  </node>
+</launch>
