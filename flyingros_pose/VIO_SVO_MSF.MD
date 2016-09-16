@@ -1,4 +1,4 @@
-VIO SVO MSF - NOT YET RUN
+VIO SVO MSF - NOT RUNNED YET 
 ==============
 
 Installation of SVO and MSF together. SVO makes the Vision Odometry and MSF merge sensors (initially only the IMU and the Vision Odometry).
@@ -68,6 +68,7 @@ cd ~/Workspace/Catkin/src
 git clone https://github.com/uzh-rpg/rpg_svo # Vision Odometry
 git clone https://github.com/ethz-asl/ethzasl_msf # Sensor vision
 git clone https://github.com/uzh-rpg/rpg_vikit.git # SVO tools
+git clone https://github.com/ethz-asl/ethzasl_ptam # PTAM calibrator for ATAN calibration
 
 # If you installed G2O, set HAVE_G2O in svo/CMakeLists.txt to true
 # also export export G2O_ROOT=$HOME/installdir
@@ -83,9 +84,11 @@ echo "source ~/Workspace/Catkin/devel/setup.bash" > ~/.bashrc
 Camera calibration
 -----------------
 
-http://wiki.ros.org/ethzasl_ptam/Tutorials/camera_calibration
+Choice of calibration - https://github.com/uzh-rpg/rpg_svo/wiki/Camera-Calibration
 
+ATAN calibration (from ethzasl_ptam package) - http://wiki.ros.org/ethzasl_ptam/Tutorials/camera_calibration
 
+Pinhole calibration (ROS & OpenCV standard) - http://wiki.ros.org/camera_calibration
 
 Known issues with installation
 ---------------------------
