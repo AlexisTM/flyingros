@@ -1,4 +1,4 @@
-VIO SVO MSF
+VIO SVO MSF - NOT YET RUN
 ==============
 
 Installation of SVO and MSF together. SVO makes the Vision Odometry and MSF merge sensors (initially only the IMU and the Vision Odometry).
