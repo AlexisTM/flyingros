@@ -8,7 +8,9 @@ Here is a list of the visual estimation possibilities
 Visual Odometry (VO)
 -----------------
 
+* Original PTAM (feature-based, mono, for desktop AR) - http://www.robots.ox.ac.uk/~gk/PTAM/
 * PTAM (feature-based, mono, for MAV) - http://wiki.ros.org/ethzasl_ptam
+* PTAMM (feature-based, mono, for AR) - http://www.robots.ox.ac.uk/~bob/research/research_ptamm.html
 * LIBVISO2 (feature-based, mono and stereo, for marine) - http://www.cvlibs.net/software/libviso/
 * SVO (semi-direct, mono, stereo, multi-cameras, for MAV) - https://github.com/uzh-rpg/rpg_svo
 
