@@ -1,0 +1,29 @@
+<launch>
+  <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" output="screen" >
+    <param name="video_device" value="/dev/video0" />
+    <param name="image_width" value="640" />
+    <param name="image_height" value="360" />
+    <param name="pixel_format" value="yuyv" />
+    <param name="camera_frame_id" value="usb_cam" />
+    <param name="io_method" value="mmap"/>
+  </node>
+
+  <node name="image_proc" pkg="image_proc" type="image_proc">
+    <remap from="image_raw" to="/usb_cam/image_raw" />
+    <remap from="camera_info" to="/usb_cam/camera_info" />
+  </node>
+
+  <node pkg="svo_ros" launch-prefix="gdb -ex run --args" type="vo" name="svo" clear_params="true" output="screen">
+    <param name="cam_topic" value="$(optenv IMAGE /image_mono)"/>
+    <rosparam file="$(find svo_ros)/param/odroid360p.yaml" />
+    <param name="init_rx" value="3.14" />
+    <param name="init_ry" value="0" />
+    <param name="init_rz" value="0" />
+    <param name="init_tx" value="0" />
+    <param name="init_ty" value="0" />
+    <param name="init_tz" value="0" />
+    <!-- Default parameter settings: choose between vo_fast and vo_accurate -->
+    <rosparam file="$(find svo_ros)/param/vo_fast.yaml" />
+  </node>
+
+</launch>

@@ -1,0 +1,20 @@
+<launch>
+  <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" output="screen" >
+    <param name="video_device" value="/dev/video0" />
+    <param name="image_width" value="640" />
+    <param name="image_height" value="360" />
+    <param name="pixel_format" value="yuyv" />
+    <param name="camera_frame_id" value="usb_cam" />
+    <param name="io_method" value="mmap"/>
+  </node>
+  <node name="image_proc" pkg="image_proc" type="image_proc">
+      <remap from="image_raw" to="/usb_cam/image_raw" />
+      <remap from="camera_info" to="/usb_cam/camera_info" />
+  </node>
+
+  <node name="cameracalibrator" pkg="ptam" type="cameracalibrator" clear_params="true" output="screen">
+    <remap from="image" to="$(optenv IMAGE /image_mono)" />
+    <remap from="pose" to="pose"/>
+    <rosparam file="$(find ptam)/PtamFixParams.yaml"/>
+  </node>
+</launch>

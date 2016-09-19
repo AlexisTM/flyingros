@@ -1,4 +1,4 @@
-VIO SVO MSF - NOT RUNNED YET 
+VIO SVO MSF - NOT RUNNED YET
 ==============
 
 Installation of SVO and MSF together. SVO makes the Vision Odometry and MSF merge sensors (initially only the IMU and the Vision Odometry).
@@ -21,7 +21,7 @@ Tested on the Odroid XU4
 echo export ARM_ARCHITECTURE=True > ~/.bashrc
 
 # apt-get dependencies
-sudo apt-get install cmake libeigen3-dev libsuitesparse-dev libqt4-dev qt4-qmake libqglviewer-dev
+sudo apt-get install cmake libeigen3-dev libsuitesparse-dev libqt4-dev qt4-qmake libqglviewer-dev ros-indigo-usb-cam
 
 # Create a catkin workspace and external workspace
 mkdir ~/Workspace
