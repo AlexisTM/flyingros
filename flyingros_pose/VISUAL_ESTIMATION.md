@@ -19,6 +19,9 @@ Visual Inertial Odometry (VIO)
 
 * rovio (tightly coupled EKF) - https://github.com/ethz-asl/rovio
 * okvis  (non-linear optimization) - https://github.com/ethz-asl/okvis_ros
+* ETHZASL MSF (Multi sensor fusion, EKF, loosely-coupled) - https://github.com/ethz-asl/ethzasl_msf
+* SVO + GTSAM - https://bitbucket.org/gtborg/gtsam, informations here : http://arxiv.org/pdf/1512.02363
+
 
 Visual Simultaneous Localization And Mapping (VSLAM)
 ------------------
@@ -26,11 +29,6 @@ Visual Simultaneous Localization And Mapping (VSLAM)
 * ORB-SLAM2 (feature based, mono, stereo, RGB-D, relocalization) - https://github.com/raulmur/ORB_SLAM2
 * LSD-SLAM (semi-dense, direct, mono) - https://github.com/tum-vision/lsd_slam
 * iSAM : Incremental Smoothing and Mapping - http://people.csail.mit.edu/kaess/isam/
-
-IMU Vision Fusion
-----------------
-* ETHZASL MSF (Multi sensor fusion, EKF, loosely-coupled) - https://github.com/ethz-asl/ethzasl_msf
-* SVO + GTSAM - https://bitbucket.org/gtborg/gtsam, informations here : http://arxiv.org/pdf/1512.02363
 
 Libraries widely used
 -----------------
@@ -53,7 +51,7 @@ Performances
 
 SVO for more fps (60cm error RMS)
 
-SVO + BA (bundle adjustment) for more (7cm error RMS)
+SVO + BA (bundle adjustment) for more precision (7cm error RMS)
 
 SVO works better on a down facing camera
 

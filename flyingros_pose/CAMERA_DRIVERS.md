@@ -19,3 +19,12 @@ Install the following packages:
 NOTE : Gige SDK did not work for me.
 
 ### New Vimba SDK
+
+```
+sudo apt-get install ros-indigo-polled-camera ros-indigo-driver-base
+
+git clone https://github.com/srv/avt_vimba_camera
+cd avt_vimba_camera
+# kinetic branch
+# apply this fix https://github.com/srv/avt_vimba_camera/issues/16
+```
