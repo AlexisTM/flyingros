@@ -18,7 +18,7 @@ Tested on the Odroid XU4
 
 ```
 # It activate NEON FLAGS for ARM
-echo export ARM_ARCHITECTURE=True > ~/.bashrc
+echo export ARM_ARCHITECTURE=True >> ~/.bashrc
 
 # apt-get dependencies
 sudo apt-get install cmake libeigen3-dev libsuitesparse-dev libqt4-dev qt4-qmake libqglviewer-dev ros-indigo-usb-cam
@@ -69,6 +69,8 @@ git clone https://github.com/uzh-rpg/rpg_svo # Vision Odometry
 git clone https://github.com/ethz-asl/ethzasl_msf # Sensor vision
 git clone https://github.com/uzh-rpg/rpg_vikit.git # SVO tools
 git clone https://github.com/ethz-asl/ethzasl_ptam # PTAM calibrator for ATAN calibration
+git clone https://github.com/ethz-asl/glog_catkin # Google glog catkin
+git clone https://github.com/catkin/catkin_simple # Catkin simple
 
 # If you installed G2O, set HAVE_G2O in svo/CMakeLists.txt to true
 # also export export G2O_ROOT=$HOME/installdir
@@ -76,6 +78,7 @@ git clone https://github.com/ethz-asl/ethzasl_ptam # PTAM calibrator for ATAN ca
 
 cd ~/Workspace/Catkin/
 catkin_make
+# Or catkin_make -DG2O_INCLUDE_DIR=/opt/ros/indigo/include/g2o/
 # NOTE: I needed at least 4Go RAM to compile => add some swap
 
 echo "source ~/Workspace/Catkin/devel/setup.bash" > ~/.bashrc
