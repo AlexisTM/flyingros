@@ -1,0 +1,18 @@
+<launch>
+  <node name="odroid416p" pkg="usb_cam" type="usb_cam_node" output="screen" >
+    <param name="video_device" value="/dev/video0" />
+    <param name="image_width" value="752" />
+    <param name="image_height" value="416" />
+    <param name="pixel_format" value="yuyv" />
+    <param name="camera_frame_id" value="odroid416p" />
+    <param name="io_method" value="mmap"/>
+  </node>
+
+  <node ns="odroid416p" name="image_proc" pkg="image_proc" type="image_proc">
+    <remap from="image_raw" to="/odroid416p/image_raw" />
+    <remap from="camera_info" to="/odroid416p/camera_info" />
+    <param name="respawn" value="true"/>
+    <param name="queue_size" value="1"/>
+  </node>
+
+</launch>

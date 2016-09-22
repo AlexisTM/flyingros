@@ -1,16 +1,44 @@
 <launch>
-  <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" output="screen" >
-    <param name="video_device" value="/dev/video0" />
-    <param name="image_width" value="752" />
-    <param name="image_height" value="416" />
-    <param name="pixel_format" value="mjpeg" />
-    <param name="camera_frame_id" value="usb_cam" />
-    <param name="io_method" value="mmap"/>
-  </node>
+    <group ns="odroid">
+      <node pkg="libuvc_camera" type="camera_node" name="mycam">
+        <!-- Parameters used to find the camera -->
+        <param name="vendor" value="0x1b71"/>
+        <param name="product" value="0x0056"/>
+        <param name="serial" value=""/>
+        <!-- If the above parameters aren't unique, choose the first match: -->
+        <param name="index" value="0"/>
 
-  <node ns="usb_cam" name="image_proc" pkg="image_proc" type="image_proc">
-    <remap from="image_raw" to="/usb_cam/image_raw" />
-    <remap from="camera_info" to="/usb_cam/camera_info" />
-  </node>
+        <!-- Image size and type -->
+        <param name="width" value="1280"/>
+        <param name="height" value="720"/>
+        <!-- choose whichever uncompressed format the camera supports: -->
+        <param name="video_mode" value="jpeg"/> <!-- or yuyv/nv12/jpeg -->
+        <param name="frame_rate" value="30"/>
+
+        <param name="timestamp_method" value="start"/> <!-- start of frame -->
+      <!--  <param name="camera_info_url" value=""/> -->
+
+        <param name="auto_exposure" value="3"/> <!-- use aperture_priority auto exposure -->
+        <param name="auto_white_balance" value="false"/>
+      </node>
+      <node ns="usb_cam" name="image_proc" pkg="image_proc" type="image_proc">
+        <remap from="image_raw" to="/usb_cam/image_raw" />
+        <remap from="camera_info" to="/usb_cam/camera_info" />
+      </node>
+    </group>
+
+<!--  <node name="usb_cam" pkg="usb_cam" type="usb_cam_node" output="screen" >
+    <param name="camera_name" value="odroid720" />
+    <param name="video_device" value="/dev/video0" />
+    <param name="image_width" value="1280" />
+    <param name="image_height" value="720" />
+    <param name="pixel_format" value="mjpeg" />
+    <param name="camera_frame_id" value="odroid720" />
+    <param name="io_method" value="mmap"/>
+    <param name="framerate" value="30"/>
+    <param name="autofocus" value="false"/>
+  </node>-->
+
+
 
 </launch>
