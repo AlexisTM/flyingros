@@ -1,0 +1,56 @@
+<launch>
+  <!-- rosservice call /msf_pose_sensor/pose_sensor/initialize_msf_scale 1 -->
+    <arg name="fcu_url" default="serial:///dev/ttyUSB0:921600" />
+    <arg name="gcs_url" default="udp://:14556@127.0.0.1:14550" />
+    <arg name="tgt_system" default="1" />
+    <arg name="tgt_component" default="50" />
+    <arg name="pluginlists_yaml" value="$(rospack find mavros)/launch/px4_pluginlists.yaml" />
+    <arg name="config_yaml" value="$(rospack find mavros)/launch/px4_config.yaml" />
+
+    <node name="odroid416p" pkg="usb_cam" type="usb_cam_node" output="screen" >
+      <param name="video_device" value="/dev/video0" />
+      <param name="image_width" value="752" />
+      <param name="image_height" value="416" />
+      <param name="pixel_format" value="yuyv" />
+      <param name="camera_frame_id" value="odroid416p" />
+      <param name="io_method" value="mmap"/>
+    </node>
+
+    <node ns="odroid416p" name="image_proc" pkg="image_proc" type="image_proc">
+      <remap from="image_raw" to="/odroid416p/image_raw" />
+      <remap from="camera_info" to="/odroid416p/camera_info" />
+      <param name="respawn" value="true"/>
+      <param name="queue_size" value="1"/>
+    </node>
+
+    <!-- PX4 launch -->
+    <include file="$(rospack find mavros)/launch/node.launch">
+      <arg name="fcu_url" value="$(arg fcu_url)" />
+      <arg name="gcs_url" value="$(arg gcs_url)" />
+      <arg name="tgt_system" value="$(arg tgt_system)" />
+      <arg name="tgt_component" value="$(arg tgt_component)" />
+      <arg name="log_output" value="$(arg log_output)" />
+      <param name="conn_heartbeat" value="5.0" />
+      <param name="conn_timeout" value="10.0" />
+      <param name="startup_px4_usb_quirk" value="true" />
+      <param name="position/vision/pose_with_covariance" value="true" />
+    </include>
+
+    <node pkg="svo_ros" type="vo" name="svo" clear_params="true" output="screen">
+        <param name="cam_topic" value="/odroid416p/image_mono" type="str" />
+        <rosparam file="$(rospack find svo_ros)/param/odroid752_416.yaml" />
+        <rosparam file="$(rospack find svo_ros)/param/vo_odroid.yaml" />
+        <param name="accept_console_user_input" value="true" />
+        <param name="publish_world_in_cam_frame" value="false" />
+        <param name="init_rx" value="3.1415289878" />
+
+    </node>
+
+    <node name="msf_pose_sensor" pkg="msf_updates" type="pose_sensor" clear_params="true" output="screen">
+        <remap from="msf_core/imu_state_input" to="/mavros/imu/data" />
+        <remap from="msf_updates/pose_with_covariance_input" to="/svo/pose" />
+        <!--<remap from="mavros/vision_pose/pose_cov" to="svo/pose" />-->
+        <rosparam file="$(find svo_ros)/param/px4_svo_sensor_fix.yaml"/>
+    </node>
+
+</launch>
