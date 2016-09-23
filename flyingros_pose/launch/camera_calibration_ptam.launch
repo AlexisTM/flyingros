@@ -1,0 +1,7 @@
+<launch>
+    <node name="cameracalibrator" pkg="ptam" type="cameracalibrator" clear_params="true" output="screen">
+	    <remap from="image" to="/vimba/image_raw" />
+            <remap from="pose" to="pose"/>
+	    <rosparam file="$(find ptam)/PtamFixParams.yaml"/>
+    </node>
+</launch>

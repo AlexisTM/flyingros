@@ -1,0 +1,6 @@
+<launch>
+  	<node pkg="camera_calibration" type="cameracalibrator.py" name="camera_calibrator" args="-k 6 --size 8x6 --square 0.01345" output="screen">
+  		<remap from="image" to="/vimba/image_raw" />
+  		<remap from="camera" to="/vimba" />
+  	</node>
+  </launch>
