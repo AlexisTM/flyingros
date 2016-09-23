@@ -1,0 +1,75 @@
+<launch>
+
+	<group ns="camera">
+		<node name="image_proc" pkg="image_proc" type="image_proc"/>
+	</group>
+
+	<node name="camera" pkg="avt_vimba_camera" type="mono_camera_node" output="screen">
+		<param name="guid" value="50-0536875045"/>
+		<param name="ip" value="10.10.1.2"/>
+		<param name="camera_info_url" value="file://$(find avt_vimba_camera)/calibrations/calibration_50-0503343290.yaml"/>
+		<param name="frame_id" value="left_optical"/>
+		<param name="trig_timestamp_topic" value=""/>
+		<param name="show_debug_prints" value="true"/>
+
+		<!-- Trigger mode:
+			1. Freerun
+			2. SyncIn1
+			3. SyncIn2
+			4. SyncIn3
+			5. SyncIn4
+			6. FixedRate
+			7. Software
+		-->
+		<param name="trigger_source" value="FixedRate"/>
+
+		<!-- Acquisition mode:
+			1. Continuous
+			2. SingleFrame
+			3. MultiFrame
+			4. Recorder
+		-->
+		<param name="acquisition_mode" value="Continuous"/>
+
+		<!-- Acquisition rate in fps -->
+		<param name="acquisition_rate" value="62"/>
+
+		<!-- Pixel format:
+			1. Mono8
+			2. Mono12
+			3. Mono12Packed
+			4. BayerRG8
+			5. BayerRG12Packed
+			6. BayerGR12
+			7. RGB8Packed
+			8. BGR8Packed
+		-->
+		<param name="pixel_format" value="Mono8"/>
+		<!-- Exposure in us -->
+		<param name="exposure" value="10000"/>
+		<!-- Gain in dB -->
+		<param name="gain" value="0"/>
+
+		<!-- Auto control
+			1. Off
+			2. Once
+			3. Continuous
+		-->
+		<param name="exposure_auto" value="Off"/>
+		<param name="gain_auto" value="Off"/>
+		<param name="whitebalance_auto" value="Off"/>
+
+		<param name="binning_x" value="1"/>
+		<param name="binning_y" value="1"/>
+		<param name="decimation_x" value="1"/>
+		<param name="decimation_y" value="1"/>
+		<param name="x_offset" value="0"/>
+		<param name="y_offset" value="0"/>
+		<param name="width" value="1280"/>
+		<param name="height" value="1024"/>
+
+    <!-- Odroid Gigabit Ethernet capabilities : 850MBits, highest on the market for SBC. -->
+		<param name="stream_bytes_per_second" value="115000000"/>
+	</node>
+
+</launch>
