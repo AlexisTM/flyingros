@@ -60,8 +60,8 @@
 		<param name="decimation_y" value="1"/>
 		<param name="x_offset" value="0"/>
 		<param name="y_offset" value="0"/>
-		<param name="width" value="1280"/>
-		<param name="height" value="1024"/>
+		<param name="width" value="752"/>
+		<param name="height" value="480"/>
 
     <!-- Odroid Gigabit Ethernet capabilities : 850MBits, highest on the market for SBC. -->
 		<param name="stream_bytes_per_second" value="45000000"/>
