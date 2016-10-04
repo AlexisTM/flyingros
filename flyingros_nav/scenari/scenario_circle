@@ -1,0 +1,78 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+scenario_circle.py
+
+This is a scenario which makes the multicopter do a circle
+
+FlyingROS is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+FlyingROS is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with FlyingROS.  If not, see <http://www.gnu.org/licenses/>.
+
+Software created by Alexis Paques and Nabil Nehri for the UCL
+in a Drone-Based Additive Manufacturing of Architectural Structures
+project financed by the MIT Seed Fund
+
+Copyright (c) Maxime Bosquet 2016
+Copyright (c) Alexis Paques 2016
+"""
+from flyingros_libs.tasks import *
+from math import cos, sin, pi
+import rospy
+from signal import signal, SIGINT
+from geometry_msgs.msg import Point
+import sys
+
+def signal_handler(signal, frame):
+        print('You pressed Ctrl+C')
+        print('Leaving the Controller & closing the UAV')
+        Controller.__exit__()
+        sys.exit(0)
+
+def PointsInCircum(r,z=3,n=8):
+    #return (x,y,z) points of a circle
+    #PointsInCircum(Rayon(m), Altitude{defaut:3}(m), NombreDePoints{defaut:8})
+    return [(round(cos(2*pi/n*x)*r,3),round(sin(2*pi/n*x)*r,3),z) for x in range(0,n+1)]
+
+rospy.init_node('test_tasks')
+Controller = taskController(rate=3, setpoint_rate=10)
+rospy.loginfo("Controller initiated")
+signal(SIGINT, signal_handler)
+
+
+#Initialisation
+tasks = []
+rospy.loginfo("Circle sequencing")
+tasks.append(init_UAV("Init UAV"))
+tasks.append(arm("Arming"))
+tasks.append(takeoff("TAKEOFF"))
+#Targetting circle points
+CirclePoints = PointsInCircum(3)
+for circle in CirclePoints:
+    tasks.append(target("target", Point(circle[0], circle[1], circle[2])))
+
+tasks.append(land("LANDING"))
+#Disarming
+tasks.append(disarm("Disarming"))
+
+#Adding tasks
+Controller.addTasks(tasks)
+rospy.loginfo("Tasks added")
+
+# for i in range(100):
+while True:
+    Controller.rate.sleep()
+    Controller.spinOnce()
+    rospy.loginfo("Task %s on %s : %s", Controller.current+1, Controller.count, Controller.getCurrentTask().__str__())
+
+Controller.__exit__()
+sys.exit(0)
