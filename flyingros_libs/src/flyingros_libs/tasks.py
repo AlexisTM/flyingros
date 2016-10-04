@@ -224,11 +224,13 @@ class taskController:
     def addTask(self, task):
         self.tasks.append(task)
         self.count += 1
+        return self.count-1
 
     def addTasks(self, tasks):
         for task in tasks:
             self.tasks.append(task)
         self.count += len(tasks)
+        return self.count-1
 
     def getTasks(self):
         return self.tasks
@@ -498,12 +500,11 @@ class test(task, object):
             print("waiting")
             return False
 
-# Init the the pixHawk with a home
-# Tested, working
+# Not optimized
 class init_UAV(task, object):
     """The init_UAV class is a task. It wait the UAV to be initialized, set home and set the setpoint to hom"""
-    def __init__(self, name, sleep = 10):
-        self.sleep = rospy.Rate(10/sleep)
+    def __init__(self, name, sleep = 5):
+        self.sleep = rospy.Rate(1.0/sleep)
         super(init_UAV, self).__init__("INIT_UAV", name)
 
     def __str__(self):

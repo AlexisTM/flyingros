@@ -47,6 +47,10 @@ install(DIRECTORY tests/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/tests
 )
 
+install(DIRECTORY launch/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+)
+
 #############
 ## Testing ##
 #############

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-control_thread.py
+manual_node
 
 This script sends positions to control the UAV in X, Y, Z
 
@@ -341,7 +341,7 @@ def init():
     state = State()
 
     # Node initiation
-    rospy.init_node('laserpack_control')
+    rospy.init_node('manual_control')
 
     local_pos_pub   = rospy.Publisher('mavros/mocap/pose', PoseStamped, queue_size=1)
 
@@ -349,11 +349,10 @@ def init():
 
     # Publishers, subscribers and services
     pose_sub        = rospy.Subscriber('mavros/local_position/pose', PoseStamped, Pose_Callback)
-    laser_pose_sub  = rospy.Subscriber('lasers/filtered', PoseStamped, laser_callback)
-    state_sub       = rospy.Subscriber('mavrqos/state', State, State_Callback)
-    laser_sub       = rospy.Subscriber('lasers/raw', Distance, lasers_raw_callback)
-    task_sub        = rospy.Subscriber('web/task', Task, Task_Callback)
-
+    laser_pose_sub  = rospy.Subscriber('flyinros/control/input_pose', PoseStamped, laser_callback)
+    state_sub       = rospy.Subscriber('mavros/state', State, State_Callback)
+    laser_sub       = rospy.Subscriber('flyinros/lasers/raw', Distance, lasers_raw_callback)
+    task_sub        = rospy.Subscriber('flyinros/web/task', Task, Task_Callback)
 
     rospy.wait_for_service('mavros/set_mode')
     set_mode_client = rospy.ServiceProxy('mavros/set_mode', SetMode)

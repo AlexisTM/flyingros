@@ -1,0 +1,5 @@
+<launch>
+  <node name="manual_node" pkg="flyingros_nav" type="manual_node">
+    <remap from="flyinros/control/input_pose" to="flyinros/lasers/pose" />
+  </node>
+</launch>
