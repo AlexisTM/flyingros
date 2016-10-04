@@ -15,9 +15,23 @@ Available data
 ------
 
 * GPS RTK (as local NED)
-* Lasers
+* Lasers, altitude or position
 * PixHawk IMU
 * Onboard GPS
+* Camera (to be selected)
+
+Camera choice
+-----
+
+*
+* Vimba on ARMv7 HF did not worked well for us on the Odroid, the frames where incomplete.
+* USB customer camera (Odorid 720p for example) : To avoid, too slow and no global shutter.
+
+TODO
+------
+
+* Find the right camera
+* Make a successfull use of `rpg_svo in` coordination with `ethzasl_msf`.
 
 Future
 -------
