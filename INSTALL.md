@@ -54,7 +54,7 @@ sudo swapon -s
 
 ```
 sudo apt-get update
-sudo apt-get upgrade
+sudo apt-get dist-upgrade
 
 # Prebuilt
 sudo apt-get install ros-kinetic-mavros-extras ros-kinetic-rosbridge-suite
@@ -87,49 +87,20 @@ git clone https://github.com/PaulBouchier/swiftnav_piksi.git
 cd ~/Workspace/src
 git clone https://github.com/AlexisTM/flyingros.git
 
-
 # make and source the workspace
 cd ~/Workspace
 catkin_make
 source ~/Workspace/devel/setup.bash
-```
 
+# If you want URWID interfaces (in flyingros_nav, console_* scripts)
+cd ~/External
+wget https://pypi.python.org/packages/source/u/urwid/urwid-1.3.1.tar.gz
+tar -xvf urwid-1.3.1.tar.gz
+rm urwid-1.3.1.tar.gz
+cd urwid-1.3.1
+sudo python setup.py install
+```
 
 ### Install SLAM capabilities
 
-```
-# prebuilt
-sudo apt-get install libblas-dev libusb-dev
-sudo apt-get install liblapack-dev
-
-# pangolin
-sudo apt-get install libglew-dev
-sudo apt-get install ffmpeg libavcodec-dev libavutil-dev libavformat-dev libswscale-dev
-sudo apt-get install libdc1394-22-dev libraw1394-dev
-sudo apt-get install libjpeg-dev libpng12-dev libtiff5-dev libopenexr-dev
-
-cd ~/External
-git clone https://github.com/ktossell/libuvc
-cd libuvc
-mkdir build
-cd build
-cmake ..
-make && sudo make install
-
-cd ~/External
-git clone https://github.com/stevenlovegrove/Pangolin.git
-cd Pangolin
-git checkout -f v0.4
-mkdir build
-cd build
-cmake -DCPP11_NO_BOOST=1 Duvc_ICLUDE_DIRS=/usr/local/include;/usr/include/libusb-1.0..
-
-make -j3
-
-cd ~/External
-git clone https://github.com/raulmur/ORB_SLAM2.git ORB_SLAM2
-cd ORB_SLAM2
-chmod +x build.sh
-./build.sh
-
-```
+Please check the [`flyingros_pose` package](flyingros_pose/INSTALL.md).

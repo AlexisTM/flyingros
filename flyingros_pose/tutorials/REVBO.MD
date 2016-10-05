@@ -1,6 +1,8 @@
 Revbo installation - https://github.com/JuanTarrio/rebvo
 ===========================
 
+> REVBO not tested
+
 Dependencies
 -----------
 
