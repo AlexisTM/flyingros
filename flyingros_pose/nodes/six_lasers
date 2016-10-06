@@ -34,15 +34,15 @@ Copyright (c) Alexis Paques 2016
 from __future__ import division
 import rospy
 from time import time
-from flyingros.lasers import lasersController
-from flyingros.transformations import *
-from flyingros.algorithm_functions import *
+from flyingros_libs.lasers import lasersController
+from flyingros_libs.transformations import *
+from flyingros_libs.algorithm_functions import *
 from flyingros_msgs.msg import Distance
 from geometry_msgs.msg import PoseStamped, Accel, TwistStamped, Quaternion, Point
 from sensor_msgs.msg import Imu
 from threading import Thread
-from flyingros.getch import getch
-from flyingros.kalman import filter_container
+from flyingros_libs.getch import getch
+from flyingros_libs.kalman import filter_container
 
 
 def local_position_callback(data):
@@ -194,7 +194,7 @@ def subscribers():
 
     imu_sub         = rospy.Subscriber('mavros/imu/data', Imu, imu_callback)
     state_sub       = rospy.Subscriber('flyingros/lasers/raw', Distance, raw_lasers_callback)
-    velocity_sub    = rospy.Subscriber('mavros/local_position/pose', PoseStamped, local_position_callback)
+    local_pos_sub   = rospy.Subscriber('mavros/local_position/pose', PoseStamped, local_position_callback)
     velocity_sub    = rospy.Subscriber('mavros/local_position/velocity', TwistStamped, velocity_callback)
 
 
