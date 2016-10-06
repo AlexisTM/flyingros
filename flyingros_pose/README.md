@@ -23,7 +23,7 @@ Available data
 Camera choice
 -----
 
-*
+* mvBlueFOX-IGC200wG-1112 (~320 €)
 * Vimba on ARMv7 HF did not worked well for us on the Odroid, the frames where incomplete.
 * USB customer camera (Odorid 720p for example) : To avoid, too slow and no global shutter.
 
