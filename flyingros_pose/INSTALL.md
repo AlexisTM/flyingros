@@ -20,3 +20,4 @@ Then, you can choose your Visual Odometry method from tutorials section.
 * [PTAM from ETHZ-ASL](tutorials/PTAM.MD)
 * [ROVIO from ETHZ-ASL](tutorials/ROVIO.MD)
 * [REVBO from TUM](tutorials/REVBO.MD)
+* [ORB_SLAM2](tutorials/ORB_SLAM2.MD)
