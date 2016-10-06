@@ -1,6 +1,8 @@
 ROVIO - https://github.com/ethz-asl/rovio/wiki
 ===========================
 
+> ROVIO not tested
+
 Dependencies
 -----------
 
