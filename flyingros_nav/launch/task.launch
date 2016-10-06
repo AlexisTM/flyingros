@@ -1,5 +1,5 @@
 <launch>
   <node name="task_node" pkg="flyingros_nav" type="task_node">
-    <remap from="flyinros/control/input_pose" to="flyinros/lasers/pose" />
+    <remap from="/mavros/mocap/pose" to="/flyinros/lasers/pose" />
   </node>
 </launch>
