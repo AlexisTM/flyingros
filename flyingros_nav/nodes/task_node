@@ -91,9 +91,8 @@ def subscribers():
     mission_get_srv     = rospy.Service('flyingros/controller/mission/get', MissionRequest, handle_get_whole_mission)
     # - tasks
     task_add_srv        = rospy.Service('flyingros/controller/task/add', TaskHandle, handle_add_task)
-    task_add_srv        = rospy.Service('flyingros/controller/task/get', TaskRequest, handle_get_task)
+    task_get_srv        = rospy.Service('flyingros/controller/task/get', TaskRequest, handle_get_task)
     task_remove_srv     = rospy.Service('flyingros/controller/task/remove', TaskHandle, handle_remove_task)
-
 
 def init():
     # Input data
@@ -102,7 +101,9 @@ def init():
     # Node initiation
     rospy.init_node('laserpack_control')
     # Data initiation
-    Controller = taskController(rate=3, setpoint_rate=10)
+    rate = rospy.get_param("flyingros/controller/rate",3)
+    setpoint_rate = rospy.get_param("flyingros/controller/setpoint_rate",10)
+    Controller = taskController(rate=rate, setpoint_rate=setpoint_rate)
 
 if __name__ == '__main__':
     rospy.loginfo("We are ready")
