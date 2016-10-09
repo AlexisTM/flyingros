@@ -76,11 +76,11 @@ generate_messages(
 # )
 
 ## Generate services in the 'srv' folder
-# add_service_files(
-#   FILES
-#   Service1.srv
-#   Service2.srv
-# )
+add_service_files(
+ FILES
+ MissionRequest.srv
+ TaskRequest.srv
+)
 
 ## Generate actions in the 'action' folder
 # add_action_files(
@@ -127,7 +127,7 @@ generate_messages(
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES flyingros_msgs
-#  CATKIN_DEPENDS other_catkin_pkg
+CATKIN_DEPENDS std_msgs mavros_msgs geometry_msgs
 #  DEPENDS system_lib
 )
 
