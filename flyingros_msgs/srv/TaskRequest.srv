@@ -1,5 +1,5 @@
 # Return a certain task by ID
-std_msgs/Int64 ID
+std_msgs/Int64 index
 ---
 Task task
 std_msgs/Bool result
