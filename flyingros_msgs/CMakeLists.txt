@@ -71,6 +71,8 @@ add_service_files(
  FILES
  MissionRequest.srv
  TaskRequest.srv
+ MissionHandle.srv
+ TaskHandle.srv
 )
 
 ## Generate actions in the 'action' folder
