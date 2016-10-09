@@ -222,12 +222,14 @@ class taskController:
             controller_string += "\n"
 
     def addTask(self, task):
+        task.updateID()
         self.tasks.append(task)
         self.count += 1
         return self.count-1
 
     def addTasks(self, tasks):
         for task in tasks:
+            task.updateID()
             self.tasks.append(task)
         self.count += len(tasks)
         return self.count-1
@@ -284,6 +286,10 @@ class task:
         self.name = name
         self.Type = Type
         self.done = False
+        self.id = None
+
+    def updateID(self):
+        self.id = id(self)
 
     def isDone(self):
         # check if task is ended
