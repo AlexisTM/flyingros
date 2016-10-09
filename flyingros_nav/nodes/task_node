@@ -33,6 +33,7 @@ import mavros
 import time
 from getch import *
 from threading import Thread
+from flyingros_msgs.msg import Task, Mission
 from geometry_msgs.msg import PoseStamped, Point
 from mavros.utils import *
 from flyingros_libs.tasks import *
@@ -95,6 +96,18 @@ def task_feeder():
     Controller.addTask(land("Landing incoming"))
     Controller.addTask(disarm("Shutdown now"))
 
+def subscribers():
+
+    # systematic
+    current_pub     = rospy.Publisher('flyingros/controller/task/get', Task, queue_size=1)
+
+    # services
+    mission_pub         = rospy.Publisher('flyingros/controller/mission/get', Mission, queue_size=1)
+    # services
+    task_add_sub    = rospy.Subscriber('flyingros/controller/task/add', Task, addTask_callback)
+    tasks_add_sub   = rospy.Subscriber('flyingros/controller/mission/add', Mission, addTasks_callback)
+    task_add_sub    = rospy.Subscriber('flyingros/controller/task/add', Task, addTask_callback)
+
 def init():
     # Input data
     global stop
@@ -114,6 +127,7 @@ if __name__ == '__main__':
     rospy.loginfo("We are ready")
     try:
         init()
+        subscribers()
         task_feeder()
         main()
     except rospy.ROSInterruptException:
