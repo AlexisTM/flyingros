@@ -72,13 +72,14 @@ class UAV:
         # State subscriber
         self.state_subscriber = rospy.Subscriber('mavros/state', State, self.state_callback)
 
-        #Arming & mode Services
-        rospy.loginfo("Subscribing to arming service")
-        rospy.wait_for_service('mavros/cmd/arming')
-        self.arming_client   = rospy.ServiceProxy('mavros/cmd/arming', CommandBool)
-        rospy.loginfo("Subscribing to setmode service")
-        rospy.wait_for_service('mavros/set_mode')
-        self.set_mode_client = rospy.ServiceProxy('mavros/set_mode', SetMode)
+        # Arming & mode Services
+        if not test :
+            rospy.loginfo("Subscribing to arming service")
+            rospy.wait_for_service('mavros/cmd/arming')
+            self.arming_client   = rospy.ServiceProxy('mavros/cmd/arming', CommandBool)
+            rospy.loginfo("Subscribing to setmode service")
+            rospy.wait_for_service('mavros/set_mode')
+            self.set_mode_client = rospy.ServiceProxy('mavros/set_mode', SetMode)
 
         # Setpoints
         self.setpoint_init()
@@ -208,7 +209,7 @@ class UAV:
 
 class taskController:
     """ The task controller handle a list with every tasks """
-    def __init__(self, rate=10, setpoint_rate=10):
+    def __init__(self, rate=10, setpoint_rate=10, test=False):
         self.tasks = list()
         self.count = 0
         self.current = 0
