@@ -32,12 +32,58 @@ import time
 from math import fabs
 from threading import Thread
 from geometry_msgs.msg import PoseStamped, Quaternion, Pose, Point, Vector3, TwistStamped
+from flyingros_msgs.msg import Task
 from transformations import *
 from sensor_msgs.msg import Imu
 from mavros_msgs.srv import SetMode
 from mavros_msgs.msg import State, PositionTarget
 from mavros_msgs.srv import CommandBool
 from algorithm_functions import deg2radf
+
+def default_if_zero(data, default=0):
+    return data if(data != None and data != 0) else default
+
+def rostask_to_pythontask(ros_task):
+    if(ros_task.mission_type == Task.TYPE_TARGET):
+        return target(  ros_task.name,
+                        ros_task.position,
+                        ros_task.yaw,
+                        default_if_zero(ros_task.data[0], 0.05),
+                        default_if_zero(ros_task.data[1], 0.05),
+                        default_if_zero(ros_task.data[2], 1))
+
+    elif(ros_task.mission_type == Task.TYPE_ARM):
+        return arm( ros_task.name,
+                        default_if_zero(ros_task.data[0],1))
+
+    elif(ros_task.mission_type == Task.TYPE_DISARM):
+        return disarm( ros_task.name,
+                        default_if_zero(ros_task.data[0],1))
+
+    elif(ros_task.mission_type == Task.TYPE_LOITER):
+        return loiter(  ros_task.name,
+                        default_if_zero(ros_task.data[0],1))
+
+    elif(ros_task.mission_type == Task.TYPE_TAKEOFF):
+        return takeoff( ros_task.name,
+                        default_if_zero(ros_task.data[0],0.05))
+
+    elif(ros_task.mission_type == Task.TYPE_LAND):
+        return land( ros_task.name,
+                        default_if_zero(ros_task.data[0],0.05))
+
+    elif(ros_task.mission_type == Task.TYPE_INIT_UAV):
+        return init_UAV( ros_task.name,
+                        default_if_zero(ros_task.data[0],5))
+
+    elif(ros_task.mission_type == Task.TYPE_GRAB):
+        return grab( ros_task.name,
+                     default_if_zero(ros_task.data[0],0))
+    else:
+        return task( "default_task",
+                     ros_task.name)
+    #elif(ros_task.mission_type == Task.TYPE_TEST):
+    #    pass
 
 class UAV:
     def __init__(self, setpoint_rate=10):
