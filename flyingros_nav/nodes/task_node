@@ -47,13 +47,13 @@ def handle_add_task(req):
 
 def handle_remove_task(req):
     global Controller
-    # remove task
-    pass
+    success = str(Controller.removeTask(req.Task))
+    return TaskHandleResponse(success, True)
 
 def handle_get_task(req):
     global Controller
-    # one task by ID
-    pass
+    task = Controller.getTask(req.index)
+    return TaskRequestResponse(task, True)
 
 def handle_add_mission(req):
     global Controller
@@ -109,7 +109,7 @@ if __name__ == '__main__':
     try:
         init()
         subscribers()
-        task_feeder()
+        #task_feeder()
         main()
     except rospy.ROSInterruptException:
         rospy.loginfo("init failed")
