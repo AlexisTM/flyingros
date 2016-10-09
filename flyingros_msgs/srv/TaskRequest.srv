@@ -1,6 +1,5 @@
-#request
-Task task
+# Return a certain task by ID
+std_msgs/Int64 ID
 ---
-std_msgs/String message
+Task task
 std_msgs/Bool result
-#response

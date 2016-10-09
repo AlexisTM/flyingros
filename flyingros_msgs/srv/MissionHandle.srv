@@ -1,0 +1,5 @@
+# Append a mission (task list)
+Mission mission
+---
+std_msgs/String message
+std_msgs/Bool result

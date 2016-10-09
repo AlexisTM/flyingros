@@ -1,6 +1,4 @@
-#request
-Mission mission
+# Ask for the whole mission
 ---
-std_msgs/String message
+Mission mission
 std_msgs/Bool result
-#response
