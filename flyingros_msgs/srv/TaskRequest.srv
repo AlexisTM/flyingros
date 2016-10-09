@@ -1,6 +1,6 @@
 #request
 Task task
 ---
-String message
-Bool result
+std_msgs/String message
+std_msgs/Bool result
 #response
