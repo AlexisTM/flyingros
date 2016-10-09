@@ -1,4 +1,4 @@
 # Ask for the whole mission
 ---
 Mission mission
-std_msgs/Bool result
+bool result

@@ -1,5 +1,5 @@
 # Append a task, apply something
 Task task
 ---
-std_msgs/String message
-std_msgs/Bool result
+string message
+bool result
