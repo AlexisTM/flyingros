@@ -34,54 +34,39 @@ import time
 from getch import *
 from threading import Thread
 from flyingros_msgs.msg import Task, Mission
+from flyingros_msgs.srv import TaskRequest, MissionRequest, TaskHandle, MissionHandle, TaskRequestResponse, MissionRequestResponse, TaskHandleResponse, MissionHandleResponse
 from geometry_msgs.msg import PoseStamped, Point
 from mavros.utils import *
 from flyingros_libs.tasks import *
 import sys
 
-def interface_getch():
-    global setpoint
+def handle_add_task(req):
     global Controller
-    global stop
+    Controller.addTask(req.task)
+    return TaskHandleResponse("Allright", True)
 
-    what = getch()
+def handle_remove_task(req):
+    global Controller
+    # remove task
+    pass
 
-    if what == "g":
-        setpoint.x = setpoint.x + 0.1
-    if what == "t":
-        setpoint.x = setpoint.x - 0.1
-    if what == "h":
-        setpoint.y = setpoint.y + 0.1
-    if what == "f":
-        setpoint.y = setpoint.y - 0.1
-    if what == "i":
-        setpoint.z = setpoint.z + 0.1
-    if what == "k":
-        setpoint.z = setpoint.z - 0.1
-    if what == "m":
-        stop = True
-        sys.exit("SHUTDOWN")
+def handle_get_task(req):
+    global Controller
+    # one task by ID
+    pass
 
+def handle_add_mission(req):
+    global Controller
+    Controller.addTasks(req.mission)
+    return MissionHandleResponse("Allright", True)
 
-    task = Controller.getCurrentTask()
-    #rospy.loginfo(task)
+def handle_get_whole_mission(req):
+    global Controller
+    tasks = Controller.getTasks()
+    return MissionRequestResponse(tasks, True)
 
 def main():
-    do_job_thread = Thread(target=do_job).start()
-    while not rospy.is_shutdown():
-        interface_getch()
-
-
-def do_job():
-    # Input data
-    global stop
-    # Objects
-    global Controller
-    while not stop :
-        Controller.rate.sleep()
-        Controller.spinOnce()
-    if stop :
-        Controller.UAV.arm(False)
+    rospy.spin()
 
 def task_feeder():
     global Controller
@@ -97,30 +82,26 @@ def task_feeder():
     Controller.addTask(disarm("Shutdown now"))
 
 def subscribers():
+    # Publisher
+    current_pub     = rospy.Publisher('flyingros/controller/task/current', Task, queue_size=1)
 
-    # systematic
-    current_pub     = rospy.Publisher('flyingros/controller/task/get', Task, queue_size=1)
+    # Services
+    # - missions
+    mission_add_srv     = rospy.Service('flyingros/controller/mission/add', MissionHandle, handle_add_mission)
+    mission_get_srv     = rospy.Service('flyingros/controller/mission/get', MissionRequest, handle_get_whole_mission)
+    # - tasks
+    task_add_srv        = rospy.Service('flyingros/controller/task/add', TaskHandle, handle_add_task)
+    task_add_srv        = rospy.Service('flyingros/controller/task/get', TaskRequest, handle_get_task)
+    task_remove_srv     = rospy.Service('flyingros/controller/task/remove', TaskHandle, handle_remove_task)
 
-    # services
-    mission_pub         = rospy.Publisher('flyingros/controller/mission/get', Mission, queue_size=1)
-    # services
-    task_add_sub    = rospy.Subscriber('flyingros/controller/task/add', Task, addTask_callback)
-    tasks_add_sub   = rospy.Subscriber('flyingros/controller/mission/add', Mission, addTasks_callback)
-    task_add_sub    = rospy.Subscriber('flyingros/controller/task/add', Task, addTask_callback)
 
 def init():
     # Input data
-    global stop
     # Objects
-    global setpoint, Controller
-
-    global uav
-    # Data initiation
-    stop = False
-    setpoint = Point()
-
+    global Controller
     # Node initiation
     rospy.init_node('laserpack_control')
+    # Data initiation
     Controller = taskController(rate=3, setpoint_rate=10)
 
 if __name__ == '__main__':
