@@ -19,6 +19,7 @@
 # TYPE_DISARM:
 #    0 - timeout (s) # retry after timeout
 
+uint8 TYPE_NULL = 0         # 0b00000000
 uint8 TYPE_INIT_UAV = 9     # 0b00001001
 uint8 TYPE_ARM = 13         # 0b00001101
 uint8 TYPE_DISARM = 11      # 0b00001011
@@ -32,6 +33,6 @@ uint8 TYPE_TEST = 254       # 0b11111110
 std_msgs/String name        # Can be unique, you can use it as you please
 uint8 mission_type          # Type of the mission
 geometry_msgs/Point position
-float64 yaw
-float32[] data                # Can be multiple data, like time to sleep, time to loiter, etc.
+float64 yaw                 # in degrees
+float32[] data              # Can be multiple data, like time to sleep, time to loiter, etc.
 int64 ID
