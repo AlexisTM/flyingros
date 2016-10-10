@@ -38,10 +38,83 @@ from sensor_msgs.msg import Imu
 from mavros_msgs.srv import SetMode
 from mavros_msgs.msg import State, PositionTarget
 from mavros_msgs.srv import CommandBool
-from algorithm_functions import deg2radf
+from algorithm_functions import deg2radf, rad2degf
 
 def default_if_zero(data, default=0):
     return data if(data != None and data != 0) else default
+
+
+def pythontask_to_rostask(python_task):
+    if(python_task.getType() == "target"):
+        return Task(python_task.name,
+            Task.TYPE_TARGET,
+            python_task.target,
+            rad2degf(python_task.orientation),
+            [python_task.precision.x, python_task.precision.z, python_task.precisionYAW],
+            python_task.ID)
+
+    elif(pythontask.getType() == "loiter"):
+        return Task(python_task.name,
+            Task.TYPE_LOITER,
+            Point(0,0,0),
+            0,
+            [python_task.waitTime],
+            python_task.ID)
+
+    elif(pythontask.getType() == "takeoff"):
+        return Task(python_task.name,
+            Task.TYPE_TAKEOFF,
+            Point(0,0,0),
+            0,
+            [python_task.precision],
+            python_task.ID)
+
+    elif(pythontask.getType() == "land"):
+        return Task(python_task.name,
+            Task.TYPE_LAND,
+            Point(0,0,0),
+            0,
+            [python_task.precision],
+            python_task.ID)
+
+    elif(pythontask.getType() == "grab"):
+        return Task(python_task.name,
+            Task.TYPE_GRAB,
+            Point(0,0,0),
+            0,
+            [float(python_task.state)],
+            python_task.ID)
+
+    elif(pythontask.getType() == "init_UAV"):
+        return Task(python_task.name,
+            Task.TYPE_INIT_UAV,
+            Point(0,0,0),
+            0,
+            [float(python_task.sleep)],
+            python_task.ID)
+
+    elif(pythontask.getType() == "arm"):
+        return Task(python_task.name,
+            Task.TYPE_ARM,
+            Point(0,0,0),
+            0,
+            [float(python_task.timeout)],
+            python_task.ID)
+
+    elif(pythontask.getType() == "disarm"):
+        return Task(python_task.name,
+            Task.TYPE_TAKEOFF,
+            Point(0,0,0),
+            0,
+            [float(python_task.timeout)],
+            python_task.ID)
+    else :
+        return Task(Task(python_task.name,
+            Task.TYPE_NULL,
+            Point(0,0,0),
+            0,
+            [float(python_task.timeout)],
+            python_task.ID)
 
 def rostask_to_pythontask(ros_task):
     if(ros_task.mission_type == Task.TYPE_TARGET):

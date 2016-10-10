@@ -38,7 +38,6 @@ from flyingros_libs.tasks import *
 import sys
 
 # rostask_to_pythontask(rostask) -> pythontask
-
 def handle_add_task(req):
     global Controller
     Controller.addTask(rostask_to_pythontask(req.task))
@@ -46,23 +45,29 @@ def handle_add_task(req):
 
 def handle_remove_task(req):
     global Controller
-    success = str(Controller.removeTask(req.Task))
+    success = str(Controller.removeTask(rostask_to_pythontask(req.Task)))
     return TaskHandleResponse(success, True)
 
 def handle_get_task(req):
     global Controller
-    task = Controller.getTask(req.index)
+    task = pythontask_to_rostask(Controller.getTask(req.index))
     return TaskRequestResponse(task, True)
 
 def handle_add_mission(req):
     global Controller
-    Controller.addTasks(req.mission)
+    mission = list()
+    for i in req.mission :
+        mission.append(rostask_to_pythontask(i))
+    Controller.addTasks(mission)
     return MissionHandleResponse("Allright", True)
 
 def handle_get_whole_mission(req):
     global Controller
     tasks = Controller.getTasks()
-    return MissionRequestResponse(tasks, True)
+    ros_mission = list()
+    for task in tasks :
+        ros_mission.append(pythontask_to_rostask(task))
+    return MissionRequestResponse(ros_mission, True)
 
 def myhook():
   rospy.loginfo("Shutting down")
