@@ -63,14 +63,14 @@ In depth status
   - [x] taskController
   - [ ] UAV : *To be tested & adapted*
   - [x] task : *easy to add new tasks*
-    * ARM
-    * DISARM
-    * INIT_UAV
+    * ARM : *to be reviewed, change timeout method*
+    * DISARM : *to be reviewed, change timeout method*
+    * INIT_UAV : *to be reviewed, change timeout method*
     * LOITER
-    * TAKEOFF
-    * LAND
+    * TAKEOFF : **TO BE TESTED**
+    * LAND : **TO BE TESTED**
     * TARGET
-    * GRAB
+    * GRAB : **TO BE IMPLEMENTED**
 * flyingros_nav
   - [x] Task_node : Start & manage the controller
   - [ ] Manual_node : bypass the controller **Work in progress**
@@ -83,4 +83,4 @@ In depth status
   - [ ] sex_lasers
 * flyingros_web :  *To be reviewed & tested*
   - [ ] web_export
-  - [ ] website 
+  - [ ] website
