@@ -4,6 +4,10 @@ project(flyingros_nav)
 find_package(catkin REQUIRED COMPONENTS
   rospy)
 
+if (CATKIN_ENABLE_TESTING)
+  find_package(catkin REQUIRED COMPONENTS rostest rosunit)
+endif()
+
 catkin_python_setup()
 
 ################################################
@@ -58,3 +62,8 @@ install(DIRECTORY launch/
 #############
 ## Testing ##
 #############
+
+if (CATKIN_ENABLE_TESTING)
+  catkin_add_nosetests(tests/test.task.py)
+#  add_rostest(tests/your_second_rostest.test)
+endif()
