@@ -30,7 +30,7 @@ uint8 TYPE_TARGET = 124     # 0b10000100
 uint8 TYPE_GRAB = 193       # 0b11000001
 uint8 TYPE_TEST = 254       # 0b11111110
 
-std_msgs/String name        # Can be unique, you can use it as you please
+string name                 # Can be unique, you can use it as you please
 uint8 mission_type          # Type of the mission
 geometry_msgs/Point position
 float64 yaw                 # in degrees

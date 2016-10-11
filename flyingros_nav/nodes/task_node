@@ -45,18 +45,19 @@ def handle_add_task(req):
 
 def handle_remove_task(req):
     global Controller
-    success = str(Controller.removeTask(rostask_to_pythontask(req.Task)))
-    return TaskHandleResponse(success, True)
+    success = Controller.removeTask(req.task.ID)
+    return TaskHandleResponse(str(success), False if success == None else True)
 
 def handle_get_task(req):
     global Controller
-    task = pythontask_to_rostask(Controller.getTask(req.index))
+    py_task = Controller.getTask(req.index)
+    task = pythontask_to_rostask(py_task)
     return TaskRequestResponse(task, True)
 
 def handle_add_mission(req):
     global Controller
     mission = list()
-    for i in req.mission :
+    for i in req.mission.tasks :
         mission.append(rostask_to_pythontask(i))
     Controller.addTasks(mission)
     return MissionHandleResponse("Allright", True)
@@ -64,9 +65,9 @@ def handle_add_mission(req):
 def handle_get_whole_mission(req):
     global Controller
     tasks = Controller.getTasks()
-    ros_mission = list()
+    ros_mission = Mission()
     for task in tasks :
-        ros_mission.append(pythontask_to_rostask(task))
+        ros_mission.tasks.append(pythontask_to_rostask(task))
     return MissionRequestResponse(ros_mission, True)
 
 def myhook():

@@ -95,7 +95,6 @@ class TestTasksConversion(unittest.TestCase):
         oros_task = pythontask_to_rostask(rostask_to_pythontask(iros_task))
         self.assertEquals(iros_task, oros_task, "input and output ros_task equals")
 
-
 if __name__ == '__main__':
     import rosunit
 
