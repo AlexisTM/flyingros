@@ -72,6 +72,7 @@ def handle_get_whole_mission(req):
 
 def myhook():
   rospy.loginfo("Shutting down")
+  rospy.signal_shutdown("ROSPy Shutdown")
 
 def main():
     rospy.spin()
