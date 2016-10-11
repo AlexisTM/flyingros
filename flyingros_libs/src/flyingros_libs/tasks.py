@@ -108,11 +108,11 @@ def pythontask_to_rostask(python_task):
             [float(python_task.timeout)],
             python_task.ID)
     else :
-        return Task(python_task.name,
+        return Task("null",
             Task.TYPE_NULL,
             Point(0,0,0),
             0,
-            [float(python_task.timeout)],
+            [],
             python_task.ID)
 
 def rostask_to_pythontask(ros_task):
@@ -153,8 +153,7 @@ def rostask_to_pythontask(ros_task):
         python_task = grab( ros_task.name,
                      default_if_zero(ros_task.data[0],1.0))
     else:
-        python_task = task( "default_task",
-                     ros_task.name)
+        python_task = task()
 
     python_task.ID = ros_task.ID
     return python_task
@@ -351,10 +350,11 @@ class taskController:
         return self.count-1
 
     # returns the ID of the delete object or None
-    def removeTask(self, task):
+    def removeTask(self, taskID):
         for i, t in enumerate(self.tasks):
-            if t.ID == task.ID:
+            if t.ID == taskID:
                 self.tasks.pop(i)
+                self.count -= 1
                 return i
         return None
 
@@ -370,7 +370,7 @@ class taskController:
 
     def getTask(self, index):
         # if index = 5, it is the last of a 6 task list
-        return -1 if (self.index >= self.count) else self.tasks[index]
+        return task("Null", "not_found") if (index > self.count-1) else self.tasks[index]
 
     def getCurrentTask(self):
         if self.current <  self.count :
@@ -413,7 +413,7 @@ class taskController:
 class task:
     """The Task class defines a class & the needed methods to
     be compatible with the taskController"""
-    def __init__(self, Type, name):
+    def __init__(self, Type = "null", name = "null"):
         self.name = name
         self.Type = Type
         self.done = False
@@ -641,14 +641,15 @@ class test(task, object):
 class init_UAV(task, object):
     """The init_UAV class is a task. It wait the UAV to be initialized, set home and set the setpoint to hom"""
     def __init__(self, name, sleep = 5):
-        self.sleep = rospy.Rate(1.0/sleep)
+        self.sleep = sleep
+        self.rate = rospy.Rate(1.0/sleep)
         super(init_UAV, self).__init__("init_UAV", name)
 
     def __str__(self):
         return super(init_UAV, self).__str__() + " init"
 
     def run(self, UAV):
-        self.sleep.sleep()
+        self.rate.sleep()
         UAV.home = Point(UAV.local_position.x, UAV.local_position.y, UAV.local_position.z)
         UAV.setpoint.position = Point(UAV.local_position.x, UAV.local_position.y, UAV.local_position.z)
         return self.isDone(UAV)
