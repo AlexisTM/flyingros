@@ -43,7 +43,6 @@ from algorithm_functions import deg2radf, rad2degf
 def default_if_zero(data, default=0):
     return data if(data != None and data != 0) else default
 
-
 def pythontask_to_rostask(python_task):
     if(python_task.getType() == "target"):
         return Task(python_task.name,
@@ -53,7 +52,7 @@ def pythontask_to_rostask(python_task):
             [python_task.precision.x, python_task.precision.z, python_task.precisionYAW],
             python_task.ID)
 
-    elif(pythontask.getType() == "loiter"):
+    elif(python_task.getType() == "loiter"):
         return Task(python_task.name,
             Task.TYPE_LOITER,
             Point(0,0,0),
@@ -61,7 +60,7 @@ def pythontask_to_rostask(python_task):
             [python_task.waitTime],
             python_task.ID)
 
-    elif(pythontask.getType() == "takeoff"):
+    elif(python_task.getType() == "takeoff"):
         return Task(python_task.name,
             Task.TYPE_TAKEOFF,
             Point(0,0,0),
@@ -69,7 +68,7 @@ def pythontask_to_rostask(python_task):
             [python_task.precision],
             python_task.ID)
 
-    elif(pythontask.getType() == "land"):
+    elif(python_task.getType() == "land"):
         return Task(python_task.name,
             Task.TYPE_LAND,
             Point(0,0,0),
@@ -77,15 +76,15 @@ def pythontask_to_rostask(python_task):
             [python_task.precision],
             python_task.ID)
 
-    elif(pythontask.getType() == "grab"):
+    elif(python_task.getType() == "grab"):
         return Task(python_task.name,
             Task.TYPE_GRAB,
             Point(0,0,0),
             0,
-            [float(python_task.state)],
+            [python_task.state],
             python_task.ID)
 
-    elif(pythontask.getType() == "init_UAV"):
+    elif(python_task.getType() == "init_UAV"):
         return Task(python_task.name,
             Task.TYPE_INIT_UAV,
             Point(0,0,0),
@@ -93,7 +92,7 @@ def pythontask_to_rostask(python_task):
             [float(python_task.sleep)],
             python_task.ID)
 
-    elif(pythontask.getType() == "arm"):
+    elif(python_task.getType() == "arm"):
         return Task(python_task.name,
             Task.TYPE_ARM,
             Point(0,0,0),
@@ -101,15 +100,15 @@ def pythontask_to_rostask(python_task):
             [float(python_task.timeout)],
             python_task.ID)
 
-    elif(pythontask.getType() == "disarm"):
+    elif(python_task.getType() == "disarm"):
         return Task(python_task.name,
-            Task.TYPE_TAKEOFF,
+            Task.TYPE_DISARM,
             Point(0,0,0),
             0,
             [float(python_task.timeout)],
             python_task.ID)
     else :
-        return Task(Task(python_task.name,
+        return Task(python_task.name,
             Task.TYPE_NULL,
             Point(0,0,0),
             0,
@@ -117,8 +116,9 @@ def pythontask_to_rostask(python_task):
             python_task.ID)
 
 def rostask_to_pythontask(ros_task):
+    python_task = object()
     if(ros_task.mission_type == Task.TYPE_TARGET):
-        return target(  ros_task.name,
+        python_task = target(  ros_task.name,
                         ros_task.position,
                         ros_task.yaw,
                         default_if_zero(ros_task.data[0], 0.05),
@@ -126,35 +126,38 @@ def rostask_to_pythontask(ros_task):
                         default_if_zero(ros_task.data[2], 1))
 
     elif(ros_task.mission_type == Task.TYPE_ARM):
-        return arm( ros_task.name,
+        python_task = arm( ros_task.name,
                         default_if_zero(ros_task.data[0],1))
 
     elif(ros_task.mission_type == Task.TYPE_DISARM):
-        return disarm( ros_task.name,
+        python_task = disarm( ros_task.name,
                         default_if_zero(ros_task.data[0],1))
 
     elif(ros_task.mission_type == Task.TYPE_LOITER):
-        return loiter(  ros_task.name,
+        python_task = loiter(  ros_task.name,
                         default_if_zero(ros_task.data[0],1))
 
     elif(ros_task.mission_type == Task.TYPE_TAKEOFF):
-        return takeoff( ros_task.name,
+        python_task = takeoff( ros_task.name,
                         default_if_zero(ros_task.data[0],0.05))
 
     elif(ros_task.mission_type == Task.TYPE_LAND):
-        return land( ros_task.name,
+        python_task = land( ros_task.name,
                         default_if_zero(ros_task.data[0],0.05))
 
     elif(ros_task.mission_type == Task.TYPE_INIT_UAV):
-        return init_UAV( ros_task.name,
+        python_task = init_UAV( ros_task.name,
                         default_if_zero(ros_task.data[0],5))
 
     elif(ros_task.mission_type == Task.TYPE_GRAB):
-        return grab( ros_task.name,
-                     default_if_zero(ros_task.data[0],0))
+        python_task = grab( ros_task.name,
+                     default_if_zero(ros_task.data[0],1.0))
     else:
-        return task( "default_task",
+        python_task = task( "default_task",
                      ros_task.name)
+
+    python_task.ID = ros_task.ID
+    return python_task
     #elif(ros_task.mission_type == Task.TYPE_TEST):
     #    pass
 
@@ -511,7 +514,7 @@ class loiter_callback(task, object):
         self.duration = rospy.Duration(waitTime)
         self.called = False
         self.done = False
-        super(loiter_callback, self).__init__("loiter callback", name)
+        super(loiter_callback, self).__init__("loiter_callback", name)
 
     def __str__(self):
         return super(loiter_callback, self).__str__()
@@ -532,7 +535,7 @@ class takeoff(task, object):
     """The takeoff class is a task. It says to the UAV to go to
     takeoff"""
     def __init__(self, name, precision=0.05):
-        super(takeoff, self).__init__("target", name)
+        super(takeoff, self).__init__("takeoff", name)
         self.sent             = False
         self.takeoff_altitude = 1
         self.precision        = precision
@@ -559,7 +562,7 @@ class land(task, object):
     """The land class is a task. It says to the UAV to go to
     land"""
     def __init__(self, name, precision=0.05):
-        super(land, self).__init__("target", name)
+        super(land, self).__init__("land", name)
         self.sent             = False
         self.landing_altitude = 0.2
         self.precision        = precision
@@ -588,7 +591,7 @@ class grab(task, object):
     the pliers"""
     def __init__(self, name, state):
         super(grab, self).__init__("grab", name)
-        self.state = 0;
+        self.state = state;
 
     def __str__(self):
         return super(grab, self).__str__() + "Grab"
@@ -639,7 +642,7 @@ class init_UAV(task, object):
     """The init_UAV class is a task. It wait the UAV to be initialized, set home and set the setpoint to hom"""
     def __init__(self, name, sleep = 5):
         self.sleep = rospy.Rate(1.0/sleep)
-        super(init_UAV, self).__init__("INIT_UAV", name)
+        super(init_UAV, self).__init__("init_UAV", name)
 
     def __str__(self):
         return super(init_UAV, self).__str__() + " init"
@@ -659,8 +662,9 @@ class init_UAV(task, object):
 class arm(task, object):
     """The arm class is a task. It put the UAV in OFFBOARD mode and arm it"""
     def __init__(self, name, timeout = 1):
-        self.timeout = rospy.Rate(1.0/timeout)
-        super(arm, self).__init__("ARM", name)
+        self.timeout = timeout
+        self.rate = rospy.Rate(1.0/timeout)
+        super(arm, self).__init__("arm", name)
 
     def __str__(self):
         return super(arm, self).__str__() + " arming"
@@ -668,10 +672,10 @@ class arm(task, object):
     def run(self, UAV):
         if not UAV.state.armed :
             UAV.arm(True)
-        self.timeout.sleep()
+        self.rate.sleep()
         if not (UAV.state.mode == "OFFBOARD" or UAV.state.mode == "AUTO.LAND"):
             UAV.set_offboard()
-        self.timeout.sleep()
+        self.rate.sleep()
         return self.isDone(UAV)
 
     def isDone(self, UAV):
@@ -683,9 +687,10 @@ class arm(task, object):
 class disarm(task, object):
     """The disarm Class disarms the UAV"""
     def __init__(self, name, timeout = 1):
-        self.timeout = rospy.Rate(1.0/timeout)
+        self.timeout = timeout
+        self.rate = rospy.Rate(1.0/timeout)
         self.last = None
-        super(disarm, self).__init__("DISARM", name)
+        super(disarm, self).__init__("disarm", name)
 
     def __str__(self):
         return super(disarm, self).__str__() + " disarming"
@@ -693,7 +698,7 @@ class disarm(task, object):
     def run(self, UAV):
         if UAV.state.armed :
             UAV.arm(False)
-        self.timeout.sleep()
+        self.rate.sleep()
         return self.isDone(UAV)
 
     def isDone(self, UAV):
