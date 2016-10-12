@@ -18,3 +18,5 @@ Configurations
 * `ATT_EXT_HDG_M` to 0 to disable external heading, to 1 to use the vision heading and to 2 to use the mocap heading.
 
 ### LPE (Local Position Estimation) configuration
+
+* Enable LPE with the parameter `SYS_MC_EST_GROUP` to local_position_estimator
