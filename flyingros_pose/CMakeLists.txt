@@ -2,10 +2,13 @@ cmake_minimum_required(VERSION 2.8.3)
 project(flyingros_pose)
 
 ## Find catkin macros and libraries
-## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
+## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS eigen tf )
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
-  rospy)
+  rospy
+  tf
+  geometry_msgs
+  kdl_conversions)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -47,10 +50,10 @@ catkin_python_setup()
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES flyingros_pose
+  INCLUDE_DIRS include
+#  LIBRARIES ${PROJECT_NAME}
   CATKIN_DEPENDS flyingros_libs flyingros_msgs mavros mavros-extras swiftnav_piksi
-#  DEPENDS system_lib
+  DEPENDS tf geometry_msgs kdl_conversions
 )
 
 ###########
@@ -59,12 +62,12 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Youryour_package package locations should be listed before other locations
-# include_directories(include)
+include_directories(include)
 
 ## Declare a C++ library
-# add_library(flyingros_pose
-#   src/${PROJECT_NAME}/flyingros_pose.cpp
-# )
+# add_library(laser_algorithm_functions
+#  src/${PROJECT_NAME}/laser_algorithm_functions.cpp
+#)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -72,11 +75,11 @@ catkin_package(
 # add_dependencies(flyingros_pose ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Declare a C++ executable
-# add_executable(flyingros_pose_node src/flyingros_pose_node.cpp)
+add_executable(laser_node src/laser_node.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-# add_dependencies(flyingros_pose_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(laser_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
 
 ## Specify libraries to link a library or executable target against
 # target_link_libraries(flyingros_pose_node
@@ -107,7 +110,7 @@ install(PROGRAMS
 # )
 
 ## Mark executables and/or libraries for installation
-# install(TARGETS flyingros_pose flyingros_pose_node
+# install(TARGETS flyingros_pose laser_node
 #   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
