@@ -29,13 +29,29 @@
 #ifndef LASER_ALGORITHM_FUNCTIONS_H
 #define LASER_ALGORITHM_FUNCTIONS_H
 
-#include <Transform.h>
-#include <tf/transform_datatypes.h>
+#include "tf/transform_datatypes.h"
+//#include <tf/transform_datatypes.h>
+#include <cmath>
 #include "flyingros_msgs/Distance.h"
-#include "geometry_msgs/Vector3.h"
+//#include "geometry_msgs/Vector3.h"
+#include <iostream>
+
+#define M_PI180 3.14159265358979323846/180
+#define M_180PI 180/3.14159265358979323846
 
 namespace flyingros_pose
 {
+
+   // Convert degrees to radians
+   double inline deg2radf(double angle){
+       return double(angle)*M_PI180;
+   }
+
+   // Convert radians to degrees
+   double inline rad2degf(double angle){
+       return double(angle)*M_180PI;
+   }
+
   //! \brief Laser represents a laser
   /*!
    * This class provide a laser which cache the laser position/orientation to
@@ -44,30 +60,51 @@ namespace flyingros_pose
    * The Laser class aims to get the laser projection.
    */
   class Laser {
-    public:
+  public:
+    // Initialisation
+    Laser(tf::Vector3 _position, tf::Vector3 _orientation, double _offset) {
+      position = _position;
+      if(_orientation == tf::Vector3(0,0,0)) // This is bad... unhandled... division by 0
+         _orientation = tf::Vector3(1,0,0);
+      orientation = _orientation.normalize();
+      offset = _offset;
+    };
 
-      // Initialisation
-      LaserProjector(tf::Vector3 _position, tf::Vector3 _orientation, double _offset) {
-        position = _position;
-        orientation = _orientation.normalize();
-        offset = _offset;
-      };
+    // To deallocate the object
+    ~Laser(){};
 
-      // To deallocate the object
-      ~LaserProjection(){};
+    // Update the laser orientation quaternion
+    void updateOrientation(tf::Vector3 _orientation){
+      orientation = _orientation.normalize();
+    }
 
-      // Update the laser orientation quaternion
-      void updateOrientation(tf::Vector3 _orientation);
+    // Project the laser and returns the actual true measure
+    tf::Vector3 projectLaser(double _measure, tf::Quaternion _q){
+      _measure = _measure - offset;
+      tf::Vector3 r_orientation = tf::quatRotate(_q, orientation);
+      last = _measure*r_orientation - position;
+      return last;
+    }
 
-      // Project the laser and returns the actual true measure
-      double projectLaser(double _measure, tf::Quaternion _q);
+    // Last result
+    double last;
+    // Laser position
+    tf::Vector3 position;
+    // Laser normalized orientation
+    tf::Vector3 orientation;
+    // Laser offset
+    double offset;
+  };
 
-      // Laser position
-      tf::Vector3 position;
-      // Laser normalized orientation
-      tf::Vector3 orientation;
-      // Laser offset
-      double offset;
+  // Get the yaw from 2 lasers.
+  double getYaw(Laser _laser1, double _measure1, Laser _laser2, double _measure2, tf::Quaternion _q){
+    double a = 1;
+    double b = 1;
+    //tf::getRPY(_q);
+
+    //double a = _measure2*_laser2.orientation.x() - _measure1*_laser1.orientation.x() + _laser1.position.x() - _laser2.position.x()
+    //double b = _measure2*_laser2.orientation.y() - _measure1*_laser1.orientation.y() + _laser1.position.y() - _laser2.position.y()
+    return atan2(a,b);
   }
 }
 

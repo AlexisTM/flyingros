@@ -7,6 +7,7 @@ project(flyingros_pose)
 find_package(catkin REQUIRED COMPONENTS
   rospy
   tf
+  tf2
   geometry_msgs
   kdl_conversions)
 
@@ -52,7 +53,7 @@ catkin_python_setup()
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS flyingros_libs flyingros_msgs mavros mavros-extras swiftnav_piksi
+  CATKIN_DEPENDS flyingros_libs flyingros_msgs mavros mavros-extras swiftnav_piksi tf2
   DEPENDS tf geometry_msgs kdl_conversions
 )
 

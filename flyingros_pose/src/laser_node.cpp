@@ -27,6 +27,8 @@
  */
 
 #include <iostream>
+
+#include "tf/transform_datatypes.h"
 #include "flyingros_pose/laser_algorithm_functions.h"
 
 using namespace std;
@@ -34,5 +36,9 @@ using namespace flyingros_pose;
 
 int main()
 {
+    Laser laser = Laser(tf::Vector3(0,0,0),tf::Vector3(1,0,0),0);
     cout << "coucou" << endl;
+    tf::Quaternion q = tf::createQuaternionFromRPY(0,0,deg2radf(10));
+    tf::Vector3 thing = laser.projectLaser(10, q);
+    cout << thing.x() << " " << thing.y() << " "<< thing.z() << endl;
 }
