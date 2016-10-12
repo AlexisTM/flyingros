@@ -19,14 +19,19 @@
   <!-- Examples: -->
   <!-- Use buildtool_depend for build tool packages: -->
   <!--   <buildtool_depend>catkin</buildtool_depend> -->
-  <!-- Use run_depend for packages you need at runtime: -->
-    <depend>rospy</depend>
-    <depend>swiftnav_piksi</depend>
-    <depend>mavros</depend>
-    <depend>mavros-extras</depend>
-    <depend>flyingros_libs</depend>
-    <depend>flyingros_msgs</depend>
-    <exec_depend>message_runtime</exec_depend>
+
+  <!-- Lasers algorithm cpp -->
+  <depend>geometry_msgs</depend>
+  <depend>tf</depend>
+  <depend>kdl_conversions</depend>
+
+  <depend>rospy</depend>
+  <depend>swiftnav_piksi</depend>
+  <depend>mavros</depend>
+  <depend>mavros-extras</depend>
+  <depend>flyingros_libs</depend>
+  <depend>flyingros_msgs</depend>
+  <exec_depend>message_runtime</exec_depend>
   <!-- Use test_depend for packages you need only for testing: -->
   <!--   <test_depend>gtest</test_depend> -->
 
