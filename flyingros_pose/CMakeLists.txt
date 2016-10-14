@@ -8,8 +8,7 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   tf
   tf2
-  geometry_msgs
-  kdl_conversions)
+  geometry_msgs)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -54,7 +53,7 @@ catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES ${PROJECT_NAME}
   CATKIN_DEPENDS flyingros_libs flyingros_msgs mavros mavros-extras swiftnav_piksi tf2
-  DEPENDS tf geometry_msgs kdl_conversions
+  DEPENDS tf geometry_msgs
 )
 
 ###########
@@ -134,10 +133,7 @@ install(DIRECTORY launch/
 #############
 
 ## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_flyingros_pose.cpp)
-# if(TARGET ${PROJECT_NAME}-test)
-#   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
-# endif()
+catkin_add_gtest(AlgorithmUnitTests tests/algorithm_functions_tests.cpp)
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
