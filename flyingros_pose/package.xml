@@ -24,7 +24,6 @@
   <depend>geometry_msgs</depend>
   <depend>tf</depend>
   <depend>tf2</depend>
-  <depend>kdl_conversions</depend>
 
   <depend>rospy</depend>
   <depend>swiftnav_piksi</depend>

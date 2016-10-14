@@ -41,7 +41,6 @@
 
 namespace flyingros_pose
 {
-
    // Convert degrees to radians
    double inline deg2radf(double angle){
        return double(angle)*M_PI180;
@@ -79,15 +78,15 @@ namespace flyingros_pose
     }
 
     // Project the laser and returns the actual true measure
-    tf::Vector3 projectLaser(double _measure, tf::Quaternion _q){
+    tf::Vector3 project(double _measure, tf::Quaternion _q){
       _measure = _measure - offset;
       tf::Vector3 r_orientation = tf::quatRotate(_q, orientation);
-      last = _measure*r_orientation - position;
-      return last;
+      tf::Vector3 r_position = tf::quatRotate(_q, position);
+      return _measure*r_orientation + r_position;
     }
 
     // Last result
-    double last;
+    tf::Vector3 last;
     // Laser position
     tf::Vector3 position;
     // Laser normalized orientation
@@ -96,16 +95,33 @@ namespace flyingros_pose
     double offset;
   };
 
-  // Get the yaw from 2 lasers.
-  double getYaw(Laser _laser1, double _measure1, Laser _laser2, double _measure2, tf::Quaternion _q){
-    double a = 1;
-    double b = 1;
-    //tf::getRPY(_q);
-
-    //double a = _measure2*_laser2.orientation.x() - _measure1*_laser1.orientation.x() + _laser1.position.x() - _laser2.position.x()
-    //double b = _measure2*_laser2.orientation.y() - _measure1*_laser1.orientation.y() + _laser1.position.y() - _laser2.position.y()
-    return atan2(a,b);
+  // Remove YAW component from quaternion with SRPY convention
+  // Could be pimped
+  tf::Quaternion nullYawQuaternion(tf::Quaternion q){
+    double roll, pitch, yaw;
+    tf::Matrix3x3 m(q);
+    m.getRPY(roll, pitch, yaw);
+    return tf::createQuaternionFromRPY(roll, pitch, 0);
   }
+  
+  // Rotate lasers and project measures to the wall.
+  // Finaly, compute yaw angle to the wall
+  // _laser1 & _laser2 are the lasers
+  // _measure1 & _measure2 are the measures of the precedent lasers
+  // _q is the quaternion rotation with only roll & pitch
+  // index1 & index2 determines if we use X, Y or Z values for numerator or denominator
+  // atan2(a(index1),b(index2))
+  double getYawFromTargets(tf::Vector3 target1, tf::Vector3 target2, int index1 = 0, int index2 = 1){
+    // tf::Vector3::m_floats[0] = x
+    // tf::Vector3::m_floats[1] = y
+    // tf::Vector3::m_floats[2] = z
+    double a = target2.m_floats[index1] - target1.m_floats[index1];
+    double b = target2.m_floats[index2] - target1.m_floats[index2];
+    double result = atan2(a,b);
+    std::cout << "atan2(" << a << "," << b << ") = " << result << std::endl;
+    return result;
+  }
+
 }
 
 

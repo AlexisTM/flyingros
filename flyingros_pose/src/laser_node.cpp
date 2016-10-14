@@ -36,9 +36,22 @@ using namespace flyingros_pose;
 
 int main()
 {
-    Laser laser = Laser(tf::Vector3(0,0,0),tf::Vector3(1,0,0),0);
+    Laser laser1(tf::Vector3(0,0,0),tf::Vector3(1,0,0),0);
+    Laser laser2(tf::Vector3(0.10,0.10,0.10),tf::Vector3(1,0,0),0);
     cout << "coucou" << endl;
-    tf::Quaternion q = tf::createQuaternionFromRPY(0,0,deg2radf(10));
-    tf::Vector3 thing = laser.projectLaser(10, q);
-    cout << thing.x() << " " << thing.y() << " "<< thing.z() << endl;
+
+    // @ 50Hz
+    tf::Quaternion q_imu = tf::createQuaternionFromRPY(deg2radf(10),deg2radf(25),deg2radf(10));
+
+    double roll, pitch, yaw;
+    tf::Matrix3x3 m(q_imu);
+    m.getRPY(roll, pitch, yaw);
+    tf::Quaternion q_zero = tf::createQuaternionFromRPY(roll, pitch, 0);
+
+    tf::Vector3 thing1 = laser1.project(10, q_imu);
+    tf::Vector3 thing2 = laser2.project(10, q_imu);
+
+    double yaw_corrected = getYawFromTargets(thing1, thing2);
+    cout << thing1.x() << " " << thing1.y() << " "<< thing1.z() << endl;
+    cout << thing2.x() << " " << thing2.y() << " "<< thing2.z() << endl;
 }
