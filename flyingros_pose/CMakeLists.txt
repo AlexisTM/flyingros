@@ -53,7 +53,7 @@ catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES ${PROJECT_NAME}
   CATKIN_DEPENDS flyingros_libs flyingros_msgs mavros mavros-extras swiftnav_piksi tf2
-  DEPENDS tf geometry_msgs
+  DEPENDS tf geometry_msgs flyingros_msgs
 )
 
 ###########
