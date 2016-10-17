@@ -43,17 +43,32 @@ tf::Quaternion q_imu(0,0,0,1);
 ros::Publisher position_publisher;
 
 void callback_laser_raw(const flyingros_msgs::Distance::ConstPtr& msg){
-  //msg->lasers[0-6]
+  double roll, pitch, yaw;
+
   double measures[6];
   for(int i = 0; i < 6; i++){
       // measures are in cm and have an offset
       measures[i] = double(lasers[i])/100.0 - lasers[i].offset;
   }
 
-  tf::Quaternion q_zero = nullYawQuaternion(q_imu);
-  laser[0].project(measures[0], q_zero);
-  laser[1].project(measures[1], q_zero);
+  tf::Matrix3x3 m(q_imu);
+  m.getRPY(roll, pitch, yaw);
+  tf::Quaternion q_zero = tf::createQuaternionFromRPY(roll, pitch, 0);
 
+  tf::Vector3 targetx1 = laser[0].project(measures[0], q_zero);
+  tf::Vector3 targetx2 = laser[1].project(measures[1], q_zero);
+  double yaw_x = getYawFromTargets(targetx2, targetx1,0,1);
+
+  tf::Vector3 targety1 = laser[2].project(measures[2], q_zero);
+  tf::Vector3 targety2 = laser[3].project(measures[3], q_zero);
+  double yaw_y = getYawFromTargets(targety2, targety1,1,0);
+
+  tf::Quaternion q_correct = tf::createQuaternionFromRPY(roll, pitch, yaw_x);
+
+  tf::Vector3 targetx1 = laser[0].project(measures[0], q_zero);
+  tf::Vector3 targetx2 = laser[1].project(measures[1], q_zero);
+  tf::Vector3 targety1 = laser[2].project(measures[2], q_zero);
+  tf::Vector3 targety2 = laser[3].project(measures[3], q_zero);
   // get yaw
   // get position
   // publish
