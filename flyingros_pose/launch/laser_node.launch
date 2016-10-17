@@ -1,0 +1,13 @@
+<launch>
+  <!-- laser serial launch
+	<arg name="port" default="/dev/ttyLasers" />
+	<node pkg="rosserial_server" type="serial_node" name="rosserial_server">
+		<param name="port" value="$(arg port)" />
+	</node>
+	<node pkg="rosserial_python" type="message_info_service.py" name="rosserial_message_info" />
+	-->
+  <!-- laser node launch -->
+  <node name="flyingros" pkg="flyingros_pose" type="laser_node" output="screen" >
+    <rosparam file="$(find flyingros_pose)/cfg/laser/6lasers.yaml"/>
+  </node>
+</launch>

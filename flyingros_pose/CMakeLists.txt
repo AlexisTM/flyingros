@@ -6,9 +6,10 @@ project(flyingros_pose)
 ## is used, also find other catkin packages
 find_package(catkin REQUIRED COMPONENTS
   rospy
+  roscpp
   tf
-  tf2
-  geometry_msgs)
+  geometry_msgs
+  sensor_msgs)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -52,8 +53,8 @@ catkin_python_setup()
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS flyingros_libs flyingros_msgs mavros mavros-extras swiftnav_piksi tf2
-  DEPENDS tf geometry_msgs flyingros_msgs
+  CATKIN_DEPENDS flyingros_libs geometry_msgs flyingros_msgs mavros mavros-extras swiftnav_piksi tf roscpp sensor_msgs
+#  DEPENDS
 )
 
 ###########
@@ -80,13 +81,13 @@ add_executable(laser_node src/laser_node.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-add_dependencies(laser_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} flyingros_msgs_generate_messages_cpp)
+add_dependencies(laser_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} flyingros_msgs_generate_messages_cpp roscpp)
 
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(flyingros_pose_node
-#   ${catkin_LIBRARIES}
-# )
+target_link_libraries(laser_node
+   ${catkin_LIBRARIES}
+)
 
 #############
 ## Install ##
