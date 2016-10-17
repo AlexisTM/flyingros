@@ -29,10 +29,10 @@
 #ifndef LASER_ALGORITHM_FUNCTIONS_H
 #define LASER_ALGORITHM_FUNCTIONS_H
 
-#include "tf/transform_datatypes.h"
-//#include <tf/transform_datatypes.h>
+
+#include <tf/transform_datatypes.h>
 #include <cmath>
-#include "flyingros_msgs/Distance.h"
+#include <flyingros_msgs/Distance.h>
 //#include "geometry_msgs/Vector3.h"
 #include <iostream>
 
@@ -103,7 +103,7 @@ namespace flyingros_pose
     m.getRPY(roll, pitch, yaw);
     return tf::createQuaternionFromRPY(roll, pitch, 0);
   }
-  
+
   // Rotate lasers and project measures to the wall.
   // Finaly, compute yaw angle to the wall
   // _laser1 & _laser2 are the lasers

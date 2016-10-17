@@ -53,7 +53,7 @@ catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES ${PROJECT_NAME}
   CATKIN_DEPENDS flyingros_libs flyingros_msgs mavros mavros-extras swiftnav_piksi tf2
-  DEPENDS tf geometry_msgs
+  DEPENDS tf geometry_msgs flyingros_msgs
 )
 
 ###########
@@ -62,7 +62,8 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Youryour_package package locations should be listed before other locations
-include_directories(include)
+
+include_directories(include ${catkin_INCLUDE_DIRS})
 
 ## Declare a C++ library
 # add_library(laser_algorithm_functions
@@ -79,7 +80,8 @@ add_executable(laser_node src/laser_node.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-add_dependencies(laser_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(laser_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} flyingros_msgs_generate_messages_cpp)
+
 
 ## Specify libraries to link a library or executable target against
 # target_link_libraries(flyingros_pose_node
