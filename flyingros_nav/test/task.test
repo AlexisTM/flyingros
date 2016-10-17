@@ -1,0 +1,3 @@
+<launch>
+  <test test-name="flyingros_nav" pkg="flyingros_nav" type="test/unit_test_task.py" />
+</launch>

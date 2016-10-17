@@ -95,14 +95,21 @@ class TestTasksConversion(unittest.TestCase):
         oros_task = pythontask_to_rostask(rostask_to_pythontask(iros_task))
         self.assertEquals(iros_task, oros_task, "input and output ros_task equals")
 
+## Testing test
+class TestBareBones(unittest.TestCase):
+    ## test 1 == 1
+    def test_one_equals_one(self):
+        self.assertEquals(1, 1, "1!=1")
+
 if __name__ == '__main__':
-    import rosunit
+    import rostest
 
     # Need ros for timing...
     rospy.init_node("test_node_time")
 
     #logging.basicConfig( stream=sys.stderr )
     #logging.getLogger( "TestTasksConversion.test_takeoff" ).setLevel( logging.DEBUG )
-    rosunit.unitrun(PKG, 'test_name', TestTasksConversion)
+    #rostest.unitrun(PKG, 'unit_test_task', TestTasksConversion)
+    rostest.unitrun(PKG, 'unit_test_task_conversion', TestTasksConversion)
     #import rostest
     #rostest.rosrun(PKG, 'test_bare_bones', TestTasksConversion)
