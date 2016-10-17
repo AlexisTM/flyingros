@@ -62,20 +62,28 @@ namespace flyingros_pose
   public:
     // Initialisation
     Laser(tf::Vector3 _position, tf::Vector3 _orientation, double _offset) {
+      configure(_position, _orientation, _offset);
+    };
+
+    // no arg constructor
+    Laser() {
+      configure(tf::Vector3(0,0,0), tf::Vector3(1,0,0), 0);
+    };
+
+    // To deallocate the object
+    ~Laser(){};
+
+    void configure(tf::Vector3 _position, tf::Vector3 _orientation, double _offset){
       position = _position;
       if(_orientation == tf::Vector3(0,0,0)) // This is bad... unhandled... division by 0
          _orientation = tf::Vector3(1,0,0);
       orientation = _orientation.normalize();
       offset = _offset;
     };
-
-    // To deallocate the object
-    ~Laser(){};
-
     // Update the laser orientation quaternion
     void updateOrientation(tf::Vector3 _orientation){
       orientation = _orientation.normalize();
-    }
+    };
 
     // Project the laser and returns the actual true measure
     tf::Vector3 project(double _measure, tf::Quaternion _q){
@@ -83,7 +91,7 @@ namespace flyingros_pose
       tf::Vector3 r_orientation = tf::quatRotate(_q, orientation);
       tf::Vector3 r_position = tf::quatRotate(_q, position);
       return _measure*r_orientation + r_position;
-    }
+    };
 
     // Last result
     tf::Vector3 last;
@@ -102,7 +110,7 @@ namespace flyingros_pose
     tf::Matrix3x3 m(q);
     m.getRPY(roll, pitch, yaw);
     return tf::createQuaternionFromRPY(roll, pitch, 0);
-  }
+  };
 
   // Rotate lasers and project measures to the wall.
   // Finaly, compute yaw angle to the wall
@@ -120,7 +128,7 @@ namespace flyingros_pose
     double result = atan2(a,b);
     std::cout << "atan2(" << a << "," << b << ") = " << result << std::endl;
     return result;
-  }
+  };
 
 }
 

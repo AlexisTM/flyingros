@@ -22,10 +22,12 @@
 
   <!-- Lasers algorithm cpp -->
   <depend>geometry_msgs</depend>
+  <depend>sensor_msgs</depend>
   <depend>tf</depend>
   <depend>tf2</depend>
 
   <depend>rospy</depend>
+  <depend>roscpp</depend>
   <depend>swiftnav_piksi</depend>
   <depend>mavros</depend>
   <depend>mavros-extras</depend>
