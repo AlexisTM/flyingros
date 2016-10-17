@@ -10,7 +10,7 @@
   <author email="alexis.paques@gmail.com">Alexis Paques</author>
 
   <build_depend>rostest</build_depend>
-  <test_depend>rosunit</test_depend>
+  <run_depend>rostest</run_depend>
   <run_depend>message_runtime</run_depend>
   <run_depend>flyingros_libs</run_depend>
   <run_depend>flyingros_msgs</run_depend>

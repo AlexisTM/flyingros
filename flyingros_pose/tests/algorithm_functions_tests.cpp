@@ -94,7 +94,7 @@ TEST(FlyingrosPose, LaserYaw) {
 
     // The actual test
 
-    double yaw = getYawFromTargets(target1, target2, 0, 1);
+    double yaw = getYawFromTargets(target2, target1, 0, 1);
 
     EXPECT_NEAR(yaw, deg2radf(-7), 0.001);
     //tf::Quaternion q = tf::createQuaternionFromRPY(deg2radf(15),deg2radf(-20),deg2radf(-7));
