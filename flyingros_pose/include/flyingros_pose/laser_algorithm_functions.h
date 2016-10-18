@@ -123,11 +123,13 @@ namespace flyingros_pose
     // tf::Vector3::m_floats[0] = x
     // tf::Vector3::m_floats[1] = y
     // tf::Vector3::m_floats[2] = z
+    return atan2(target2.m_floats[index1] - target1.m_floats[index1],
+                 target2.m_floats[index2] - target1.m_floats[index2]);
+    /* Debug
     double a = target2.m_floats[index1] - target1.m_floats[index1];
     double b = target2.m_floats[index2] - target1.m_floats[index2];
     double result = atan2(a,b);
-    std::cout << "atan2(" << a << "," << b << ") = " << result << std::endl;
-    return result;
+    return result;*/
   };
 
 }
