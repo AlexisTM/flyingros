@@ -32,7 +32,6 @@
 
 #include <tf/transform_datatypes.h>
 #include <cmath>
-#include <flyingros_msgs/Distance.h>
 //#include "geometry_msgs/Vector3.h"
 #include <iostream>
 
