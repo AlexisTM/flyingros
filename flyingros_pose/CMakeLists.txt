@@ -9,6 +9,7 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   tf
   geometry_msgs
+  flyingros_msgs
   sensor_msgs)
 
 ## System dependencies are found with CMake's conventions
