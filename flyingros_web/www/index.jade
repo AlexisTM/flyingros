@@ -1,0 +1,87 @@
+doctype html
+html(lang='en')
+  head
+    meta(content='text/html; charset=utf-8' http-equiv='Content-Type')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    meta(content='IE=edge' http-equiv='X-UA-Compatible')
+    meta(charset='utf-8')
+    title Drone Control
+    
+    // LIBS : Font-Awesome
+    link(href='css/font-awesome.min.css', rel='stylesheet')
+    link(href='css/app.css', rel='stylesheet')
+    script(src='js/eventemitter2.min.js', type='text/javascript')
+    script(src='js/roslib.min.js', type='text/javascript')
+    //script(src='http://cdn.robotwebtools.org/roslibjs/current/roslib.min.js')
+body.nav-md
+  .left 
+    .container-realtime
+      canvas#realtime
+
+  .right#Mission
+    table(border='1')
+      thead
+        tr
+          th Index  
+          th Type  
+          th Name 
+          th Target 
+          th Bonus data
+      tbody.list
+        tr
+          td.index dummy
+          td.type dummy
+          td.name dummy 
+          td.target dummy
+          td.bonus dummy
+    br
+    button(onclick='return false').btn#addTask add a task
+    button(onclick='return false').btn#getMission get the mission
+    .modal#addTaskModal
+      .modal-content
+        center
+          .modal-header
+            i.fa.fa-times.close(aria-hidden='true')
+            h2 Add a task
+          .modal-body
+            label Type : 
+            select
+              optgroup(label='Fly command')
+                option(value='target') Go to ...
+                option(value='loiter') Wait here ... 
+                option(value='grab') Grab 
+              optgroup(label='Special command')
+                option(value='init') Init UAV
+                option(value='arm') Arm
+                option(value='takeoff') Takeoff
+                option(value='disarm') Disarm
+                option(value='land') Land
+              optgroup(label='Testing')
+                option(value='null') Null
+                option(value='test') Test
+                option(value='notexisting') Not existing one
+            br
+            label Name : 
+            input(type='text', placeholder='Going to brick 3')
+            br 
+            label Additionnal data : 
+            input(type='text', placeholder='[ 0.2, 0.2, 1]') 
+            br
+            fieldset
+              legend Target
+              label X : 
+              input(type='number', placeholder='2.0') 
+              label Y : 
+              input(type='number', placeholder='2.0') 
+              label Z : 
+              input(type='number', placeholder='2.0') 
+
+          .modal-footer
+            button(onclick='return false').btn#addTaskModal Add the task
+            button(onclick='return false').btn#cancelTaskModal Cancel
+
+  script(src='js/paper-core.min.js', type='text/javascript')
+  script(src='js/list.min.js', type='text/javascript')
+  script(src='app/app.js', type='text/javascript')
+  // LIBS : Paper, ROSLIB
+
