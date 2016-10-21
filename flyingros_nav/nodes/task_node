@@ -37,7 +37,6 @@ from mavros.utils import *
 from flyingros_libs.tasks import *
 import sys
 
-# rostask_to_pythontask(rostask) -> pythontask
 def handle_add_task(req):
     global Controller
     Controller.addTask(rostask_to_pythontask(req.task))
@@ -70,6 +69,11 @@ def handle_get_whole_mission(req):
         ros_mission.tasks.append(pythontask_to_rostask(task))
     return MissionRequestResponse(ros_mission, True)
 
+def publish_current(py_task):
+    global current_pub
+    ros_task = pythontask_to_rostask(py_task)
+    current_pub.publish(ros_task)
+
 def myhook():
   rospy.loginfo("Shutting down")
   rospy.signal_shutdown("ROSPy Shutdown")
@@ -91,6 +95,7 @@ def task_feeder():
     Controller.addTask(disarm("Shutdown now"))
 
 def subscribers():
+    global current_pub
     # Publisher
     current_pub     = rospy.Publisher('flyingros/controller/task/current', Task, queue_size=1)
 
@@ -114,7 +119,7 @@ def init():
     rospy.on_shutdown(myhook)
     rate = rospy.get_param("flyingros/controller/rate",3)
     setpoint_rate = rospy.get_param("flyingros/controller/setpoint_rate",10)
-    Controller = taskController(rate=rate, setpoint_rate=setpoint_rate, test=True)
+    Controller = taskController(rate=rate, setpoint_rate=setpoint_rate, callback_current_task=,test=True)
 
 if __name__ == '__main__':
     rospy.loginfo("We are ready")
