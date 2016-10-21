@@ -72,7 +72,7 @@ In depth status
     * TARGET
     * GRAB : **TO BE IMPLEMENTED**
 * flyingros_nav
-  - [x] Task_node : Start & manage the controller
+  - [x] Task_node : Start & manage the controller *missing get & send current task*
   - [ ] Manual_node : bypass the controller **Work in progress**
   - [ ] Console_task : URWID interface for the Task Node
     individual tasks working well
@@ -83,4 +83,4 @@ In depth status
   - [ ] sex_lasers
 * flyingros_web :  *To be reviewed & tested*
   - [ ] web_export
-  - [ ] website
+  - [ ] website **WIP**
