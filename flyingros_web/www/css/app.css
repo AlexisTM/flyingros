@@ -61,8 +61,7 @@ button:hover {
 
 td, th {
     margin-left: 10px;
-    padding-left: 15px;
-    padding:10px; 
+    padding: 10px;
     border:solid 1px #eee;
     font-size: 18px;
     text-align: center;
@@ -85,6 +84,7 @@ input {
     border: 1px solid #ccc; 
     border-radius: 7px;
 }
+
 
 /*** Modal specific ***/
 /* Background */
