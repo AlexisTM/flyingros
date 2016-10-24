@@ -27,8 +27,9 @@ body.nav-md
           th Name
           th Target
           th Bonus data
-      tbody.list
+      tbody.list#clickTbody
         tr
+          td.ID(style='display:none;') dummy
           td.index dummy
           td.type dummy
           td.name dummy 
@@ -75,10 +76,36 @@ body.nav-md
               input(type='number', placeholder='2.0') 
               label Z : 
               input(type='number', placeholder='2.0') 
-
           .modal-footer
-            button(onclick='return false').btn#addTaskModal Add the task
-            button(onclick='return false').btn#cancelTaskModal Cancel
+            button(onclick='return false').btn.confirm Add the task
+            button(onclick='return false').btn.cancel Cancel
+    .modal#removeModal
+      .modal-content
+        center
+          .modal-header
+            i.fa.fa-times.close(aria-hidden='true')
+            h2 Remove the task
+          .modal-body
+            label Index : 
+            span.index dummy
+            br
+            label Type : 
+            span.type dummy
+            br
+            label Name : 
+            span.name dummy
+            br
+            label Target : 
+            span.target (dummy)
+            br
+            label Data : 
+            span.bonus [dummy]
+            br
+            label ID : 
+            span.ID 30210dummy
+          .modal-footer
+            button(onclick='return false').btn.confirm Remove the task
+            button(onclick='return false').btn.cancel Cancel
 
   script(src='js/paper-core.min.js', type='text/javascript')
   script(src='js/list.min.js', type='text/javascript')

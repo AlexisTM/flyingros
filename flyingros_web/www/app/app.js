@@ -55,7 +55,8 @@ var dynamicData = {
         x: 150,
         y: 150,
         z: 150
-    }
+    },
+    currentObject : {}
 }
 
 
@@ -115,8 +116,8 @@ function dom_init(){
     modalObject.addTask.open = document.getElementById('addTask');
     modalObject.addTask.modal = document.getElementById('addTaskModal');
     modalObject.addTask.close = modalObject.addTask.modal.querySelector('.close');
-    modalObject.addTask.add = modalObject.addTask.modal.querySelector('#addTaskModal');
-    modalObject.addTask.cancel = modalObject.addTask.modal.querySelector('#cancelTaskModal');
+    modalObject.addTask.confirm = modalObject.addTask.modal.querySelector('.confirm');
+    modalObject.addTask.cancel = modalObject.addTask.modal.querySelector('.cancel');
 
     modalObject.addTask.open.addEventListener('click', function(){
         modalObject.addTask.modal.style.display = "block";
@@ -130,10 +131,59 @@ function dom_init(){
         modalObject.addTask.modal.style.display = "none";
     });
 
-
-    modalObject.addTask.add.addEventListener('click', function(){
+    modalObject.addTask.confirm.addEventListener('click', function(){
+        // send the task
         modalObject.addTask.modal.style.display = "none";
     });
+
+    modalObject.removeTask = {};
+    modalObject.removeTask.modal = document.getElementById('removeModal');
+    modalObject.removeTask.close = modalObject.removeTask.modal.querySelector('.close');
+    modalObject.removeTask.confirm = modalObject.removeTask.modal.querySelector('.confirm');
+    modalObject.removeTask.cancel = modalObject.removeTask.modal.querySelector('.cancel');
+
+    modalObject.removeTask.show = function(task){
+      modalObject.removeTask.modal.querySelector('.name').innerHTML = task._values.name
+      modalObject.removeTask.modal.querySelector('.index').innerHTML = task._values.index
+      modalObject.removeTask.modal.querySelector('.type').innerHTML = task._values.type
+      modalObject.removeTask.modal.querySelector('.bonus').innerHTML = task._values.bonus
+      modalObject.removeTask.modal.querySelector('.target').innerHTML = task._values.target
+      modalObject.removeTask.modal.querySelector('.ID').innerHTML = task._values.ID
+      modalObject.removeTask.modal.style.display = "block";
+    }
+
+    modalObject.removeTask.close.addEventListener('click', function(){
+        modalObject.removeTask.modal.style.display = "none";
+    });
+
+    modalObject.removeTask.cancel.addEventListener('click', function(){
+        modalObject.removeTask.modal.style.display = "none";
+    });
+
+    modalObject.removeTask.confirm.addEventListener('click', function(){
+        modalObject.removeTask.modal.style.display = "none";
+    });
+
+    document.getElementById("clickTbody").addEventListener('click', function(e){
+      task = getClickedObject(event);
+      console.log('clicked : ', getClickedObject(event));
+      modalObject.removeTask.show(task)
+    })
+}
+
+function getClickedObject(event) {
+    var tr = event.srcElement.closest('tr');
+    var a = tr.getElementsByClassName('ID');
+    if (a.length == 1) {
+        var b = missionList.get('ID', a[0].innerText)
+        if (b.length == 1) {
+            // save data to use
+            dynamicData.currentObject = b[0];
+            return b[0];
+        }
+    }
+    // Failed
+    return false;
 }
 
 function ros_init(){
