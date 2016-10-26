@@ -330,7 +330,7 @@ class UAV:
 
 class taskController:
     """ The task controller handle a list with every tasks """
-    def __init__(self, rate=10, setpoint_rate=10, test=False, callback_current_task=(lambda:None)):
+    def __init__(self, rate=10, setpoint_rate=10, test=False, callback_current_task=None):
         self.callback_current_task = callback_current_task
         self.tasks = list()
         self.count = 0
@@ -399,7 +399,8 @@ class taskController:
             task = self.tasks[self.current]
             result = task.run(self.UAV)
             if result: # returns True if done
-                self.callback_current_task(self.tasks[self.current])
+                if self.callback_current_task is not None:
+                    self.callback_current_task(self.tasks[self.current])
                 self.current = self.current + 1
                 self.runTask()
         return
