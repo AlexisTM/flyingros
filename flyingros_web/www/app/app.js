@@ -56,7 +56,8 @@ var dynamicData = {
         y: 150,
         z: 150
     },
-    currentObject : {}
+    currentObject : {},
+    currentTask : {}
 }
 
 
@@ -221,8 +222,21 @@ function ros_init(){
         console.log(message);
     });
 
-    currentListener.subscribe(function(message) {
-        console.log(message);
+    currentListener.subscribe(function(task) {
+        // Do it only if we change the task
+        if(dynamicData.currentTask.ID == task.ID) return;
+        // First remove classes of the old task
+        var oldTask = missionList.get('ID', dynamicData.currentTask.ID);
+        
+        if(oldTask.length == 1){
+          oldTask[0].elm.classList.remove('active');
+        } 
+
+        var newTask = missionList.get('ID', task.ID);
+        if(newTask.length != 1) return;
+        newTask[0].elm.classList.add('active');
+
+        dynamicData.currentTask = task
     });
 
     cmd = {
