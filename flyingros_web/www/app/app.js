@@ -123,9 +123,10 @@ function dom_init(){
 
       console.log(id);
 
-      var msg = ROSLIB.Message({task: {
+      var msg = new ROSLIB.Message({task: {
         ID : parseInt(id)
-      }});;
+      }});
+      
       cmd.task.remove.callService(msg, function(result){
         console.log(result);
       });
