@@ -390,7 +390,6 @@ function moveUAV(x,y,z,yaw){
     p.o.UAV.rotation = yaw;
 }
 
-
 // Uncomplete task compliant
 function taskForList(task, i) {
     i = isFinite(i) ? i : Number(missionList.items.last()._values.i);
@@ -450,4 +449,14 @@ function idSpecificData(task){
 
 Array.prototype.last = function() {
     return this[this.length-1];
+}
+
+function sendNewTask(task){
+  cmd.task.add.callService({task: task}, function(result){
+
+              console.log(result.message)
+
+              console.warn(Number(result.message))
+              //missionList.add([])
+            });
 }
