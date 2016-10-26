@@ -121,14 +121,10 @@ function dom_init(){
       
       if(!isFinite(id)) return false;
 
-      console.log(id);
-
-      var msg = new ROSLIB.Message({task: {
+      cmd.task.remove.callService({task: {
         ID : parseInt(id)
-      }});
-      
-      cmd.task.remove.callService(msg, function(result){
-        console.log(result);
+      }}, function(result){
+        missionList.remove('ID', id);
       });
     });
 
@@ -348,10 +344,6 @@ function paper_init(){
         cache.target.task.data = [0.2,0.2,1];
 
         sendNewTask(cache.target.task);
-        /*cmd.task.add.callService(cache.target, function(result){
-            p.o.setpoint.position.x = xp;
-            p.o.setpoint.position.y = yp;
-        });*/
     }   
     paper.view.draw();
 }
@@ -427,7 +419,6 @@ Array.prototype.last = function() {
 function sendNewTask(task){
   task.ID = 0;
   cmd.task.add.callService({task: task}, function(result){
-              console.log(task);
               task.ID = Number(result.message);
               missionList.add([taskForList(task)])
             });
