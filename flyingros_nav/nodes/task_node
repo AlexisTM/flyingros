@@ -126,7 +126,6 @@ if __name__ == '__main__':
     try:
         init()
         subscribers()
-        #task_feeder()
         main()
     except rospy.ROSInterruptException:
         rospy.loginfo("init failed")

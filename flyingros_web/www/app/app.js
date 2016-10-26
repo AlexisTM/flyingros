@@ -111,38 +111,27 @@ function dom_init(){
 
     missionList = new List('Mission', options);
 
-    // Modal
-    modalObject.addTask = {};
-    modalObject.addTask.open = document.getElementById('addTask');
-    modalObject.addTask.modal = document.getElementById('addTaskModal');
-    modalObject.addTask.close = modalObject.addTask.modal.querySelector('.close');
-    modalObject.addTask.confirm = modalObject.addTask.modal.querySelector('.confirm');
-    modalObject.addTask.cancel = modalObject.addTask.modal.querySelector('.cancel');
+    modalObject.addTask = new Modalise('addTaskModal', {
+      btnsOpen : [document.getElementById('addTask')]
+    }).attach();
 
-    modalObject.addTask.open.addEventListener('click', function(){
-        modalObject.addTask.modal.style.display = "block";
+    modalObject.removeTask = new Modalise('removeModal', {
+    }).attach().on('onConfirm', function(event){
+      id = Number(modalObject.removeTask.modal.querySelector('.ID').innerHTML);
+      
+      if(!isFinite(id)) return false;
+
+      console.log(id);
+
+      var msg = ROSLIB.Message({task: {
+        ID : parseInt(id)
+      }});;
+      cmd.task.remove.callService(msg, function(result){
+        console.log(result);
+      });
     });
 
-    modalObject.addTask.close.addEventListener('click', function(){
-        modalObject.addTask.modal.style.display = "none";
-    });
-
-    modalObject.addTask.cancel.addEventListener('click', function(){
-        modalObject.addTask.modal.style.display = "none";
-    });
-
-    modalObject.addTask.confirm.addEventListener('click', function(){
-        // send the task
-        modalObject.addTask.modal.style.display = "none";
-    });
-
-    modalObject.removeTask = {};
-    modalObject.removeTask.modal = document.getElementById('removeModal');
-    modalObject.removeTask.close = modalObject.removeTask.modal.querySelector('.close');
-    modalObject.removeTask.confirm = modalObject.removeTask.modal.querySelector('.confirm');
-    modalObject.removeTask.cancel = modalObject.removeTask.modal.querySelector('.cancel');
-
-    modalObject.removeTask.show = function(task){
+    modalObject.removeTask.showData = function(task){
       modalObject.removeTask.modal.querySelector('.name').innerHTML = task._values.name
       modalObject.removeTask.modal.querySelector('.index').innerHTML = task._values.index
       modalObject.removeTask.modal.querySelector('.type').innerHTML = task._values.type
@@ -152,22 +141,9 @@ function dom_init(){
       modalObject.removeTask.modal.style.display = "block";
     }
 
-    modalObject.removeTask.close.addEventListener('click', function(){
-        modalObject.removeTask.modal.style.display = "none";
-    });
-
-    modalObject.removeTask.cancel.addEventListener('click', function(){
-        modalObject.removeTask.modal.style.display = "none";
-    });
-
-    modalObject.removeTask.confirm.addEventListener('click', function(){
-        modalObject.removeTask.modal.style.display = "none";
-    });
-
     document.getElementById("clickTbody").addEventListener('click', function(e){
       task = getClickedObject(event);
-      console.log('clicked : ', getClickedObject(event));
-      modalObject.removeTask.show(task)
+      modalObject.removeTask.showData(task)
     })
 }
 
@@ -207,7 +183,7 @@ function ros_init(){
     var reportListener = new ROSLIB.Topic({
         ros: ros,
         name: 'web/report',
-        messageType: 'flyingros_msgs/Task'
+        messageType: 'flyingros_msgs/Report'
     });
 
     var odomListener = new ROSLIB.Topic({
@@ -225,6 +201,12 @@ function ros_init(){
     var taskAdd = new ROSLIB.Service({
         ros : ros,
         name : '/flyingros/controller/task/add',
+        serviceType : 'flyingros_msgs/TaskHandle'
+    });
+
+    var taskRemove = new ROSLIB.Service({
+        ros : ros,
+        name : '/flyingros/controller/task/remove',
         serviceType : 'flyingros_msgs/TaskHandle'
     });
 
@@ -252,7 +234,8 @@ function ros_init(){
         },
         task : {
             add : taskAdd,
-            current : currentListener
+            current : currentListener,
+            remove : taskRemove
         },
         report: reportListener,
         odometry: odomListener
@@ -362,10 +345,12 @@ function paper_init(){
         cache.target.task.position.y = (yp-p.o.origin.y)/100;
         cache.target.task.yaw = 0;
         cache.target.task.data = [0.2,0.2,1];
-        cmd.task.add.callService(cache.target, function(result){
+
+        sendNewTask(cache.target.task);
+        /*cmd.task.add.callService(cache.target, function(result){
             p.o.setpoint.position.x = xp;
             p.o.setpoint.position.y = yp;
-        });
+        });*/
     }   
     paper.view.draw();
 }
@@ -390,19 +375,6 @@ function moveUAV(x,y,z,yaw){
     p.o.UAV.rotation = yaw;
 }
 
-// Uncomplete task compliant
-function taskForList(task, i) {
-    i = isFinite(i) ? i : Number(missionList.items.last()._values.i);
-    specific = idSpecificData(task)
-    return {
-        type : task.mission_type ? specific.fa : specific.fa, 
-        name : task.name || "NoName",
-        target : task.position? "( " + task.position.x + ", " + task.position.y + ", " + task.position.z +")" : "NoTarget",
-        index : i,
-        ID : task.ID || "",
-        data : task.data || "",
-        bonus : specific.bonus}
-}
 
 function idSpecificData(task){
     var data = { fa : '', bonus : ''}
@@ -452,14 +424,25 @@ Array.prototype.last = function() {
 }
 
 function sendNewTask(task){
+  task.ID = 0;
   cmd.task.add.callService({task: task}, function(result){
-
-              console.log(result.message)
-
-              console.warn(Number(result.message))
-
-              task.ID = Number(result.message);
               console.log(task);
-              //missionList.add([])
+              task.ID = Number(result.message);
+              missionList.add([taskForList(task)])
             });
+}
+
+// Uncomplete task compliant
+function taskForList(task, i) {
+    i = isFinite(i) ? i : Number(missionList.items.last()._values.i);
+    i = isFinite(i) ? i : missionList.items.length;
+    specific = idSpecificData(task)
+    return {
+        type : task.mission_type ? specific.fa : specific.fa, 
+        name : task.name || "NoName",
+        target : task.position? "( " + task.position.x + ", " + task.position.y + ", " + task.position.z +")" : "NoTarget",
+        index : i,
+        ID : task.ID || "",
+        data : task.data || "",
+        bonus : specific.bonus}
 }
