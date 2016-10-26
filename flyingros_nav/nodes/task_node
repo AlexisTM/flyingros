@@ -39,8 +39,8 @@ import sys
 
 def handle_add_task(req):
     global Controller
-    Controller.addTask(rostask_to_pythontask(req.task))
-    return TaskHandleResponse("working", True)
+    py_task = Controller.addTask(rostask_to_pythontask(req.task))
+    return TaskHandleResponse(str(py_task.ID), True)
 
 def handle_remove_task(req):
     global Controller

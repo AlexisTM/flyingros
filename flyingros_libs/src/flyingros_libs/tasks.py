@@ -348,7 +348,7 @@ class taskController:
         task.updateID()
         self.tasks.append(task)
         self.count += 1
-        return self.count-1
+        return task
 
     # returns the ID of the delete object or None
     def removeTask(self, taskID):
