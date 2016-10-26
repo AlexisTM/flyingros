@@ -119,7 +119,7 @@ def init():
     rospy.on_shutdown(myhook)
     rate = rospy.get_param("flyingros/controller/rate",3)
     setpoint_rate = rospy.get_param("flyingros/controller/setpoint_rate",10)
-    Controller = taskController(rate=rate, setpoint_rate=setpoint_rate, callback_current_task=,test=True)
+    Controller = taskController(rate=rate, setpoint_rate=setpoint_rate, callback_current_task=publish_current,test=True)
 
 if __name__ == '__main__':
     rospy.loginfo("We are ready")

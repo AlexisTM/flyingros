@@ -457,6 +457,9 @@ function sendNewTask(task){
               console.log(result.message)
 
               console.warn(Number(result.message))
+
+              task.ID = Number(result.message);
+              console.log(task);
               //missionList.add([])
             });
 }
