@@ -352,10 +352,8 @@ class taskController:
 
     # returns the ID of the delete object or None
     def removeTask(self, taskID):
-        rospy.loginfo(taskID);
         for i, t in enumerate(self.tasks):
             if t.ID == taskID:
-                rospy.loginfo("pop");
                 self.tasks.pop(i)
                 self.count -= 1
                 return i
