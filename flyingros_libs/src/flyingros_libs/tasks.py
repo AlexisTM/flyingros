@@ -381,7 +381,7 @@ class taskController:
 
     def notifyCurrentTask(self):
         if self.callback_current_task is not None:
-            self.callback_current_task(getCurrentTask())
+            self.callback_current_task(self.getCurrentTask())
 
     def getTasks(self):
         return self.tasks
