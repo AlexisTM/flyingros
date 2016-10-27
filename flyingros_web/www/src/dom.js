@@ -8,31 +8,103 @@ modal.options = {
    // item : '<tr><td class="index"></td><td class="type"></td><td class="name"></td><td class="target"></td></tr>',
  };
 
-function dom_init() {
+function SelectText(el, win) {
+    win = win || window;
+    var doc = win.document, sel, range;
+    if (win.getSelection && doc.createRange) {
+        sel = win.getSelection();
+        range = doc.createRange();
+        range.selectNodeContents(el);
+        sel.removeAllRanges();
+        sel.addRange(range);
+    } else if (doc.body.createTextRange) {
+        range = doc.body.createTextRange();
+        range.moveToElementText(el);
+        range.select();
+    }
+}
 
+function syntaxHighlight(json) {
+    if (typeof json != 'string') {
+         json = JSON.stringify(json, undefined, 2);
+    }
+    json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>').replace(/\ /g, '&nbsp;&nbsp;');;
+    return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+        var cls = 'number';
+        var br = '';
+        if (/^"/.test(match)) {
+            if (/:$/.test(match)) {
+                cls = 'key';
+            } else {
+                cls = 'string';
+            }
+        } else if (/true|false/.test(match)) {
+            cls = 'boolean';
+        } else if (/null/.test(match)) {
+            cls = 'null';
+        }
+        return '<span class="' + cls + '">' + match + '</span>';
+    });
+}
+
+function show_mission_json(mission_json){
+  mission.remove();
+  var l = mission_json.tasks.length;
+  var missionArray = [];
+  for (var i = 0; i < l; i++) {
+    missionArray.push(taskHelper.toList(mission_json.tasks[i], i));
+  }
+  mission.add(missionArray);
+}
+
+ function dom_init() {
   mission = new List('Mission', modal.options);
 
   document.getElementById("getMission")
-  .addEventListener("click",
-                    function(){
-                      cmd.mission.get.callService({}, function(result){
-                        mission.remove();
-                        var l = result.mission.tasks.length;
-                        var missionArray = [];
-                        for (var i = 0; i < l; i++) {
-                          missionArray.push(taskHelper.toList(result.mission.tasks[i], i));
-                        }
-                        mission.add(missionArray);
-                      });
-                    });
+  .addEventListener("click", function(){
+    cmd.mission.get.callService({}, function(result){
+      show_mission_json(result.mission);
+    });
+  });
+
+  document.getElementById("removeMission").addEventListener("click", function(){
+   cmd.mission.reset();
+ });
+
+  document.getElementById("selectTextExport").addEventListener("click", function(){
+   SelectText(modal.exportMission.modal.querySelector('.exportData'), window);
+ });
 
   modal.addTask = new Modalise('addTaskModal', {
     btnsOpen : [document.getElementById('addTask')]
   }).attach();
 
-  modal.removeTask = new Modalise('removeModal', {
+  modal.exportMission = new Modalise('exportModal', {
+    btnsOpen : [document.getElementById('exportMission')]
+  }).attach().on('onShow', function(){
+    var textareajson = this.querySelector('.exportData');
+    cmd.mission.get.callService({}, function(result){
+      textareajson.innerHTML = syntaxHighlight(JSON.stringify(result.mission, null, 2));
+    });
+  });
+
+  modal.importMission = new Modalise('importModal', {
+    btnsOpen : [document.getElementById('importMission')]
+  }).attach().on('onShow', function(){
+    this.querySelector('textarea').innerHTML = "";
+  }).on('onConfirm', function(){
+    var json_mission = JSON.parse(this.querySelector('textarea').value);
+
+    cmd.mission.reset(function(){
+      cmd.mission.add.callService({mission: json_mission} ,function(result){
+        show_mission_json(json_mission);
+      });
+    });
+  
   })
-  .attach().on('onConfirm', function(event){
+
+  modal.removeTask = new Modalise('removeModal', {
+  }).attach().on('onConfirm', function(event){
     id = Number(modal.removeTask.modal.querySelector('.ID').innerHTML);
 
     if(!isFinite(id)) return false;
@@ -59,7 +131,6 @@ function dom_init() {
     modal.removeTask.showData(task)
   });
 }
-
 
 var getClicked = function (event) {
   var tr = event.srcElement.closest('tr');

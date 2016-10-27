@@ -7,7 +7,7 @@
 // dom
 // paper
 // start
-
+var testVar;
 var dynamicData = {
     position : {
       x: 150,
