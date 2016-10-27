@@ -97,21 +97,21 @@ function ros_init(){
 
 function subscribe_topics(){
   cmd.task.current.subscribe(function(task) {
-// Do it only if we change the task
-if(modal.dynamicData.currentTask.ID == task.ID) return;
-// First remove classes of the old task
-var oldTask = mission.get('ID', modal.dynamicData.currentTask.ID);
+    // Do it only if we change the task
+    if(dynamicData.currentTask.ID == task.ID) return;
+    // First remove classes of the old task
+    var oldTask = mission.get('ID', dynamicData.currentTask.ID);
 
-if(oldTask.length == 1){
-  oldTask[0].elm.classList.remove('active');
-}
+    if(oldTask.length == 1){
+      oldTask[0].elm.classList.remove('active');
+    }
 
-var newTask = mission.get('ID', task.ID);
-if(newTask.length != 1) return;
-newTask[0].elm.classList.add('active');
+    var newTask = mission.get('ID', task.ID);
+    if(newTask.length != 1) return;
+    newTask[0].elm.classList.add('active');
 
-modal.dynamicData.currentTask = task
-});
+    dynamicData.currentTask = task
+  });
 
 
   cmd.report.subscribe(function(message) {
@@ -121,4 +121,10 @@ modal.dynamicData.currentTask = task
   cmd.odometry.subscribe(function(message) {
     console.log(message);
   });
+
+  cmd.mission.reset = function(){
+    cmd.mission.remove.callService({}, function(){
+      mission.remove();
+    });
+  }
 };
