@@ -76,8 +76,9 @@ def handle_get_whole_mission(req):
 
 def publish_current(py_task):
     global current_pub
-    ros_task = pythontask_to_rostask(py_task)
-    current_pub.publish(ros_task)
+    if ros_task is not None:
+      ros_task = pythontask_to_rostask(py_task)
+      current_pub.publish(ros_task)
 
 def myhook():
   rospy.loginfo("Shutting down")
