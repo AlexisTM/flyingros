@@ -1,0 +1,44 @@
+{
+  "name": "flyingros_web.www",
+  "version": "0.1.0",
+  "description": "flyingros_web.www is a real-time web interface",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/AlexisTM/flyingros.git"
+  },
+  "keywords": [
+    "ROS",
+    "interface",
+    "web",
+    "real-time",
+    "roslibjs",
+    "flyingros",
+    "flyingros_web"
+  ],
+  "author": "Alexis Paques",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/AlexisTM/flyingros/issues"
+  },
+  "homepage": "https://github.com/AlexisTM/flyingros#readme",
+  "devDependencies": {
+    "gulp-cli": "^1.2.2"
+  },
+  "dependencies": {
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-jade": "^1.1.0",
+    "gulp-sourcemaps": "^2.2.0",
+    "gulp-uglify": "^2.0.0",
+    "gulp-uglifycss": "^1.0.6",
+    "gulp-util": "^3.0.7",
+    "jade": "^1.11.0",
+    "merge-stream": "^1.0.0",
+    "node-sass": "^3.10.1",
+    "pump": "^1.0.1"
+  }
+}

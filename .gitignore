@@ -47,3 +47,5 @@ qtcreator-*
 CATKIN_IGNORE
 
 bfg.jar
+flyingros_web/www/node_modules
+flyingros_web/www/dist
