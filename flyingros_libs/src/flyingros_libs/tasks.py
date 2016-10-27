@@ -3,7 +3,8 @@
 """
 tasks.py
 
-This is a task implementation initialy used to control an UAV
+This is a task implementation initialy used to control an UAV.
+Successfuly tested with high number of tasks (5k tasks)
 
 This file is part of FlyingROS.
 
@@ -350,12 +351,24 @@ class taskController:
         self.count += 1
         return task
 
+    def reset(self):
+        self.tasks = list()
+        self.count = 0
+        self.current = 0
+
     # returns the ID of the delete object or None
     def removeTask(self, taskID):
         for i, t in enumerate(self.tasks):
             if t.ID == taskID:
+                if self.current >= taskID:
+                  self.current -= 1
+                # if self.current < taskID : => self current don't change
+                # Avoid "negative current task"
+                if self.current < 0:
+                  self.current = 0 
                 self.tasks.pop(i)
                 self.count -= 1
+                notifyCurrentTask()
                 return i
         return None
 
@@ -365,6 +378,10 @@ class taskController:
             self.tasks.append(task)
         self.count += len(tasks)
         return self.count-1
+
+    def notifyCurrentTask(self):
+        if self.callback_current_task is not None:
+            self.callback_current_task(getCurrentTask())
 
     def getTasks(self):
         return self.tasks
@@ -399,8 +416,7 @@ class taskController:
             task = self.tasks[self.current]
             result = task.run(self.UAV)
             if result: # returns True if done
-                if self.callback_current_task is not None:
-                    self.callback_current_task(self.tasks[self.current])
+                notifyCurrentTask()
                 self.current = self.current + 1
                 self.runTask()
         return

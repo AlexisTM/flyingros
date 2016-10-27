@@ -53,6 +53,11 @@ def handle_get_task(req):
     task = pythontask_to_rostask(py_task)
     return TaskRequestResponse(task, True)
 
+def handle_remove_mission(req):
+    global Controller
+    Controller.reset()
+    return MissionRequestResponse(Mission(), True)
+
 def handle_add_mission(req):
     global Controller
     mission = list()
@@ -103,6 +108,7 @@ def subscribers():
     # - missions
     mission_add_srv     = rospy.Service('flyingros/controller/mission/add', MissionHandle, handle_add_mission)
     mission_get_srv     = rospy.Service('flyingros/controller/mission/get', MissionRequest, handle_get_whole_mission)
+    task_remove_srv     = rospy.Service('flyingros/controller/mission/remove', MissionRequest, handle_remove_mission)
     # - tasks
     task_add_srv        = rospy.Service('flyingros/controller/task/add', TaskHandle, handle_add_task)
     task_get_srv        = rospy.Service('flyingros/controller/task/get', TaskRequest, handle_get_task)
