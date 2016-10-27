@@ -103,3 +103,23 @@ input {
 tr.active {
   background-color: #5cb85c;
 }
+
+span.key {
+  color : blue;
+}
+
+span.number {
+  color : red;
+}
+
+span.string {
+  color : green;
+}
+
+div.exportData {
+  text-align: left;
+  height : 300px;
+  width: 50%;
+  overflow-y: auto;
+  overflow-x: auto;
+}

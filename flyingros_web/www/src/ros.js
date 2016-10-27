@@ -122,9 +122,10 @@ function subscribe_topics(){
     console.log(message);
   });
 
-  cmd.mission.reset = function(){
-    cmd.mission.remove.callService({}, function(){
+  cmd.mission.reset = function(callback){
+    cmd.mission.remove.callService({}, function(a){
       mission.remove();
+      if(callback) callback(a);
     });
   }
 };

@@ -31,9 +31,13 @@ body.nav-md
           td.name dummy 
           td.target dummy
           td.bonus dummy
-    br
-    button(onclick='return false').btn#addTask add a task
-    button(onclick='return false').btn#getMission get the mission
+  br
+  button(onclick='return false').btn#addTask add a task
+  button(onclick='return false').btn#getMission get the mission
+  button(onclick='return false').btn#removeMission remove the mission
+  button(onclick='return false').btn#exportMission export the mission
+  button(onclick='return false').btn#importMission import the mission
+  .modal-container
     .mdl.mdl-fadin#addTaskModal
       .mdl-content.mdl-slidein
         center
@@ -103,6 +107,29 @@ body.nav-md
             button(onclick='return false').btn.confirm Remove the task
             button(onclick='return false').btn.cancel Cancel
 
+    .mdl.mdl-fadin#exportModal
+      .mdl-content.mdl-slidein
+        center
+          .mdl-header.mdl-band-success
+            i.fa.fa-times.close(aria-hidden='true')
+            h2 Export mission
+          .mdl-body
+            .exportData
+          .mdl-footer.mdl-band-success
+            button(onclick='return false').btn#selectTextExport Select text
+            button(onclick='return false').btn.cancel Ok
+
+    .mdl.mdl-fadin#importModal
+      .mdl-content.mdl-slidein
+        center
+          .mdl-header.mdl-band-success
+            i.fa.fa-times.close(aria-hidden='true')
+            h2 Import mission
+          .mdl-body
+            textarea(rows="8" cols="100")
+          .mdl-footer.mdl-band-success
+            button(onclick='return false').btn.confirm Send
+            button(onclick='return false').btn.cancel Cancel
   
   script(src='lib.min.js', type='text/javascript')
   script(async src='app.js', type='text/javascript')
