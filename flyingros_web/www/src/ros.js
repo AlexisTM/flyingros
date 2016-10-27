@@ -49,9 +49,21 @@ function ros_init(){
     serviceType : 'flyingros_msgs/TaskHandle'
   });
 
+  var missionAdd = new ROSLIB.Service({
+    ros : ros,
+    name : '/flyingros/controller/mission/add',
+    serviceType : 'flyingros_msgs/MissionHandle'
+  });
+
   var missionGet = new ROSLIB.Service({
     ros : ros,
     name : '/flyingros/controller/mission/get',
+    serviceType : 'flyingros_msgs/MissionRequest'
+  });
+
+  var missionRemove = new ROSLIB.Service({
+    ros : ros,
+    name : '/flyingros/controller/mission/remove',
     serviceType : 'flyingros_msgs/MissionRequest'
   });
 
@@ -69,7 +81,9 @@ function ros_init(){
 
   cmd = {
     mission : {
-      get : missionGet
+      add : missionAdd,
+      get : missionGet,
+      remove: missionRemove
     },
     task : {
       add : taskAdd,
