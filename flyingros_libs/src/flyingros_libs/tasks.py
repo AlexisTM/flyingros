@@ -368,7 +368,7 @@ class taskController:
                   self.current = 0 
                 self.tasks.pop(i)
                 self.count -= 1
-                notifyCurrentTask()
+                self.notifyCurrentTask()
                 return i
         return None
 
@@ -416,7 +416,7 @@ class taskController:
             task = self.tasks[self.current]
             result = task.run(self.UAV)
             if result: # returns True if done
-                notifyCurrentTask()
+                self.notifyCurrentTask()
                 self.current = self.current + 1
                 self.runTask()
         return
