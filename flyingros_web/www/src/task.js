@@ -21,7 +21,9 @@ var taskHelper = new function(){
   },
 
   self.toList = function (task, i) {
-    i = isFinite(i) ? i : Number(mission.items.last()._values.i);
+    if(mission.items.length > 0){
+      i = isFinite(i) ? i : Number(mission.items.last()._values.i);
+    }
     i = isFinite(i) ? i : mission.items.length;
     var specific = self.idSpecificData(task);
     return {

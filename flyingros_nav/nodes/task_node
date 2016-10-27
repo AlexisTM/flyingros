@@ -84,7 +84,10 @@ def myhook():
   rospy.signal_shutdown("ROSPy Shutdown")
 
 def main():
-    rospy.spin()
+    current_notifier_period = rospy.get_param("flyingros/controller/current_notifier_sleep", 5)
+    while not rospy.is_shutdown(): 
+      rospy.sleep(current_notifier_period)
+      Controller.notifyCurrentTask()
 
 def task_feeder():
     global Controller
