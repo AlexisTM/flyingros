@@ -76,7 +76,7 @@ def handle_get_whole_mission(req):
 
 def publish_current(py_task):
     global current_pub
-    if ros_task is not None:
+    if py_task is not None:
       ros_task = pythontask_to_rostask(py_task)
       current_pub.publish(ros_task)
 
