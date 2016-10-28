@@ -123,3 +123,11 @@ div.exportData {
   overflow-y: auto;
   overflow-x: auto;
 }
+
+input:valid {
+  border-color: green;
+}
+
+input:invalid {
+  border-color: red;
+}

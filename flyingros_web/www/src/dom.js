@@ -28,7 +28,7 @@ function syntaxHighlight(json) {
     if (typeof json != 'string') {
          json = JSON.stringify(json, undefined, 2);
     }
-    json = json.replace(/&/g, '&amp;').replace(/\}\,\n\ \ \ \ \{/g, '\}\,\{').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>').replace(/\ /g, '&nbsp;&nbsp;');;
+    json = json.replace(/&/g, '&amp;').replace(/\}\,\n[ ]\{/g, '\}\,\{').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>').replace(/\ /g, '&nbsp;&nbsp;');;
     return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
         var cls = 'number';
         var br = '';
@@ -57,13 +57,14 @@ function show_mission_json(mission_json){
   mission.add(missionArray);
 }
 
- function dom_init() {
+function dom_init() {
   mission = new List('Mission', modal.options);
 
   document.getElementById("getMission")
   .addEventListener("click", function(){
     cmd.mission.get.callService({}, function(result){
       show_mission_json(result.mission);
+      dynamicData.currentTask = {}
     });
   });
 
@@ -77,7 +78,35 @@ function show_mission_json(mission_json){
 
   modal.addTask = new Modalise('addTaskModal', {
     btnsOpen : [document.getElementById('addTask')]
-  }).attach();
+  }).attach().on('onShow', function(){
+    testVar = this;
+    this.querySelector('.targetx').value = "";
+    this.querySelector('.targety').value = "";
+    this.querySelector('.targetz').value = "";
+    this.querySelector('.name').value = "";
+    this.querySelector('.data').value = "";
+    this.querySelector('.yaw').value = "";
+    this.querySelector('.type').selectedIndex = 0;
+  }).on('onConfirm', function(){
+    var mission_type = taskHelper.getMissionFromSelect(this.querySelector('.type'));
+    var data = this.querySelector('.data').value;
+    data = data ? JSON.parse(data) : [];
+    data = Array.isArray(data) ? data : [];
+    var taskToSend = {
+      name : this.querySelector('.name').value,
+      position : {
+        x: Number(this.querySelector('.targetx').value),
+        y: Number(this.querySelector('.targety').value),
+        z: Number(this.querySelector('.targetz').value)
+      },
+      yaw : Number(this.querySelector('.yaw').value),
+      data : data,
+      ID : 0,
+      mission_type : mission_type
+    };
+
+    taskHelper.sendNew(taskToSend);
+  });
 
   modal.exportMission = new Modalise('exportModal', {
     btnsOpen : [document.getElementById('exportMission')]

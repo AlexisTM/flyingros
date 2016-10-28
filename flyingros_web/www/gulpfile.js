@@ -14,6 +14,7 @@ var paths = {
               'src/task.js',
               'src/ros.js',
               'src/dom.js',
+              'src/form_validator.js',
               'src/paper.js',
               'src/start.js'],
   static: 'static/*',
