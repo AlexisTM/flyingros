@@ -75,10 +75,6 @@ function ros_init(){
     console.log(message);
   });
 
-  currentListener.subscribe(function(message) {
-    console.log(message);
-  });
-
   cmd = {
     mission : {
       add : missionAdd,
@@ -97,6 +93,7 @@ function ros_init(){
 
 function subscribe_topics(){
   cmd.task.current.subscribe(function(task) {
+    console.log(task)
     // Do it only if we change the task
     if(dynamicData.currentTask.ID == task.ID) return;
     // First remove classes of the old task
@@ -125,6 +122,7 @@ function subscribe_topics(){
   cmd.mission.reset = function(callback){
     cmd.mission.remove.callService({}, function(a){
       mission.remove();
+      dynamicData.currentTask = {};
       if(callback) callback(a);
     });
   }

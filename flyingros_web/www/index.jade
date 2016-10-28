@@ -46,13 +46,13 @@ body.nav-md
             h2 Add a task
           .mdl-body
             label Type : 
-            select
+            select.type
               optgroup(label='Fly command')
                 option(value='target') Go to ...
                 option(value='loiter') Wait here ... 
                 option(value='grab') Grab 
               optgroup(label='Special command')
-                option(value='init') Init UAV
+                option(value='init_uav') Init UAV
                 option(value='arm') Arm
                 option(value='takeoff') Takeoff
                 option(value='disarm') Disarm
@@ -63,19 +63,21 @@ body.nav-md
                 option(value='notexisting') Not existing one
             br
             label Name : 
-            input(type='text', placeholder='Going to brick 3')
+            input.name(type='text', placeholder='Going to brick 3')
             br 
             label Additionnal data : 
-            input(type='text', placeholder='[ 0.2, 0.2, 1]') 
+            input.data(type='text', placeholder='[ 0.2, 0.2, 1]' required) 
             br
             fieldset
               legend Target
               label X : 
-              input(type='number', placeholder='2.0') 
+              input.targetx(type='number', placeholder='2.0' required) 
               label Y : 
-              input(type='number', placeholder='2.0') 
+              input.targety(type='number', placeholder='2.0' required) 
               label Z : 
-              input(type='number', placeholder='2.0') 
+              input.targetz(type='number', placeholder='2.0' required) 
+              label Yaw : 
+              input.yaw(type='number', placeholder='0.0' required) 
           .mdl-footer.mdl-band-success
             button(onclick='return false').btn.confirm Add the task
             button(onclick='return false').btn.cancel Cancel

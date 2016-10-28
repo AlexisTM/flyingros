@@ -20,6 +20,13 @@ var taskHelper = new function(){
     TEST : 254
   },
 
+  self.getMissionFromSelect = function(select){
+    var name = select.selectedOptions[0].value.toUpperCase();
+    mission_type = self.type[name];
+    mission_type = mission_type ? mission_type : self.type.TEST;
+    return mission_type;
+  },
+
   self.toList = function (task, i) {
     if(mission.items.length > 0){
       i = isFinite(i) ? i : Number(mission.items.last()._values.i);
