@@ -129,6 +129,7 @@ function paper_init(){
 
     cache.target.task.position.x = (xp-p.o.origin.x)/100;
     cache.target.task.position.y = (yp-p.o.origin.y)/100;
+    cache.target.task.position.z = Number(document.querySelector('input.alti').value);
     cache.target.task.yaw = 0;
     cache.target.task.data = [0.2,0.2,1];
 

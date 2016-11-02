@@ -6,4 +6,4 @@ window.onload = function() {
     form_validator_init();
     paper_init();
     subscribe_topics();
-};
+}; 

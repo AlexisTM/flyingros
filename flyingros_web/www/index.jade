@@ -9,34 +9,40 @@ html(lang='en')
     
     // LIBS : Font-Awesome, ROSLIBJS, LIST.JS, EventEmitter2, Paper
     link(href='app.min.css', rel='stylesheet')
-body.nav-md
-  .left 
-    .container-realtime
-      canvas#realtime
-
-  .right#Mission
-    table(border='1')
-      thead
-        tr
-          th Index
-          th Type
-          th Name
-          th Target
-          th Bonus data
-      tbody.list#clickTbody
-        tr
-          td.ID(style='display:none;') dummy
-          td.index dummy
-          td.type dummy
-          td.name dummy 
-          td.target dummy
-          td.bonus dummy
-  br
-  button(onclick='return false').btn#addTask add a task
-  button(onclick='return false').btn#getMission get the mission
-  button(onclick='return false').btn#removeMission remove the mission
-  button(onclick='return false').btn#exportMission export the mission
-  button(onclick='return false').btn#importMission import the mission
+body
+  .navtop
+    ul
+      li Flyingros
+  .content-holder
+    .left
+      .container-realtime
+        canvas#realtime
+    .right#Mission
+      .altitude
+        label.alti Altitude 2.5m
+        input(min='0.5', max='5' type='range' step='0.1' orient='vertical' value='2.5').alti
+      table(border='1')
+        thead
+          tr
+            th Index
+            th Type
+            th Name
+            th Target
+            th Bonus data
+        tbody.list#clickTbody
+          tr
+            td.ID(style='display:none;') dummy
+            td.index dummy
+            td.type dummy
+            td.name dummy 
+            td.target dummy
+            td.bonus dummy
+    br
+    button(onclick='return false').btn#addTask add a task
+    button(onclick='return false').btn#getMission get the mission
+    button(onclick='return false').btn#removeMission remove the mission
+    button(onclick='return false').btn#exportMission export the mission
+    button(onclick='return false').btn#importMission import the mission
   .modal-container
     .mdl.mdl-fadin#addTaskModal
       .mdl-content.mdl-slidein
@@ -119,6 +125,8 @@ body.nav-md
             .exportData
           .mdl-footer.mdl-band-success
             button(onclick='return false').btn#selectTextExport Select text
+            a.downloadJSON(download='mission.json')
+              button.btn Download
             button(onclick='return false').btn.cancel Ok
 
     .mdl.mdl-fadin#importModal
@@ -126,9 +134,9 @@ body.nav-md
         center
           .mdl-header.mdl-band-success
             i.fa.fa-times.close(aria-hidden='true')
-            h2 Import mission
+            h2 Import mission 
           .mdl-body
-            textarea(rows="8" cols="100")
+            textarea(rows="8" cols="100" placeholder="Copy paste the mission or drop the file").dropfile
           .mdl-footer.mdl-band-success
             button(onclick='return false').btn.confirm Send
             button(onclick='return false').btn.cancel Cancel
