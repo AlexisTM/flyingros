@@ -41,29 +41,29 @@ using namespace flyingros_pose;
 Laser lasers[6];
 tf::Quaternion q_imu(0,0,0,1);
 ros::Publisher position_publisher;
-int count;
+int laser_count;
 
 void callback_laser_raw(const flyingros_msgs::Distance::ConstPtr& msg){
   double roll, pitch, yaw;
 
   // Correct offset
   double measures[6];
-  for(int i = 0; i < count; i++){
+  for(int i = 0; i < laser_count; i++){
       // measures are in cm and have an offset
       measures[i] = double(msg->lasers[i])/100.0 - lasers[i].offset;
   }
 
   // Get position
   tf::Vector3 targets[6];
-  for(int i = 0; i < count; i ++){
+  for(int i = 0; i < laser_count; i ++){
     targets[i] = lasers[i].project(measures[i], q_imu);
   }
 
   double altitude = 0;
-  for(int i = 0; i < count; i ++){
+  for(int i = 0; i < laser_count; i ++){
     altitude += targets[i].z();
   }
-  altitude = altitude/double(count);
+  altitude = altitude/double(laser_count);
 
   // publish
   geometry_msgs::Pose UAVPose;
@@ -82,8 +82,8 @@ void reconfigure_lasers(){
     XmlRpc::XmlRpcValue offsetsList, positionsList, orientationsList;
     XmlRpc::XmlRpcValue p, v;
 
-    ros::param::get("/flyingros/lasers/count", count);
-    ROS_ASSERT(count >= 1);
+    ros::param::get("/flyingros/lasers/laser_count", laser_count);
+    ROS_ASSERT(laser_count >= 1);
     ros::param::get("/flyingros/lasers/offsets", offsetsList);
     ROS_ASSERT(offsetsList.getType() == XmlRpc::XmlRpcValue::TypeArray);
     ros::param::get("/flyingros/lasers/positions", positionsList);
@@ -93,7 +93,7 @@ void reconfigure_lasers(){
 
     tf::Vector3 postition, orientation;
     double offset;
-    for(int i = 0; i < count; i++){
+    for(int i = 0; i < laser_count; i++){
         offset = offsetsList[i];
         p = positionsList[i];
         v = orientationsList[i];
@@ -113,7 +113,7 @@ int main(int argc, char **argv)
 {
     ros::init(argc, argv, "laser_node_3D_algorithm_cpp");
     ros::NodeHandle nh;
-    count = 0;
+    laser_count = 0;
 
     // Reconfigure laser values (from ROS parameters) before using them.
     reconfigure_lasers();
