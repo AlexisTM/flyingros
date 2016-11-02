@@ -41,7 +41,7 @@ using namespace flyingros_pose;
 Laser lasers[6];
 tf::Quaternion q_imu(0,0,0,1);
 ros::Publisher position_publisher;
-int count(0);
+int count;
 
 void callback_laser_raw(const flyingros_msgs::Distance::ConstPtr& msg){
   double roll, pitch, yaw;
@@ -113,6 +113,7 @@ int main(int argc, char **argv)
 {
     ros::init(argc, argv, "laser_node_3D_algorithm_cpp");
     ros::NodeHandle nh;
+    count = 0;
 
     // Reconfigure laser values (from ROS parameters) before using them.
     reconfigure_lasers();
