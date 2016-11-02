@@ -162,7 +162,7 @@ def rostask_to_pythontask(ros_task):
     #    pass
 
 class UAV:
-    def __init__(self, setpoint_rate=10):
+    def __init__(self, setpoint_rate=10, raw_setpoint=False):
         # Configurations :
         self.type_mask_Fly = 2552 # 2552 - 0000 1001 1111 1000, position setpoint + Pxyz Yaw
         self.type_mask_Takeoff = 6599 # 6599 - 0001 1001 1100 0111, Takeoff setpoint + Vxyz Yaw
@@ -203,63 +203,87 @@ class UAV:
             rospy.wait_for_service('mavros/set_mode')
             self.set_mode_client = rospy.ServiceProxy('mavros/set_mode', SetMode)
 
+        # self.laser_position_sub  = rospy.Subscriber('/lasers/filtered', PoseStamped, self.laser_position_sender)
         # Setpoints
-        self.setpoint_init()
         self.setpoint_rate = rospy.Rate(setpoint_rate)
-        #self.setpoint_subscriber = rospy.Subscriber('/UAV/Setpoint', PoseStamped, self.setpoint_callback)
-        self.laser_position_sub  = rospy.Subscriber('/lasers/filtered', PoseStamped, self.laser_position_sender)
         self.setPointsCount = 0
+        self.setpoint_init()
+        if raw_setpoint
+          self.raw_setpoint_thread = Thread(target=self.raw_setpoint_sender).start()
+        else 
+          self.local_setpoint_thread = Thread(target=self.local_setpoint_sender).start()
         # Senders threads
-        self.setpoint_thread = Thread(target=self.setpoint_sender).start()
         self.laser_position_count = 0
 
     def setpoint_position(self, position, yaw):
-        self.setpoint.type_mask = self.type_mask_Fly
-        self.setpoint.velocity = Vector3()
-        self.setpoint.position = position
-        self.setpoint.yaw = yaw
+        self.setpoint_raw.type_mask = self.type_mask_Fly
+        self.setpoint_raw.velocity = Vector3()
+        self.setpoint_raw.position = position
+        self.setpoint_raw.yaw = yaw
+
+        self.setpoint_local.position = position
+        q = quaternion_from_euler(0,0, yaw,axes="sxyz")
+        self.setpoint_local.orientation.x = q[0]
+        self.setpoint_local.orientation.y = q[1]
+        self.setpoint_local.orientation.z = q[2]
+        self.setpoint_local.orientation.w = q[3]
 
     def setpoint_takeoff_here_position(self, altitude):
-        self.setpoint.type_mask = self.type_mask_Fly
-        self.setpoint.velocity = Vector3()
-        self.setpoint.position = self.position
-        self.setpoint.position.z = altitude
-        self.setpoint.yaw = self.local_yaw
+        self.setpoint_raw.type_mask = self.type_mask_Fly
+        self.setpoint_raw.velocity = Vector3()
+        self.setpoint_raw.position = self.position
+        self.setpoint_raw.position.z = altitude
+        self.setpoint_raw.yaw = self.local_yaw
+
+        self.setpoint_local.position = self.position
+        self.setpoint_local.position.z = altitude
+        self.setpoint_local.orientation = self.quaternion
 
     def setpoint_land_here_position(self):
-        self.setpoint.type_mask = self.type_mask_Fly
-        self.setpoint.velocity = Vector3()
-        self.setpoint.position = self.position
-        self.setpoint.position.z = 0.3
-        self.setpoint.yaw = self.local_yaw
+        self.setpoint_raw.type_mask = self.type_mask_Fly
+        self.setpoint_raw.velocity = Vector3()
+        self.setpoint_raw.position = self.position
+        self.setpoint_raw.position.z = 0.3
+        self.setpoint_raw.yaw = self.local_yaw
+
+        self.setpoint_local.position = self.position
+        self.setpoint_local.orientation = self.quaternion
 
     def setpoint_takeoff(self):
-        self.setpoint.type_mask = self.type_mask_Takeoff
-        self.setpoint.velocity = Vector3(0.0,self.takeoff_speed,0.0)
+        self.setpoint_raw.type_mask = self.type_mask_Takeoff
+        self.setpoint_raw.velocity = Vector3(0.0,self.takeoff_speed,0.0)
+
+        self.setpoint_local.position = self.position
+        self.setpoint_local.position.z = self.takeoff_altitude+0.5
+        self.setpoint_local.orientation = self.quaternion
 
     def setpoint_land(self):
-        self.setpoint.type_mask = self.type_mask_Land
-        self.setpoint.velocity = Vector3(0.0,self.landing_speed,0.0)
+        self.setpoint_raw.type_mask = self.type_mask_Land
+        self.setpoint_raw.velocity = Vector3(0.0,self.landing_speed,0.0)
+
+        self.setpoint_local.position = self.position
+        self.setpoint_local.position.z = self.landing_altitude
+        self.setpoint_local.orientation = self.quaternion
+
 
     def setpoint_loiter(self):
-        self.setpoint.type_mask = self.type_mask_Loiter
-        self.setpoint.velocity = Vector3(0.0,0.0,0.0)
+        self.setpoint_raw.type_mask = self.type_mask_Loiter
+        self.setpoint_raw.velocity = Vector3(0.0,0.0,0.0)
 
     def setpoint_init(self):
         # type_mask
         # 2552 : XYZ & yaw - POSITION
         # 7104 : XYZ, yaw, vXYZ, TAKE_OFF_SETPOINT
         # 3064 : 0000 1001 1111 1000
-        self.setpoint = PositionTarget()
-        self.setpoint.coordinate_frame = self.setpoint.FRAME_LOCAL_NED
-        self.setpoint.type_mask = self.type_mask_Fly
-        self.setpoint.position = Point()
-        self.setpoint.yaw = 0.0
-        self.setpoint.velocity = Vector3()
-        self.setpoint.acceleration_or_force = Vector3()
-        self.setpoint.yaw_rate = 0.0
-
-        self.setpoint_position = PoseStamped()
+        self.setpoint_raw = PositionTarget()
+        self.setpoint_raw.coordinate_frame = self.setpoint_raw.FRAME_LOCAL_NED
+        self.setpoint_raw.type_mask = self.type_mask_Fly
+        self.setpoint_raw.position = Point()
+        self.setpoint_raw.yaw = 0.0
+        self.setpoint_raw.velocity = Vector3()
+        self.setpoint_raw.acceleration_or_force = Vector3()
+        self.setpoint_raw.yaw_rate = 0.0
+        self.setpoint_local = PoseStamped()
         self.laser_position_count = 0
 
     def local_position_callback(self, local):
@@ -272,9 +296,6 @@ class UAV:
     def state_callback(self, state):
         self.state = state
 
-    # def setpoint_callback(self, setpoint):
-    #     self.setpoint = setpoint
-
     def laser_position_sender(self, data):
         laser_pos_pub = rospy.Publisher('mavros/mocap/pose', PoseStamped, queue_size=1)
         while(not self.stopped):
@@ -284,27 +305,25 @@ class UAV:
             laser_pos_pub.publish(data)
             self.setpoint_rate.sleep()
 
-    def setpoint_sender(self):
+    def raw_setpoint_sender(self):
         # setpoint_raw
         setpoint_publisher = rospy.Publisher('mavros/setpoint_raw/local', PositionTarget, queue_size=1)
         while(not self.stopped):
-            self.setpoint.header.stamp = rospy.Time.now()
-            self.setpoint.header.seq=self.setPointsCount
+            self.setpoint_raw.header.stamp = rospy.Time.now()
+            self.setpoint_raw.header.seq=self.setPointsCount
             self.setPointsCount = self.setPointsCount + 1
-            setpoint_publisher.publish(self.setpoint)
+            setpoint_publisher.publish(self.setpoint_raw)
             self.setpoint_rate.sleep()
 
-        # setpoint position only
-        # setpoint_publisher = rospy.Publisher('mavros/setpoint_position/local', PoseStamped, queue_size=1)
-        # while(not self.stopped):
-        #     self.setpoint_position.header.stamp = rospy.Time.now()
-        #     self.setpoint_position.header.stamp = self.laser_position_count
-        #     self.setpoint_position.pose.orientation = self.quaternion
-        #     self.setpoint_position.pose.position = self.setpoint.position
-        #     setpoint_publisher.publish(self.setpoint)
-        #     self.laser_position_count += 1
-        #     self.setpoint_rate.sleep
-
+    def local_setpoint_sender(self):
+        # setpoint_raw
+        setpoint_publisher = rospy.Publisher('mavros/setpoint_position/local', PoseStamped, queue_size=1)
+        while(not self.stopped):
+            self.setpoint_local.header.stamp = rospy.Time.now()
+            self.setpoint_local.header.seq=self.setPointsCount
+            self.setPointsCount = self.setPointsCount + 1
+            setpoint_publisher.publish(self.setpoint_local)
+            self.setpoint_rate.sleep()
 
     def getPosition(self):
         return [self.local_position, self.local_yaw]
@@ -316,7 +335,7 @@ class UAV:
         self.set_mode_client(custom_mode = "OFFBOARD")
 
     def die(self):
-        self.setpoint_land()
+        self.setpoint_raw_land()
         time.sleep(3)
         self.stopped = True
         time.sleep(1)
@@ -331,13 +350,13 @@ class UAV:
 
 class taskController:
     """ The task controller handle a list with every tasks """
-    def __init__(self, rate=10, setpoint_rate=10, test=False, callback_current_task=None):
+    def __init__(self, rate=10, setpoint_rate=10, test=False, callback_current_task=None, raw_setpoint=False):
         self.callback_current_task = callback_current_task
         self.tasks = list()
         self.count = 0
         self.current = 0
         self.setRate(rate)
-        self.UAV = UAV(setpoint_rate=setpoint_rate)
+        self.UAV = UAV(setpoint_rate=setpoint_rate, raw_setpoint=raw_setpoint)
 
     def __str__(self):
         controller_string = "Task Controller :\n"
