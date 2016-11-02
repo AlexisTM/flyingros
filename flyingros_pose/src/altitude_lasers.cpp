@@ -67,7 +67,7 @@ void callback_laser_raw(const flyingros_msgs::Distance::ConstPtr& msg){
 
   // publish
   geometry_msgs::Pose UAVPose;
-  tf::quaternionTFToMsg(q_correct, UAVPose.orientation);
+  tf::quaternionTFToMsg(q_imu, UAVPose.orientation);
   UAVPose.position.x = 0;
   UAVPose.position.y = 0;
   UAVPose.position.z = altitude;
