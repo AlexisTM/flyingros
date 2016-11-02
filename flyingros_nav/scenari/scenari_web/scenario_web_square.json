@@ -1,0 +1,13 @@
+{"header":{"stamp":{"secs":0,"nsecs":0},"frame_id":"","seq":0},"tasks":[{"name":"Init UAV","yaw":0,"position":{"y":0,"x":0,"z":0},"data":[5],"ID":0,"mission_type":9},
+{"name":"Arm","yaw":0,"position":{"y":0,"x":0,"z":0},"data":[5],"ID":0,"mission_type":13},
+{"name":"Takeoff","yaw":0,"position":{"y":0,"x":0,"z":0},"data":[0.5],"ID":0,"mission_type":122},
+{"name":"Go to","yaw":0,"position":{"y":2,"x":2,"z":2.5},"data":[0.2,0.2,1],"ID":0,"mission_type":124},
+{"name":"Wait a bit","yaw":0,"position":{"y":0,"x":0,"z":0},"data":[3],"ID":0,"mission_type":121},
+{"name":"Go to","yaw":0,"position":{"y":2,"x":4,"z":2.5},"data":[0.2,0.2,1],"ID":0,"mission_type":124},
+{"name":"Wait a bit","yaw":0,"position":{"y":0,"x":0,"z":0},"data":[3],"ID":0,"mission_type":121},
+{"name":"Go to","yaw":0,"position":{"y":4,"x":4,"z":2.5},"data":[0.2,0.2,1],"ID":0,"mission_type":124},
+{"name":"Wait a bit","yaw":0,"position":{"y":0,"x":0,"z":0},"data":[3],"ID":0,"mission_type":121},
+{"name":"Go to","yaw":0,"position":{"y":2,"x":2,"z":2.5},"data":[0.2,0.2,1],"ID":0,"mission_type":124},
+{"name":"Wait a bit","yaw":0,"position":{"y":0,"x":0,"z":0},"data":[3],"ID":0,"mission_type":121},
+{"name":"Land","yaw":0,"position":{"y":0,"x":0,"z":0},"data":[0.2],"ID":0,"mission_type":123},
+{"name":"Disarm","yaw":0,"position":{"y":0,"x":0,"z":0},"data":[3],"ID":0,"mission_type":11}]}
