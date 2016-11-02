@@ -77,10 +77,15 @@ In depth status
   - [ ] Console_task : URWID interface for the Task Node
     individual tasks working well
 * flyingros_pose :  *To be reviewed & tested*
-  - [ ] laser_altitude
+  - [x] laser_altitude *To be tested*
   - [ ] rtk
   - [ ] rtk_laser_fused
   - [x] six_lasers *To be tested*
 * flyingros_web :  *To be reviewed & tested*
   - [x] web_export
   - [x] website
+
+Do not forget tasks
+-----------
+
+* High level launch file, one for all.

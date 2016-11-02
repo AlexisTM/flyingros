@@ -1,7 +1,7 @@
 /*
- * laser_node.cpp
+ * altitude_lasers.cpp
  *
- * Functions used by the position algorithm based on laser projections.
+ * Altitude computation based on fixed lasers.
  *
  * This file is a part of FlyingROS
  *
@@ -41,44 +41,36 @@ using namespace flyingros_pose;
 Laser lasers[6];
 tf::Quaternion q_imu(0,0,0,1);
 ros::Publisher position_publisher;
+int count(0);
 
 void callback_laser_raw(const flyingros_msgs::Distance::ConstPtr& msg){
   double roll, pitch, yaw;
 
   // Correct offset
   double measures[6];
-  for(int i = 0; i < 6; i++){
+  for(int i = 0; i < count; i++){
       // measures are in cm and have an offset
       measures[i] = double(msg->lasers[i])/100.0 - lasers[i].offset;
   }
 
-  // Get pitch yaw roll from the PixHawk
-  tf::Matrix3x3 m(q_imu);
-  m.getRPY(roll, pitch, yaw);
-  tf::Quaternion q_zero = tf::createQuaternionFromRPY(roll, pitch, 0);
-
-  // Get yaw
-  tf::Vector3 targetx1 = lasers[0].project(measures[0], q_zero);
-  tf::Vector3 targetx2 = lasers[1].project(measures[1], q_zero);
-  double yaw_x = getYawFromTargets(targetx2, targetx1,0,1);
-
-  tf::Vector3 targety1 = lasers[2].project(measures[2], q_zero);
-  tf::Vector3 targety2 = lasers[3].project(measures[3], q_zero);
-  double yaw_y = getYawFromTargets(targety2, targety1,1,0);
-
   // Get position
-  tf::Quaternion q_correct = tf::createQuaternionFromRPY(roll, pitch, yaw_x);
   tf::Vector3 targets[6];
-  for(int i = 0; i < 6; i ++){
-    targets[i] = lasers[i].project(measures[i], q_zero);
+  for(int i = 0; i < count; i ++){
+    targets[i] = lasers[i].project(measures[i], q_imu);
   }
+
+  double altitude = 0;
+  for(int i = 0; i < count; i ++){
+    altitude += targets[i].z();
+  }
+  altitude = altitude/double(count);
 
   // publish
   geometry_msgs::Pose UAVPose;
   tf::quaternionTFToMsg(q_correct, UAVPose.orientation);
-  UAVPose.position.x = (targets[0].x() + targets[1].x())/2.0;
-  UAVPose.position.y = (targets[2].y() + targets[3].y())/2.0;
-  UAVPose.position.z = (targets[4].z() + targets[5].z())/2.0;
+  UAVPose.position.x = 0;
+  UAVPose.position.y = 0;
+  UAVPose.position.z = altitude;
   position_publisher.publish(UAVPose);
 }
 
@@ -89,9 +81,9 @@ void callback_imu(const sensor_msgs::Imu::ConstPtr& msg){
 void reconfigure_lasers(){
     XmlRpc::XmlRpcValue offsetsList, positionsList, orientationsList;
     XmlRpc::XmlRpcValue p, v;
-    int count;
+
     ros::param::get("/flyingros/lasers/count", count);
-    ROS_ASSERT(count == 6);
+    ROS_ASSERT(count >= 1);
     ros::param::get("/flyingros/lasers/offsets", offsetsList);
     ROS_ASSERT(offsetsList.getType() == XmlRpc::XmlRpcValue::TypeArray);
     ros::param::get("/flyingros/lasers/positions", positionsList);
@@ -102,19 +94,11 @@ void reconfigure_lasers(){
     tf::Vector3 postition, orientation;
     double offset;
     for(int i = 0; i < count; i++){
-        //cout << "Laser 1 : position - " <<  positionsList[i] << "  orientation - " << orientationsList[i] << "  offset - " << offsetsList[i] << endl;
         offset = offsetsList[i];
         p = positionsList[i];
         v = orientationsList[i];
         ROS_ASSERT(p.getType() == XmlRpc::XmlRpcValue::TypeArray);
         ROS_ASSERT(v.getType() == XmlRpc::XmlRpcValue::TypeArray);
-
-        //ROS_ASSERT(p[0].getType() == XmlRpc::XmlRpcValue::TypeDouble);
-        //ROS_ASSERT(p[1].getType() == XmlRpc::XmlRpcValue::TypeDouble);
-        //ROS_ASSERT(p[2].getType() == XmlRpc::XmlRpcValue::TypeDouble);
-        //ROS_ASSERT(v[0].getType() == XmlRpc::XmlRpcValue::TypeDouble);
-        //ROS_ASSERT(v[1].getType() == XmlRpc::XmlRpcValue::TypeDouble);
-        //ROS_ASSERT(v[2].getType() == XmlRpc::XmlRpcValue::TypeDouble);
         postition.setX(double(p[0]));
         postition.setY(double(p[1]));
         postition.setZ(double(p[2]));
@@ -142,6 +126,6 @@ int main(int argc, char **argv)
     ros::Subscriber imu_sub = nh.subscribe(imu_topic, 1, callback_imu);
     position_publisher = nh.advertise<geometry_msgs::Pose>(position_pub_topic, 1);
 
-    //ros::spin();
+    ros::spin();
     return 0;
 }
