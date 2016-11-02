@@ -26,9 +26,11 @@ modal.options = {
 
 function syntaxHighlight(json) {
   if (typeof json != 'string') {
-   json = JSON.stringify(json, undefined, 2);
+   json = JSON.stringify(json);
  }
- json = json.replace(/&/g, '&amp;').replace(/\}\,\n[ ]+\{/g, '\}\, \{').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>').replace(/\ /g, '&nbsp;&nbsp;');;
+ testVar = json;
+ json = json.replace(/},{/g,'},<br>{')
+ //json = json.replace(/&/g, '&amp;').replace(/\}\,\n[ ]+\{/g, '\}\, \{').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>').replace(/\ /g, '&nbsp;&nbsp;');;
  return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
   var cls = 'number';
   var br = '';
@@ -114,7 +116,18 @@ function dom_init() {
     var textareajson = this.querySelector('.exportData');
     var downloadbutton = this.querySelector('.downloadJSON');
     cmd.mission.get.callService({}, function(result){
-      textareajson.innerHTML = syntaxHighlight(JSON.stringify(result.mission, null, 2));
+      // Simplifying useless data for more visibility
+      for (var i = result.mission.tasks.length - 1; i >= 0; i--) {
+        result.mission.tasks[i].ID = 0;
+        result.mission.tasks[i].position.x = Number(result.mission.tasks[i].position.x.toFixed(3));
+        result.mission.tasks[i].position.y = Number(result.mission.tasks[i].position.y.toFixed(3));
+        result.mission.tasks[i].position.z = Number(result.mission.tasks[i].position.z.toFixed(3));
+        for (var j = result.mission.tasks[i].data.length - 1; j >= 0; j--) {
+          result.mission.tasks[i].data[j] = Number(result.mission.tasks[i].data[j].toFixed(3));
+        }
+      }
+
+      textareajson.innerHTML = syntaxHighlight(result.mission);
       downloadbutton.href = 'data:application/octet-stream,' + encodeURIComponent(JSON.stringify(result.mission));
     });
   });
@@ -124,11 +137,16 @@ function dom_init() {
   }).attach().on('onShow', function(){
     this.querySelector('textarea').innerHTML = "";
   }).on('onConfirm', function(){
+    // Reset the mission
+    // When success : Add mission
+    // When success : Get mission (with correct IDs)
     var json_mission = JSON.parse(this.querySelector('textarea').value);
-
     cmd.mission.reset(function(){
       cmd.mission.add.callService({mission: json_mission} ,function(result){
-        show_mission_json(json_mission);
+        cmd.mission.get.callService({}, function(result_mission){
+          show_mission_json(result_mission.mission);
+          dynamicData.currentTask = {}
+        });
       });
     });
   });

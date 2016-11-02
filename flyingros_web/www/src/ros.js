@@ -7,15 +7,20 @@ function ros_init(){
     url: 'ws://' + config.ros.ip + ':9090'
   });
 
+  changeRosStatus('connection');
+  
   ros.on('connection', function() {
+    changeRosStatus('connected');
     console.info('Connected to the ROS server.');
   });
 
   ros.on('error', function(error) {
+    changeRosStatus('error');
     console.error('Error connecting to websocket server: ', error);
   });
 
   ros.on('close', function() {
+    changeRosStatus('close');
     console.warn("Connection to ROS server closed.");
   });
 
@@ -109,14 +114,14 @@ function subscribe_topics(){
     dynamicData.currentTask = task
   });
 
-
   cmd.report.subscribe(function(message) {
-    console.log(message);
+    moveUAV(message.local.position.x, message.local.position.y, message.local.position.z, message.local.orientation.yaw);
+    moveSetpoint(message.setpoint.position.x, message.setpoint.position.y, message.setpoint.position.z, message.setpoint.orientation.yaw);
   });
 
-  cmd.odometry.subscribe(function(message) {
-    console.log(message);
-  });
+  //cmd.odometry.subscribe(function(message) {
+    //console.log(message);
+  //});
 
   cmd.mission.reset = function(callback){
     cmd.mission.remove.callService({}, function(a){

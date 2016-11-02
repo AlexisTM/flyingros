@@ -22,12 +22,6 @@ var p = {
   o: {}
 };
 
-
-// limit values into a rectangle
-function limitClick(data, from, to){
-  return (data < from) ? from : (data > to) ? to : data;
-}
-
 function paper_init(){
   // Get a reference to the canvas object
   p.dom = document.getElementById('realtime');
@@ -114,18 +108,44 @@ function paper_init(){
   p.o.UAV = new paper.Raster('static/drone.png', p.o.origin.add(150,150));
   p.o.setpoint = new paper.Raster('static/setpoint.png', p.o.origin.add(150,150));
 
+  p.o.altitude = new paper.PointText(p.o.origin.add(600,680));
+  p.o.altitude.justification = 'right';
+  p.o.altitude.fillColor = 'black';
+  p.o.altitude.content = 'actual altitude : ' + 'm';
+  p.o.altitude.fontFamily = 'Courier New';
+  p.o.altitude.fontWeight = 'bold';
+  p.o.altitude.fontSize = 25;
+
+  p.o.altitude_setpoint = new paper.PointText(p.o.origin.add(600,720));
+  p.o.altitude_setpoint.justification = 'right';
+  p.o.altitude_setpoint.fillColor = 'black';
+  p.o.altitude_setpoint.content = 'altitude setpoint : ' + 'm';
+  p.o.altitude_setpoint.fontFamily = 'Courier New';
+  p.o.altitude_setpoint.fontWeight = 'bold';
+  p.o.altitude_setpoint.fontSize = 25;
+
+  p.o.ros_status = new paper.Path.Circle(p.o.origin.add(700,50), 25);
+  p.o.ros_status.fillColor = 'red';
+
   //p.o.clickable.onMouseMove = function(e){ console.log(e) }
 
   p.o.tool = new paper.Tool();
 
   p.o.tool.onMouseDown = function(e) {
     fromx = p.o.origin.x + config.ros.safetyZone.from.x;
-    tox = p.o.origin.y + config.ros.safetyZone.to.x;
-    fromy = p.o.origin.x + config.ros.safetyZone.from.y;
+    tox = p.o.origin.x + config.ros.safetyZone.to.x;
+    fromy = p.o.origin.y + config.ros.safetyZone.from.y;
     toy = p.o.origin.y + config.ros.safetyZone.to.y;
 
-    xp = limitClick(e.event.clientX, fromx, tox);
-    yp = limitClick(e.event.clientY, fromy, toy);
+    console.log(e.tool._point, fromx, tox, fromy, toy)
+
+    // limit values into a rectangle
+    function limitClick(data, from, to){
+      return (data < from) ? from : (data > to) ? to : data;
+    }
+
+    xp = limitClick(e.tool._point.x, fromx, tox);
+    yp = limitClick(e.tool._point.y, fromy, toy);
 
     cache.target.task.position.x = (xp-p.o.origin.x)/100;
     cache.target.task.position.y = (yp-p.o.origin.y)/100;
@@ -134,11 +154,30 @@ function paper_init(){
     cache.target.task.data = [0.2,0.2,1];
 
     taskHelper.sendNew(cache.target.task);
-  }
+  };
+  
   paper.view.draw();
 }
 
 function moveUAV(x,y,z,yaw){
   p.o.UAV.position = new paper.Point(250,250);
   p.o.UAV.rotation = yaw;
+  p.o.altitude.content = 'actual altitude : ' + z + 'm';
 }
+
+function moveSetpoint(x,y,z,yaw){
+  p.o.setpoint.position = new paper.Point(250,250);
+  p.o.setpoint.rotation = yaw;
+  p.o.altitude_setpoint.content = 'altitude setpoint : ' + z + 'm';
+}
+
+function changeRosStatus(status){
+  if(status == "connected"){
+    p.o.ros_status.fillColor = 'green';
+  } else if (status == "connection"){
+    p.o.ros_status.fillColor = 'orange';
+  } else {
+    p.o.ros_status.fillColor = 'red';
+  }
+}
+
