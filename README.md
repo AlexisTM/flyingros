@@ -76,11 +76,11 @@ In depth status
   - [ ] Manual_node : bypass the controller **Work in progress**
   - [ ] Console_task : URWID interface for the Task Node
     individual tasks working well
-* flyingros_nav :  *To be reviewed & tested*
+* flyingros_pose :  *To be reviewed & tested*
   - [ ] laser_altitude
   - [ ] rtk
   - [ ] rtk_laser_fused
-  - [ ] sex_lasers
+  - [x] six_lasers *To be tested*
 * flyingros_web :  *To be reviewed & tested*
   - [ ] web_export
-  - [ ] website **WIP**
+  - [x] website
