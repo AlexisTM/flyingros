@@ -82,5 +82,5 @@ In depth status
   - [ ] rtk_laser_fused
   - [x] six_lasers *To be tested*
 * flyingros_web :  *To be reviewed & tested*
-  - [ ] web_export
+  - [x] web_export
   - [x] website

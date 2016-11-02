@@ -24,7 +24,6 @@ project financed by the MIT Seed Fund
 
 Originaly published by Vladimir Ermakov (c) 2015 under GNU GPLv3
 Copyright (c) Alexis Paques 2016
-Copyright (c) Nabil Nehri 2016
 """
 
 import rospy
