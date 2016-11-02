@@ -82,7 +82,7 @@ void reconfigure_lasers(){
     XmlRpc::XmlRpcValue offsetsList, positionsList, orientationsList;
     XmlRpc::XmlRpcValue p, v;
 
-    ros::param::get("/flyingros/lasers/laser_count", laser_count);
+    ros::param::get("/flyingros/lasers/count", laser_count);
     ROS_ASSERT(laser_count >= 1);
     ros::param::get("/flyingros/lasers/offsets", offsetsList);
     ROS_ASSERT(offsetsList.getType() == XmlRpc::XmlRpcValue::TypeArray);

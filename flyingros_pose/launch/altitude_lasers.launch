@@ -7,7 +7,7 @@
 	<node pkg="rosserial_python" type="message_info_service.py" name="rosserial_message_info" />
 	-->
   <!-- laser node launch -->
-  <node name="flyingros" pkg="flyingros_pose" type="laser_node" output="screen" >
+  <node name="flyingros" pkg="flyingros_pose" type="altitude_lasers" output="screen" >
     <rosparam file="$(find flyingros_pose)/cfg/laser/2lasers.yaml"/>
   </node>
 </launch>

@@ -141,7 +141,7 @@ def subscribers():
     setpoint_position_sub = rospy.Subscriber('mavros/setpoint_position/local', PoseStamped, setpoint_callback)
     mocap_sub             = rospy.Subscriber('mavros/mocap/pose', PoseStamped, mocap_callback)
     local_position_sub    = rospy.Subscriber('mavros/local_position/pose', PoseStamped, local_callback)
-    raw_lasers            = rospy.Subscriber('lasers/raw', Distance, lasers_raw_callback)
+    raw_lasers            = rospy.Subscriber('flyingros/lasers/raw', Distance, lasers_raw_callback)
     state_sub             = rospy.Subscriber('mavros/state', State, state_callback)
     battery_sub           = rospy.Subscriber('mavros/battery', BatteryStatus, battery_callback)
     velocity_sub          = rospy.Subscriber('mavros/local_position/velocity', TwistStamped, velocity_callback)
