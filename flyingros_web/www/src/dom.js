@@ -8,43 +8,43 @@ modal.options = {
    // item : '<tr><td class="index"></td><td class="type"></td><td class="name"></td><td class="target"></td></tr>',
  };
 
-function SelectText(el, win) {
-    win = win || window;
-    var doc = win.document, sel, range;
-    if (win.getSelection && doc.createRange) {
-        sel = win.getSelection();
-        range = doc.createRange();
-        range.selectNodeContents(el);
-        sel.removeAllRanges();
-        sel.addRange(range);
-    } else if (doc.body.createTextRange) {
-        range = doc.body.createTextRange();
-        range.moveToElementText(el);
-        range.select();
-    }
+ function SelectText(el, win) {
+  win = win || window;
+  var doc = win.document, sel, range;
+  if (win.getSelection && doc.createRange) {
+    sel = win.getSelection();
+    range = doc.createRange();
+    range.selectNodeContents(el);
+    sel.removeAllRanges();
+    sel.addRange(range);
+  } else if (doc.body.createTextRange) {
+    range = doc.body.createTextRange();
+    range.moveToElementText(el);
+    range.select();
+  }
 }
 
 function syntaxHighlight(json) {
-    if (typeof json != 'string') {
-         json = JSON.stringify(json, undefined, 2);
+  if (typeof json != 'string') {
+   json = JSON.stringify(json, undefined, 2);
+ }
+ json = json.replace(/&/g, '&amp;').replace(/\}\,\n[ ]+\{/g, '\}\, \{').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>').replace(/\ /g, '&nbsp;&nbsp;');;
+ return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+  var cls = 'number';
+  var br = '';
+  if (/^"/.test(match)) {
+    if (/:$/.test(match)) {
+      cls = 'key';
+    } else {
+      cls = 'string';
     }
-    json = json.replace(/&/g, '&amp;').replace(/\}\,\n[ ]\{/g, '\}\,\{').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>').replace(/\ /g, '&nbsp;&nbsp;');;
-    return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
-        var cls = 'number';
-        var br = '';
-        if (/^"/.test(match)) {
-            if (/:$/.test(match)) {
-                cls = 'key';
-            } else {
-                cls = 'string';
-            }
-        } else if (/true|false/.test(match)) {
-            cls = 'boolean';
-        } else if (/null/.test(match)) {
-            cls = 'null';
-        }
-        return '<span class="' + cls + '">' + match + '</span>';
-    });
+  } else if (/true|false/.test(match)) {
+    cls = 'boolean';
+  } else if (/null/.test(match)) {
+    cls = 'null';
+  }
+  return '<span class="' + cls + '">' + match + '</span>';
+});
 }
 
 function show_mission_json(mission_json){
@@ -112,8 +112,10 @@ function dom_init() {
     btnsOpen : [document.getElementById('exportMission')]
   }).attach().on('onShow', function(){
     var textareajson = this.querySelector('.exportData');
+    var downloadbutton = this.querySelector('.downloadJSON');
     cmd.mission.get.callService({}, function(result){
       textareajson.innerHTML = syntaxHighlight(JSON.stringify(result.mission, null, 2));
+      downloadbutton.href = 'data:application/octet-stream,' + encodeURIComponent(JSON.stringify(result.mission));
     });
   });
 
@@ -129,8 +131,23 @@ function dom_init() {
         show_mission_json(json_mission);
       });
     });
-  
-  })
+  });
+
+
+  function handleFileSelect(evt) {
+    evt.stopPropagation();
+    evt.preventDefault();
+    var files = evt.dataTransfer.files; // FileList object.
+    reader = new FileReader();
+    reader.onload = function(e){
+      document.querySelector('textarea.dropfile').innerHTML = e.target.result;
+    }
+    for (var i = 0, f; f = files[i]; i++) {
+      reader.readAsText(f);
+    }
+  }
+
+  document.querySelector('textarea.dropfile').addEventListener('drop', handleFileSelect, false);
 
   modal.removeTask = new Modalise('removeModal', {
   }).attach().on('onConfirm', function(event){
@@ -158,6 +175,11 @@ function dom_init() {
   document.getElementById("clickTbody").addEventListener('click', function(e){
     task = getClicked(event);
     modal.removeTask.showData(task)
+  });
+
+
+  document.querySelector('input.alti').addEventListener('change', function(e){
+    document.querySelector('label.alti').innerHTML = 'Altitude ' + e.srcElement.value + 'm';
   });
 }
 

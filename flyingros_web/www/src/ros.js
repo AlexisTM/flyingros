@@ -93,7 +93,6 @@ function ros_init(){
 
 function subscribe_topics(){
   cmd.task.current.subscribe(function(task) {
-    console.log(task)
     // Do it only if we change the task
     if(dynamicData.currentTask.ID == task.ID) return;
     // First remove classes of the old task

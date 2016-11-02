@@ -7,6 +7,8 @@ var uglifycss = require('gulp-uglifycss');
 var gulpJade = require('gulp-jade');
 var concat = require('gulp-concat');
 var pump = require('pump');
+var livereload = require('gulp-livereload');
+var serve = require('gulp-serve');
 
 var paths = {
   jsconcat: ['src/config.js',
@@ -35,27 +37,34 @@ gulp.task('images', bundleStatic);
 
 gulp.task('default', ['js','jslib','css','jade','images','watch']);
 
+gulp.task('serve', serve('dist'));
+
+gulp.task('sw', ['serve', 'watch']);
+
 function watch(cb){
   gulp.watch('src/*.js', ['js']);
   gulp.watch('css/*.css', ['css']);
   gulp.watch('index.jade', ['jade']);
+  livereload.listen();
 }
 
 function bundleCSS(cb){
-  pump([gulp.src(['css/custom.css', 'css/font-awesome.min.css', 'css/modalise.min.css']),
+  pump([gulp.src(['css/custom.css', 'css/font-awesome.min.css', 'css/modalise.min.css', 'css/font-awesome-animation.min.css']),
         concat('app.css'),
         gulp.dest('dist'),
         uglifycss({
           "uglyComments": true
         }),
         concat('app.min.css'),
-        gulp.dest('dist')], cb);
+        gulp.dest('dist'),
+        livereload()], cb);
 }
 
 function bundleHTML(cb){
   pump([gulp.src('index.jade'),
         gulpJade({ jade: jade }),
-        gulp.dest('dist')], cb);
+        gulp.dest('dist'),
+        livereload()], cb);
 }
 
 
@@ -65,7 +74,8 @@ function bundleJS(cb) {
         gulp.dest('dist'),
         concat('app.min.js'),
         uglify(),
-        gulp.dest('dist')
+        gulp.dest('dist'),
+        livereload()
        ], cb);
 }
 
@@ -73,7 +83,8 @@ function bundleJSLIB(cb){
   pump([gulp.src(paths.jslib),
         concat('lib.min.js'),
         uglify(),
-        gulp.dest('dist')], cb)
+        gulp.dest('dist'),
+        livereload()], cb)
 }
 
 function bundleStatic(cb){

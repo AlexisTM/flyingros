@@ -3,7 +3,7 @@
 var form_validator_init = function(){
    var _m = modal.addTask.modal;
   _m.querySelector('.type').addEventListener('change', validator);
-};
+}; 
 
 var validator = function(e){
     var mission_type = taskHelper.getMissionFromSelect(e.srcElement);

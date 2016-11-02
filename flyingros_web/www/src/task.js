@@ -35,7 +35,7 @@ var taskHelper = new function(){
     var specific = self.idSpecificData(task);
     return {
       type : task.mission_type ? specific.fa : specific.fa,
-      name : task.name || "NoName",
+      name : specific.name,
       target : task.position? "( " + task.position.x + ", " + task.position.y + ", " + task.position.z +")" : "NoTarget",
       index : i,
       ID : task.ID || "",
@@ -53,42 +53,56 @@ var taskHelper = new function(){
   },
 
   self.idSpecificData = function(task){
-    var data = { fa : '', bonus : ''}
+    var data = { fa : '', bonus : '', name: ''};
 
     switch(task.mission_type){
       case self.type.NULL :
       data.fa =  '<i class="fa fa-question-circle" aria-hidden="true"></i>';
+      data.name = task.name ? task.name : "Null";
       break;
       case self.type.INIT_UAV :
       data.fa = '<i class="fa fa-list" aria-hidden="true"></i>';
       data.bonus = 'sleep : ' + Number(task.data[0]).toFixed(2) + 's';
+      data.name = task.name ? task.name : "Init_uav";
       break;
       case self.type.ARM :
-      data.fa = '<i class="fa fa-repeat" aria-hidden="true"></i><i class="fa fa-undo" aria-hidden="true"></i>';
+      data.fa = '<i class="fa fa-repeat faa-spin animated" aria-hidden="true"></i><i class="fa fa-undo faa-spin-reverse animated" aria-hidden="true"></i>';
       data.bonus = 'timeout : ' + Number(task.data[0]).toFixed(2) + 's';
+      data.name = task.name ? task.name : "Arm";
       break;
       case self.type.DISARM :
       data.fa = '<i class="fa fa-stop" aria-hidden="true"></i>';
       data.bonus = 'timeout : ' + Number(task.data[0]).toFixed(2) + 's';
+      data.name = task.name ? task.name : "Disarm";
       break;
       case self.type.LOITER :
       data.fa = '<i class="fa fa-pause" aria-hidden="true"></i>';
       data.bonus = 'sleep : ' + Number(task.data[0]).toFixed(2) + 's';
+      data.name = task.name ? task.name : "Loiter";
       break;
       case self.type.TAKEOFF :
       data.fa = '<i class="fa fa-play" aria-hidden="true"></i>';
       data.bonus = 'precision Z : ' + Number(task.data[0]).toFixed(2) + 'm';
+      data.name = task.name ? task.name : "Takeoff";
+      break;
+      case self.type.LAND :
+      data.fa = '<i class="fa fa-minus-circle" aria-hidden="true"></i>';
+      data.bonus = 'precision Z : ' + Number(task.data[0]).toFixed(2) + 'm';
+      data.name = task.name ? task.name : "Land";
       break;
       case self.type.TARGET :
       data.fa = '<i class="fa fa-bullseye" aria-hidden="true"></i>';
       data.bonus = 'precision(' + Number(task.data[0]).toFixed(2) + ', ' + Number(task.data[0]).toFixed(2) + ', ' + Number(task.data[1]).toFixed(2) + ', ' + Number(task.data[2]).toFixed(2) + ')';
+      data.name = task.name ? task.name : "Target";
       break;
       case self.type.GRAB :
       data.fa = '<i class="fa fa-hand-rock-o" aria-hidden="true"></i>';
       data.bonus = Number(task.data[0]).toFixed(2) ? 'ON' : 'OFF';
+      data.name = task.name ? task.name : "Grab";
       break;
       case self.type.TEST :
       data.fa = '<i class="fa fa-bomb" aria-hidden="true"></i>';
+      data.name = task.name ? task.name : "Test";
       break;
     }
     return data;
