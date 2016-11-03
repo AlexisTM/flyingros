@@ -162,7 +162,7 @@ def rostask_to_pythontask(ros_task):
     #    pass
 
 class UAV:
-    def __init__(self, setpoint_rate=10, raw_setpoint=False):
+    def __init__(self, setpoint_rate=10, raw_setpoint=False, test=False):
         # Configurations :
         self.type_mask_Fly = 2552 # 2552 - 0000 1001 1111 1000, position setpoint + Pxyz Yaw
         self.type_mask_Takeoff = 6599 # 6599 - 0001 1001 1100 0111, Takeoff setpoint + Vxyz Yaw
@@ -208,9 +208,9 @@ class UAV:
         self.setpoint_rate = rospy.Rate(setpoint_rate)
         self.setPointsCount = 0
         self.setpoint_init()
-        if raw_setpoint
+        if raw_setpoint :
           self.raw_setpoint_thread = Thread(target=self.raw_setpoint_sender).start()
-        else 
+        else : 
           self.local_setpoint_thread = Thread(target=self.local_setpoint_sender).start()
         # Senders threads
         self.laser_position_count = 0
@@ -221,49 +221,49 @@ class UAV:
         self.setpoint_raw.position = position
         self.setpoint_raw.yaw = yaw
 
-        self.setpoint_local.position = position
+        self.setpoint_local.pose.position = position
         q = quaternion_from_euler(0,0, yaw,axes="sxyz")
-        self.setpoint_local.orientation.x = q[0]
-        self.setpoint_local.orientation.y = q[1]
-        self.setpoint_local.orientation.z = q[2]
-        self.setpoint_local.orientation.w = q[3]
+        self.setpoint_local.pose.orientation.x = q[0]
+        self.setpoint_local.pose.orientation.y = q[1]
+        self.setpoint_local.pose.orientation.z = q[2]
+        self.setpoint_local.pose.orientation.w = q[3]
 
     def setpoint_takeoff_here_position(self, altitude):
         self.setpoint_raw.type_mask = self.type_mask_Fly
         self.setpoint_raw.velocity = Vector3()
-        self.setpoint_raw.position = self.position
+        self.setpoint_raw.position = self.local_position
         self.setpoint_raw.position.z = altitude
         self.setpoint_raw.yaw = self.local_yaw
 
-        self.setpoint_local.position = self.position
-        self.setpoint_local.position.z = altitude
-        self.setpoint_local.orientation = self.quaternion
+        self.setpoint_local.pose.position = self.local_position
+        self.setpoint_local.pose.position.z = altitude
+        self.setpoint_local.pose.orientation = self.quaternion
 
     def setpoint_land_here_position(self):
         self.setpoint_raw.type_mask = self.type_mask_Fly
         self.setpoint_raw.velocity = Vector3()
-        self.setpoint_raw.position = self.position
+        self.setpoint_raw.position = self.local_position
         self.setpoint_raw.position.z = 0.3
         self.setpoint_raw.yaw = self.local_yaw
 
-        self.setpoint_local.position = self.position
-        self.setpoint_local.orientation = self.quaternion
+        self.setpoint_local.pose.position = self.local_position
+        self.setpoint_local.pose.orientation = self.quaternion
 
     def setpoint_takeoff(self):
         self.setpoint_raw.type_mask = self.type_mask_Takeoff
         self.setpoint_raw.velocity = Vector3(0.0,self.takeoff_speed,0.0)
 
-        self.setpoint_local.position = self.position
-        self.setpoint_local.position.z = self.takeoff_altitude+0.5
-        self.setpoint_local.orientation = self.quaternion
+        self.setpoint_local.pose.position = self.local_position
+        self.setpoint_local.pose.position.z = self.takeoff_altitude+0.5
+        self.setpoint_local.pose.orientation = self.quaternion
 
     def setpoint_land(self):
         self.setpoint_raw.type_mask = self.type_mask_Land
         self.setpoint_raw.velocity = Vector3(0.0,self.landing_speed,0.0)
 
-        self.setpoint_local.position = self.position
-        self.setpoint_local.position.z = self.landing_altitude
-        self.setpoint_local.orientation = self.quaternion
+        self.setpoint_local.pose.position = self.local_position
+        self.setpoint_local.pose.position.z = self.landing_altitude
+        self.setpoint_local.pose.orientation = self.quaternion
 
 
     def setpoint_loiter(self):
@@ -284,6 +284,7 @@ class UAV:
         self.setpoint_raw.acceleration_or_force = Vector3()
         self.setpoint_raw.yaw_rate = 0.0
         self.setpoint_local = PoseStamped()
+        self.setpoint_local.pose.orientation.w = 1
         self.laser_position_count = 0
 
     def local_position_callback(self, local):
@@ -335,14 +336,11 @@ class UAV:
         self.set_mode_client(custom_mode = "OFFBOARD")
 
     def die(self):
-        self.setpoint_raw_land()
+        self.setpoint_land()
         time.sleep(3)
         self.stopped = True
         time.sleep(1)
         self.arm(False)
-
-    def __del__(self):
-        self.die()
 
     def __exit__(self):
         self.die()
@@ -356,7 +354,7 @@ class taskController:
         self.count = 0
         self.current = 0
         self.setRate(rate)
-        self.UAV = UAV(setpoint_rate=setpoint_rate, raw_setpoint=raw_setpoint)
+        self.UAV = UAV(setpoint_rate=setpoint_rate, raw_setpoint=raw_setpoint, test=test)
 
     def __str__(self):
         controller_string = "Task Controller :\n"
@@ -431,9 +429,12 @@ class taskController:
         return self.UAV
 
     def spinOnce(self):
+        print self.current
+        print self.count
         if self.current < self.count :
             task = self.tasks[self.current]
             result = task.run(self.UAV)
+            print "running"
             if result: # returns True if done
                 self.notifyCurrentTask()
                 self.current = self.current + 1
@@ -502,10 +503,6 @@ class target(task, object):
 
         Better solution for more complex surfaces :
         http://stackoverflow.com/questions/2752725/finding-whether-a-point-lies-inside-a-rectangle-or-not/2752753#2752753 """
-        rospy.loginfo("X %s, prec : %s", UAV.ition.x - self.target.x, self.precision.x)
-        rospy.loginfo("Y %s, prec : %s", UAV.local_position.y - self.target.y, self.precision.y)
-        rospy.loginfo("Z %s, prec : %s", UAV.local_position.z - self.target.z, self.precision.z)
-        rospy.loginfo("yaw: %s", UAV.local_yaw)
         if(fabs(UAV.local_position.x - self.target.x) > self.precision.x):
             return False
         if(fabs(UAV.local_position.y - self.target.y) > self.precision.y):
@@ -689,7 +686,8 @@ class init_UAV(task, object):
     def run(self, UAV):
         self.rate.sleep()
         UAV.home = Point(UAV.local_position.x, UAV.local_position.y, UAV.local_position.z)
-        UAV.setpoint.position = Point(UAV.local_position.x, UAV.local_position.y, UAV.local_position.z)
+        UAV.setpoint_raw.position = Point(UAV.local_position.x, UAV.local_position.y, UAV.local_position.z)
+        UAV.setpoint_local.pose.position = Point(UAV.local_position.x, UAV.local_position.y, UAV.local_position.z)
         return self.isDone(UAV)
 
     def isDone(self, UAV):

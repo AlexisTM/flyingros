@@ -20,10 +20,10 @@
 
   <!-- Localisation launch : Rosserial + lasers -->
   <node pkg="rosserial_server" type="serial_node" name="rosserial_server">
-    <arg name="port" default="/dev/ttyACM0" />
+    <param name="port" value="/dev/ttyACM0" />
   </node>
   <node pkg="rosserial_python" type="message_info_service.py" name="rosserial_message_info" />
-  <node name="altitude_lasers" pkg="flyingros_pose" type="altitude_lasers" output="screen" >
+  <node name="flyingros" pkg="flyingros_pose" type="altitude_lasers" output="screen" >
     <rosparam file="$(find flyingros_pose)/cfg/laser/2lasers.yaml"/>
   </node>
 
