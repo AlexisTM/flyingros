@@ -10,12 +10,15 @@
   <author email="alexis.paques@gmail.com">Alexis Paques</author>
 
   <build_depend>rostest</build_depend>
+  <build_depend>mavros_msgs</build_depend>
+  <build_depend>std_srvs</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>flyingros_msgs</build_depend>
   <run_depend>rostest</run_depend>
   <run_depend>message_runtime</run_depend>
-  <run_depend>flyingros_libs</run_depend>
-  <run_depend>flyingros_msgs</run_depend>
   <run_depend>std_msgs</run_depend>
   <run_depend>std_srvs</run_depend>
+  <run_depend>flyingros_msgs</run_depend>
   <run_depend>mavros_msgs</run_depend>
   <run_depend>message_runtime</run_depend>
   <buildtool_depend>catkin</buildtool_depend>
