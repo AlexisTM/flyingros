@@ -3,8 +3,13 @@
 """
 task_node
 
-This script sends positions to control the UAV in X, Y, Z using the
-task controller
+The task node instanciate tasks.py (taskController) and gives 
+the ability to add/remove/pull tasks and missions.
+
+You can choose whether or not to spin the controller. Stoping the spinning
+allows to get back the manual control. 
+
+TODO : Managing errors adding/removing tasks by checking task sanity.
 
 FlyingROS is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by

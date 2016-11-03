@@ -4,7 +4,10 @@
 tasks.py
 
 This is a task implementation initialy used to control an UAV.
-Successfuly tested with high number of tasks (5k tasks)
+Successfuly tested with high number of tasks (5k tasks).
+
+To run a new robot, you have to reimplement the UAV task to a Robot class.
+The second part is to reimplement the tasks which modify the robot.
 
 This file is part of FlyingROS.
 
