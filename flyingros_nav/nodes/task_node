@@ -81,19 +81,17 @@ def publish_current(py_task):
       current_pub.publish(ros_task)
 
 def myhook():
-  rospy.loginfo("Shutting down")
-  rospy.signal_shutdown("ROSPy Shutdown")
+    rospy.loginfo("Shutting down")
+    rospy.signal_shutdown("ROSPy Shutdown")
 
 def main():
-    counter_notifier = 0
+    global spinning
     current_notifier_period = rospy.get_param("flyingros/controller/current_notifier_sleep", 5)
+    if spinning : 
+      Controller.spin()
     while not rospy.is_shutdown(): 
-        Controller.rate.sleep()
-        Controller.spinOnce()
-        if counter_notifier > 10 : 
-            counter_notifier = 1
-            Controller.notifyCurrentTask()
-        rospy.loginfo("Task %s on %s : %s", Controller.current+1, Controller.count, Controller.getCurrentTask().__str__())
+        Controller.notifyCurrentTask()
+        rospy.sleep(current_notifier_period)
 
 def task_feeder():
     global Controller
@@ -126,12 +124,13 @@ def subscribers():
 def init():
     # Input data
     # Objects
-    global Controller
+    global Controller, spinning
     # Node initiation
     rospy.init_node('task_controller', disable_signals=False)
     # Data initiation
 
     rospy.on_shutdown(myhook)
+    spinning = rospy.get_param("flyingros/controller/spinning", True)
     rate = rospy.get_param("flyingros/controller/rate",3)
     testMode = rospy.get_param("flyingros/controller/testMode",False)
     setpoint_rate = rospy.get_param("flyingros/controller/setpoint_rate",10)

@@ -354,6 +354,7 @@ class taskController:
         self.count = 0
         self.current = 0
         self.setRate(rate)
+        self.spinning = False
         self.UAV = UAV(setpoint_rate=setpoint_rate, raw_setpoint=raw_setpoint, test=test)
 
     def __str__(self):
@@ -440,6 +441,19 @@ class taskController:
                 self.current = self.current + 1
                 self.runTask()
         return
+
+    def spin(self):
+        if self.spinning == False : 
+            self.spinning = True
+            self.spin_thread = Thread(target=self._spinLoop).start()
+
+    def stopSpin(self):
+        self.spinning = False
+
+    def _spinLoop(self):
+        while self.spinning : 
+            self.spinOnce()
+            self.rate.sleep()
 
     def __del__(self):
         self.UAV.__del__()
