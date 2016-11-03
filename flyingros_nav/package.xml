@@ -14,6 +14,8 @@
   <run_depend>message_runtime</run_depend>
   <run_depend>flyingros_libs</run_depend>
   <run_depend>flyingros_msgs</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend>std_srvs</run_depend>
   <run_depend>mavros_msgs</run_depend>
   <run_depend>message_runtime</run_depend>
   <buildtool_depend>catkin</buildtool_depend>

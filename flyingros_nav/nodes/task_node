@@ -37,10 +37,22 @@ import rospy
 import mavros
 from flyingros_msgs.msg import Task, Mission
 from flyingros_msgs.srv import TaskRequest, MissionRequest, TaskHandle, MissionHandle, TaskRequestResponse, MissionRequestResponse, TaskHandleResponse, MissionHandleResponse
+from std_srvs.srv import SetBool, SetBoolResponse
 from geometry_msgs.msg import PoseStamped, Point
 from mavros.utils import *
 from flyingros_libs.tasks import *
 import sys
+
+def handle_spinning(req):
+    global Controller, spinning
+    if req.data :
+        Controller.spin()
+        spinning = True
+        return SetBoolResponse(True, "Spinning enabled")
+    else :
+        Controller.stopSpin()
+        spinning = False
+        return SetBoolResponse(True, "Spinning disabled")
 
 def handle_add_task(req):
     global Controller
@@ -120,11 +132,14 @@ def subscribers():
     # - missions
     mission_add_srv     = rospy.Service('flyingros/controller/mission/add', MissionHandle, handle_add_mission)
     mission_get_srv     = rospy.Service('flyingros/controller/mission/get', MissionRequest, handle_get_whole_mission)
-    task_remove_srv     = rospy.Service('flyingros/controller/mission/remove', MissionRequest, handle_remove_mission)
+    mission_remove_srv  = rospy.Service('flyingros/controller/mission/remove', MissionRequest, handle_remove_mission)
     # - tasks
     task_add_srv        = rospy.Service('flyingros/controller/task/add', TaskHandle, handle_add_task)
     task_get_srv        = rospy.Service('flyingros/controller/task/get', TaskRequest, handle_get_task)
     task_remove_srv     = rospy.Service('flyingros/controller/task/remove', TaskHandle, handle_remove_task)
+    # - spinning
+    spin_enable_srv     = rospy.Service('flyingros/controller/spinning', SetBool, handle_spinning)
+    
 
 def init():
     # Input data

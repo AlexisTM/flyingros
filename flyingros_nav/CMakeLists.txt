@@ -2,7 +2,12 @@ cmake_minimum_required(VERSION 2.8.3)
 project(flyingros_nav)
 
 find_package(catkin REQUIRED COMPONENTS
-  rospy)
+  rospy 
+  mavros_msgs
+  flyingros_libs
+  flyingros_msgs
+  std_msgs
+  std_srvs)
 
 catkin_python_setup()
 
@@ -21,7 +26,7 @@ catkin_python_setup()
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES flyingros_web
-  CATKIN_DEPENDS flyingros_libs flyingros_msgs mavros_msgs
+  CATKIN_DEPENDS flyingros_libs flyingros_msgs mavros_msgs std_msgs std_srvs
 #  DEPENDS system_lib
 )
 

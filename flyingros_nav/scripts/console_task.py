@@ -29,12 +29,12 @@ Copyright (c) Alexis Paques 2016
 
 from __future__ import division
 import urwid
-from console_task_urwid_functions import *
 import rospy
 from geometry_msgs.msg import PoseStamped, Point
+from flyingros_msgs.msg import Task, Mission
+from flyingros_msgs.srv import TaskRequest, MissionRequest, TaskHandle, MissionHandle, TaskRequestResponse, MissionRequestResponse, TaskHandleResponse, MissionHandleResponse
 from flyingros_libs.algorithm_functions import deg2radf, rad2degf
 from flyingros_libs.transformations import euler_from_quaternion
-
 
 #######  URWID  #######
 class Object(object):
@@ -100,7 +100,6 @@ class TaskWidget(urwid.WidgetWrap):
         return key
 
 def add_tasks(button):
-
     # print button
     pass
 

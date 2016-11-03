@@ -417,7 +417,7 @@ class taskController:
         else :
             return None
 
-    def runTask(self):
+    def runTaskMessage(self):
         if self.current == -1 :
             rospy.loginfo("No task running (-1)")
         else :
@@ -433,16 +433,13 @@ class taskController:
         return self.UAV
 
     def spinOnce(self):
-        print self.current
-        print self.count
         if self.current < self.count :
             task = self.tasks[self.current]
             result = task.run(self.UAV)
-            print "running"
             if result: # returns True if done
                 self.notifyCurrentTask()
                 self.current = self.current + 1
-                self.runTask()
+                self.runTaskMessage()
         return
 
     def spin(self):
@@ -460,10 +457,12 @@ class taskController:
 
     def __del__(self):
         self.UAV.__del__()
+        self.spinning = False
         del self.UAV
 
     def __exit__(self):
         self.UAV.__exit__()
+        self.spinning = False
         del self.UAV
 
 class task:
@@ -672,21 +671,17 @@ class test(task, object):
     def run(self, UAV):
         if(self.last == None):
             self.last = time.time()
-            print("first time")
         return self.isDone()
 
     def isDone(self):
         now = time.time()
-        print(now - self.last)
 
         #Simplify by using :
         # return (now - self.last) > self.waitTime
 
         if(now - self.last > self.waitTime):
-            print("done")
             return True
         else :
-            print("waiting")
             return False
 
 # Not optimized
