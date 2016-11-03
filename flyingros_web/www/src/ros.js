@@ -72,14 +72,6 @@ function ros_init(){
     serviceType : 'flyingros_msgs/MissionRequest'
   });
 
-  reportListener.subscribe(function(message) {
-    console.log(message);
-  });
-
-  odomListener.subscribe(function(message) {
-    console.log(message);
-  });
-
   cmd = {
     mission : {
       add : missionAdd,

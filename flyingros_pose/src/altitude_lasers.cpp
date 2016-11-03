@@ -111,7 +111,7 @@ void reconfigure_lasers(){
 
 int main(int argc, char **argv)
 {
-    ros::init(argc, argv, "laser_node_3D_algorithm_cpp");
+    ros::init(argc, argv, "laser_node_altitude_algorithm_cpp");
     ros::NodeHandle nh;
     laser_count = 0;
 
@@ -120,7 +120,7 @@ int main(int argc, char **argv)
 
     std::string raw_laser_topic, position_pub_topic, imu_topic;
     ros::param::param<std::string>("laser_raw_topic", raw_laser_topic, "/flyingros/lasers/raw");
-    ros::param::param<std::string>("laser_pose_topic", position_pub_topic, "/flyingros/lasers/pose");
+    ros::param::param<std::string>("laser_pose_topic", position_pub_topic, "/flyingros/lasers/altitude");
     ros::param::param<std::string>("imu_topic", imu_topic, "/mavros/imu/data");
 
     ros::Subscriber raw_laser_sub = nh.subscribe(raw_laser_topic, 1, callback_laser_raw);
