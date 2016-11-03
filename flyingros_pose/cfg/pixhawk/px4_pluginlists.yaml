@@ -17,8 +17,7 @@ plugin_blacklist:
 - px4flow
 - vision_speed_estimate
 
-plugin_whitelist: []
-#- 'sys_*'
+plugin_whitelist:
 - command
 - param
 - sys_status
@@ -27,7 +26,6 @@ plugin_whitelist: []
 - vfr_hud
 - waypoint
 - vibration
-# Offboard needs
 - imu_pub
 - distance_sensor
 - global_position
