@@ -1,0 +1,72 @@
+<launch>
+  <!-- Pixhawk config -->
+  <arg name="fcu_url" default="serial:///dev/ttySAC0:921600" />
+  <arg name="gcs_url" default="udp://:14556@127.0.0.1:14550" />
+  <arg name="tgt_system" default="1" />
+  <arg name="tgt_component" default="50" />
+  <arg name="log_output" default="screen" />
+
+  <!-- Rosbridge config -->
+  <arg name="port" default="9090" />
+  <arg name="address" default="" />
+  <arg name="ssl" default="false" />
+  <arg name="certfile" default=""/>
+  <arg name="keyfile" default="" />
+  <arg name="retry_startup_delay" default="5" />
+  <arg name="fragment_timeout" default="600" />
+  <arg name="delay_between_messages" default="0" />
+  <arg name="max_message_size" default="None" />
+  <arg name="authenticate" default="false" />
+
+  <!-- Localisation launch : Rosserial + lasers -->
+  <node pkg="rosserial_server" type="serial_node" name="rosserial_server">
+    <arg name="port" default="/dev/ttyACM0" />
+  </node>
+  <node pkg="rosserial_python" type="message_info_service.py" name="rosserial_message_info" />
+  <node name="altitude_lasers" pkg="flyingros_pose" type="altitude_lasers" output="screen" >
+    <rosparam file="$(find flyingros_pose)/cfg/laser/2lasers.yaml"/>
+  </node>
+
+  <!-- Tasks node launch -->
+  <node name="task_node" pkg="flyingros_nav" type="task_node" output="screen" >
+  </node>
+
+  <!-- PX4 launch -->
+  <include file="$(find mavros)/launch/node.launch">
+    <arg name="pluginlists_yaml" value="$(find flyingros_pose)/cfg/pixhawk/px4_pluginlists.yaml" />
+    <arg name="config_yaml" value="$(find flyingros_pose)/cfg/pixhawk/px4_config.yaml" />
+
+    <arg name="fcu_url" value="$(arg fcu_url)" />
+    <arg name="gcs_url" value="$(arg gcs_url)" />
+    <arg name="tgt_system" value="$(arg tgt_system)" />
+    <arg name="tgt_component" value="$(arg tgt_component)" />
+    <arg name="log_output" value="$(arg log_output)" />
+  </include>
+
+  <!-- Rosbridge launch -->
+  <group if="$(arg ssl)">
+    <node name="rosbridge_websocket" pkg="rosbridge_server" type="rosbridge_websocket" output="screen">
+      <param name="certfile" value="$(arg certfile)" />
+      <param name="keyfile" value="$(arg keyfile)" />
+      <param name="authenticate" value="$(arg authenticate)" />
+      <param name="port" value="$(arg port)"/>
+      <param name="address" value="$(arg address)"/>
+      <param name="retry_startup_delay" value="$(arg retry_startup_delay)"/>
+      <param name="fragment_timeout" value="$(arg fragment_timeout)"/>
+      <param name="delay_between_messages" value="$(arg delay_between_messages)"/>
+      <param name="max_message_size" value="$(arg max_message_size)"/>
+    </node>
+  </group>
+  <group unless="$(arg ssl)">
+    <node name="rosbridge_websocket" pkg="rosbridge_server" type="rosbridge_websocket" output="screen">
+      <param name="authenticate" value="$(arg authenticate)" />
+      <param name="port" value="$(arg port)"/>
+      <param name="address" value="$(arg address)"/>
+      <param name="retry_startup_delay" value="$(arg retry_startup_delay)"/>
+      <param name="fragment_timeout" value="$(arg fragment_timeout)"/>
+      <param name="delay_between_messages" value="$(arg delay_between_messages)"/>
+      <param name="max_message_size" value="$(arg max_message_size)"/>
+    </node>
+  </group>
+  <node name="rosapi" pkg="rosapi" type="rosapi_node" />
+</launch>

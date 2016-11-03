@@ -1,0 +1,39 @@
+plugin_blacklist:
+# common
+- safety_area
+# extras
+- image_pub
+- vibration
+- 3dr_radio
+- actuator_control
+- hil_controls
+- ftp
+- manual_control
+- rc_io
+- setpoint_accel
+- setpoint_attitude
+- cam_imu_sync
+- image_pub
+- px4flow
+- vision_speed_estimate
+
+plugin_whitelist: []
+#- 'sys_*'
+- command
+- param
+- sys_status
+- Services
+- sys_time
+- vfr_hud
+- waypoint
+- vibration
+# Offboard needs
+- imu_pub
+- distance_sensor
+- global_position
+- local_position
+- setpoint_position
+- setpoint_raw
+- setpoint_velocity
+- mocap_pose_estimate
+- vision_pose_estimate
