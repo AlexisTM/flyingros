@@ -4,7 +4,10 @@
 tasks.py
 
 This is a task implementation initialy used to control an UAV.
-Successfuly tested with high number of tasks (5k tasks)
+Successfuly tested with high number of tasks (5k tasks).
+
+To run a new robot, you have to reimplement the UAV task to a Robot class.
+The second part is to reimplement the tasks which modify the robot.
 
 This file is part of FlyingROS.
 
@@ -354,6 +357,10 @@ class taskController:
         self.count = 0
         self.current = 0
         self.setRate(rate)
+<<<<<<< HEAD
+=======
+        self.spinning = False
+>>>>>>> c3facfd97226ce5e3e119e8eba1cc968bc04d79d
         self.UAV = UAV(setpoint_rate=setpoint_rate, raw_setpoint=raw_setpoint, test=test)
 
     def __str__(self):
@@ -413,7 +420,7 @@ class taskController:
         else :
             return None
 
-    def runTask(self):
+    def runTaskMessage(self):
         if self.current == -1 :
             rospy.loginfo("No task running (-1)")
         else :
@@ -438,15 +445,30 @@ class taskController:
             if result: # returns True if done
                 self.notifyCurrentTask()
                 self.current = self.current + 1
-                self.runTask()
+                self.runTaskMessage()
         return
+
+    def spin(self):
+        if self.spinning == False : 
+            self.spinning = True
+            self.spin_thread = Thread(target=self._spinLoop).start()
+
+    def stopSpin(self):
+        self.spinning = False
+
+    def _spinLoop(self):
+        while self.spinning : 
+            self.spinOnce()
+            self.rate.sleep()
 
     def __del__(self):
         self.UAV.__del__()
+        self.spinning = False
         del self.UAV
 
     def __exit__(self):
         self.UAV.__exit__()
+        self.spinning = False
         del self.UAV
 
 class task:
@@ -655,21 +677,17 @@ class test(task, object):
     def run(self, UAV):
         if(self.last == None):
             self.last = time.time()
-            print("first time")
         return self.isDone()
 
     def isDone(self):
         now = time.time()
-        print(now - self.last)
 
         #Simplify by using :
         # return (now - self.last) > self.waitTime
 
         if(now - self.last > self.waitTime):
-            print("done")
             return True
         else :
-            print("waiting")
             return False
 
 # Not optimized

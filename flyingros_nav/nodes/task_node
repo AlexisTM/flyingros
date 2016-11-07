@@ -3,8 +3,13 @@
 """
 task_node
 
-This script sends positions to control the UAV in X, Y, Z using the
-task controller
+The task node instanciate tasks.py (taskController) and gives 
+the ability to add/remove/pull tasks and missions.
+
+You can choose whether or not to spin the controller. Stoping the spinning
+allows to get back the manual control. 
+
+TODO : Managing errors adding/removing tasks by checking task sanity.
 
 FlyingROS is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -32,10 +37,22 @@ import rospy
 import mavros
 from flyingros_msgs.msg import Task, Mission
 from flyingros_msgs.srv import TaskRequest, MissionRequest, TaskHandle, MissionHandle, TaskRequestResponse, MissionRequestResponse, TaskHandleResponse, MissionHandleResponse
+from std_srvs.srv import SetBool, SetBoolResponse
 from geometry_msgs.msg import PoseStamped, Point
 from mavros.utils import *
 from flyingros_libs.tasks import *
 import sys
+
+def handle_spinning(req):
+    global Controller, spinning
+    if req.data :
+        Controller.spin()
+        spinning = True
+        return SetBoolResponse(True, "Spinning enabled")
+    else :
+        Controller.stopSpin()
+        spinning = False
+        return SetBoolResponse(True, "Spinning disabled")
 
 def handle_add_task(req):
     global Controller
@@ -81,19 +98,17 @@ def publish_current(py_task):
       current_pub.publish(ros_task)
 
 def myhook():
-  rospy.loginfo("Shutting down")
-  rospy.signal_shutdown("ROSPy Shutdown")
+    rospy.loginfo("Shutting down")
+    rospy.signal_shutdown("ROSPy Shutdown")
 
 def main():
-    counter_notifier = 0
+    global spinning
     current_notifier_period = rospy.get_param("flyingros/controller/current_notifier_sleep", 5)
+    if spinning : 
+      Controller.spin()
     while not rospy.is_shutdown(): 
-        Controller.rate.sleep()
-        Controller.spinOnce()
-        if counter_notifier > 10 : 
-            counter_notifier = 1
-            Controller.notifyCurrentTask()
-        rospy.loginfo("Task %s on %s : %s", Controller.current+1, Controller.count, Controller.getCurrentTask().__str__())
+        Controller.notifyCurrentTask()
+        rospy.sleep(current_notifier_period)
 
 def task_feeder():
     global Controller
@@ -117,21 +132,27 @@ def subscribers():
     # - missions
     mission_add_srv     = rospy.Service('flyingros/controller/mission/add', MissionHandle, handle_add_mission)
     mission_get_srv     = rospy.Service('flyingros/controller/mission/get', MissionRequest, handle_get_whole_mission)
-    task_remove_srv     = rospy.Service('flyingros/controller/mission/remove', MissionRequest, handle_remove_mission)
+    mission_remove_srv  = rospy.Service('flyingros/controller/mission/remove', MissionRequest, handle_remove_mission)
+
     # - tasks
     task_add_srv        = rospy.Service('flyingros/controller/task/add', TaskHandle, handle_add_task)
     task_get_srv        = rospy.Service('flyingros/controller/task/get', TaskRequest, handle_get_task)
     task_remove_srv     = rospy.Service('flyingros/controller/task/remove', TaskHandle, handle_remove_task)
 
+    # - spinning
+    spin_enable_srv     = rospy.Service('flyingros/controller/spinning', SetBool, handle_spinning)
+    
+
 def init():
     # Input data
     # Objects
-    global Controller
+    global Controller, spinning
     # Node initiation
     rospy.init_node('task_controller', disable_signals=False)
     # Data initiation
 
     rospy.on_shutdown(myhook)
+    spinning = rospy.get_param("flyingros/controller/spinning", True)
     rate = rospy.get_param("flyingros/controller/rate",3)
     testMode = rospy.get_param("flyingros/controller/testMode",False)
     setpoint_rate = rospy.get_param("flyingros/controller/setpoint_rate",10)

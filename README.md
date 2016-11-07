@@ -59,9 +59,9 @@ In depth status
     * TaskHandle     (send task & receive string)
     * TaskRequest    (send string & receive task)
 * flyingros_libs  
-  - [ ] lasers : *To be replaced by yaml config file*
+  - [x] lasers : *Replaced by `flyingros_pose/cfg/laser/2lasers.yaml & 6lasers.yaml`*
   - [x] taskController
-  - [ ] UAV : *To be tested & adapted*
+  - [x] UAV : *Test the raw_setpoint to takeoff from offboard*
   - [x] task : *easy to add new tasks*
     * ARM : *to be reviewed, change timeout method*
     * DISARM : *to be reviewed, change timeout method*
@@ -72,9 +72,9 @@ In depth status
     * TARGET
     * GRAB : **TO BE IMPLEMENTED**
 * flyingros_nav
-  - [x] Task_node : Start & manage the controller *missing get & send current task*
-  - [ ] Manual_node : bypass the controller **Work in progress**
-  - [ ] Console_task : URWID interface for the Task Node
+  - [x] Task_node : Start & manage the task controller *missing get & send current task*
+  - [ ] Nav\_application : Using task\_node, it adds the ability to stop the task spinning and take back manual control over the multicopter  **Work in progress**
+  - [ ] Manual_node : bypass the controller 
     individual tasks working well
 * flyingros_pose :  *To be reviewed & tested*
   - [x] laser_altitude *To be tested*

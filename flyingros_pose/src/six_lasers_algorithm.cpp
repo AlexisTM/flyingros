@@ -83,7 +83,11 @@ void callback_laser_raw(const flyingros_msgs::Distance::ConstPtr& msg){
 }
 
 void callback_imu(const sensor_msgs::Imu::ConstPtr& msg){
-    tf::quaternionMsgToTF(msg->orientation, q_imu);
+    // CAUTION : Pitch is reversed for good computation... :(
+    // q_c is the pitch corrected quaternion
+    // To do it, we simply have change signs of y,z,w.
+    q_imu = tf::Quaternion(msg->orientation.x, - msg->orientation.y, - msg->orientation.z, - msg->orientation.w);
+    //tf::quaternionMsgToTF(msg->orientation, q_imu);
 }
 
 void reconfigure_lasers(){

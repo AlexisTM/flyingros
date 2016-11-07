@@ -1,0 +1,117 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+nav_application
+
+Using task_node, it adds the ability to stop the task spinning 
+and take back manual control over the multicopter
+
+FlyingROS is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+FlyingROS is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with FlyingROS.  If not, see <http://www.gnu.org/licenses/>.
+
+Software created by Alexis Paques and Nabil Nehri for the UCL
+in a Drone-Based Additive Manufacturing of Architectural Structures
+project financed by the MIT Seed Fund
+
+Originaly published by Vladimir Ermakov (c) 2015 under GNU GPLv3
+Copyright (c) Alexis Paques 2016
+"""
+
+import rospy
+import mavros
+import urwid
+import urwid_app
+from flyingros_msgs.msg import Task, Mission
+from flyingros_msgs.srv import TaskRequest, MissionRequest, TaskHandle, MissionHandle, TaskRequestResponse, MissionRequestResponse, TaskHandleResponse, MissionHandleResponse
+from std_srvs.srv import SetBool, SetBoolResponse
+from geometry_msgs.msg import PoseStamped, Point
+from mavros.utils import *
+from flyingros_libs.tasks import *
+import sys
+
+def handle_current_task(task):
+    pass
+    #rospy.loginfo('info')
+
+def spin_switch(data):
+    global spinning, app, spin_enable_srv
+    if spinning : 
+      app.setSpinning(False)
+      spin_enable_srv(False)
+      spinning = False
+    else :
+      app.setSpinning(True)
+      spin_enable_srv(True)
+      spinning = True
+
+def update_mission(data):
+    global mission_get_srv, app
+    try:
+      response = mission_get_srv()
+      app.refresh_mission(response.mission)
+    except rospy.ServiceException, e:
+      pass
+      #rospy.loginfo("Service call failed: {0}".format(e))
+
+def main():
+    global spinning, app
+    app = urwid_app.App(update_mission=update_mission, spin_switch=spin_switch)
+    app.run()
+    app.setSpinning(True)
+    # main urwid closes when user ask to
+    # rospy.spin() no need to spin ros in Python
+
+def subscribers():
+    global current_pub
+    global mission_add_srv, mission_get_srv, mission_remove_srv, task_add_srv, task_get_srv, task_remove_srv, spin_enable_srv
+
+    # Services
+    # - missions
+    rospy.wait_for_service('flyingros/controller/mission/add')
+    mission_add_srv     = rospy.ServiceProxy('flyingros/controller/mission/add', MissionHandle)
+    rospy.wait_for_service('flyingros/controller/mission/get')
+    mission_get_srv     = rospy.ServiceProxy('flyingros/controller/mission/get', MissionRequest)
+    rospy.wait_for_service('flyingros/controller/mission/remove')
+    mission_remove_srv  = rospy.ServiceProxy('flyingros/controller/mission/remove', MissionRequest)
+    # - tasks
+    rospy.wait_for_service('flyingros/controller/task/add')
+    task_add_srv        = rospy.ServiceProxy('flyingros/controller/task/add', TaskHandle)
+    rospy.wait_for_service('flyingros/controller/task/get')
+    task_get_srv        = rospy.ServiceProxy('flyingros/controller/task/get', TaskRequest)
+    rospy.wait_for_service('flyingros/controller/task/remove')
+    task_remove_srv     = rospy.ServiceProxy('flyingros/controller/task/remove', TaskHandle)
+    # - spinning
+    rospy.wait_for_service('flyingros/controller/spinning')
+    spin_enable_srv     = rospy.ServiceProxy('flyingros/controller/spinning', SetBool)
+
+    # Subscribers
+    current_sub     = rospy.Subscriber('flyingros/controller/task/current', Task, handle_current_task)
+
+def init():
+    # Input data
+    # Objects
+    global spinning
+    spinning = True
+    # Node initiation
+    rospy.init_node('nav_application_urwid')
+    # Data initiation
+
+if __name__ == '__main__':
+    #rospy.loginfo("We are ready")
+    try:
+        init()
+        subscribers()
+        main()
+    except rospy.ROSInterruptException:
+        #rospy.loginfo("init failed")
+        pass
