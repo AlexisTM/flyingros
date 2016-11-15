@@ -11,11 +11,14 @@ Depending on the right Euler convension, the altitude can be independant to the 
 
 This means we can compute the altitude without having to *correct* the yaw angle which means nothing when we have no walls. Consider the lasers have an offset on the measure, an offset on the position and an offset on the orientation. 
 
-As we explain in the 3D algorithm, we will simply have the equation `Z=f(Measure, roll, pitch)` to compute the number of times we have lasers.
+As we explain in the 3D algorithm, we will simply have the equation `Z=f(Measure, roll, pitch)` to compute the number of times we have lasers. 
 
+The computation itself becomes really simple.
 
-
-
+* Rotate the position of the lasers on the multicopter to know its actual position 
+* Rotate the orientation of the lasers on the multicopter to know its actual orientation 
+* Extrapolate the measure to know what is actually pointed. `target = measure*orientation - position`
+* The Z coordinate of the target is the distance to the floor 
 
 3D algorithm
 -----------------------
@@ -33,3 +36,16 @@ Y=f(Measure, roll, yaw)
 Z=f(Measure, roll, pitch)
 ```
 
+The computation is the same as for the altitude, but we have to correct the heading (yaw) before doing the computations 
+
+* Create a quaternion with zero yaw rotation
+* Rotate the position of the lasers on the multicopter (X and Y) to know its actual position with null yaw
+* Rotate the orientation of the lasers on the multicopter (X and Y) to know its actual orientation with null yaw
+* Compute the yaw angle which is function of the difference we measured between the two lasers and their position.
+* Create the final quaternion with the computed yaw
+* Rotate the position of the lasers on the multicopter to know its actual position with the computed yaw
+* Rotate the orientation of the lasers on the multicopter to know its actual orientation with the computed yaw
+* Extrapolate the measure to know what is actually pointed. `target = measure*orientation - position`
+* The X coordinate of the target is the distance to the wall X
+* The Y coordinate of the target is the distance to the wall Y
+* The Z coordinate of the target is the distance to the floor
