@@ -1,0 +1,86 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+rtk_csv.py
+
+This script writes a csv at GPS RTK frequency
+
+This file is part of ILPS (Indoor Laser Positioning System).
+
+ILPS is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ILPS is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with ILPS.  If not, see <http://www.gnu.org/licenses/>.
+
+Software created by Alexis Paques and Nabil Nehri for the UCL
+in a Drone-Based Additive Manufacturing of Architectural Structures
+project financed by the MIT Seed Fund
+
+Copyright (c) Alexis Paques 2016
+"""
+
+from __future__ import division
+import rospy
+import csv
+import tf
+from getch import getch
+from algorithm_functions import rad2degf
+from time import time
+from std_msgs.msg import Bool
+from geometry_msgs.msg import PoseStamped, TwistStamped, Accel, Quaternion, Point
+from mavros_msgs.msg import State
+from sensor_msgs.msg import Imu
+from nav_msgs.msg import Odometry
+from transformations import *
+from threading import Thread
+
+def gpsOdomCB(data):
+    global write, diff_time, gps_odometry, initial_time
+    global csvfile, data_writer
+
+    diff_time = time()-initial_time
+    gps_odometry =  [str(data.pose.pose.position.x), str(data.pose.pose.position.y), str(data.pose.pose.position.z)]
+    if write and not rospy.is_shutdown():
+        data_writer.writerow([diff_time] +  gps_odometry)
+    
+def main():
+    global write, diff_time, gps_odometry, initial_time
+    global csvfile, data_writer
+
+    gps_odometry = ['', '', '']
+    rate = rospy.Rate(2)
+    diff_time = 0
+    initial_time = time()
+
+    csvfile = open('result.csv', 'w'):
+    data_writer = csv.writer(csvfile, delimiter=';', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+    fieldnames = ['time', 'gps_odometry_x', 'gps_odometry_y', 'gps_odometry_z']
+    data_writer.writerow(fieldnames)
+
+    gps_odom_sub        = rospy.Subscriber('gps/rtkfix', Odometry, gpsOdomCB)
+
+    while not rospy.is_shutdown():
+        what = getch()
+        if what in ["q", "Q"]:
+            write = False
+            break
+        print "elapsed time :", diff_time
+
+    csvfile.close()
+
+if __name__ == '__main__':
+    rospy.loginfo("Data export started")
+    try:
+  rospy.init_node('csv_export')
+        main()
+    except rospy.ROSInterruptException:
+        rospy.loginfo("init failed")
+        pass
