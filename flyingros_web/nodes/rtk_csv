@@ -30,16 +30,9 @@ Copyright (c) Alexis Paques 2016
 from __future__ import division
 import rospy
 import csv
-import tf
-from getch import getch
-from algorithm_functions import rad2degf
+from flyingros_libs.getch import getch
 from time import time
-from std_msgs.msg import Bool
-from geometry_msgs.msg import PoseStamped, TwistStamped, Accel, Quaternion, Point
-from mavros_msgs.msg import State
-from sensor_msgs.msg import Imu
 from nav_msgs.msg import Odometry
-from transformations import *
 from threading import Thread
 
 def gpsOdomCB(data):
@@ -55,12 +48,13 @@ def main():
     global write, diff_time, gps_odometry, initial_time
     global csvfile, data_writer
 
+    write = True
     gps_odometry = ['', '', '']
     rate = rospy.Rate(2)
     diff_time = 0
     initial_time = time()
 
-    csvfile = open('result.csv', 'w'):
+    csvfile = open('result.csv', 'w')
     data_writer = csv.writer(csvfile, delimiter=';', quotechar='|', quoting=csv.QUOTE_MINIMAL)
     fieldnames = ['time', 'gps_odometry_x', 'gps_odometry_y', 'gps_odometry_z']
     data_writer.writerow(fieldnames)
@@ -79,7 +73,7 @@ def main():
 if __name__ == '__main__':
     rospy.loginfo("Data export started")
     try:
-  rospy.init_node('csv_export')
+        rospy.init_node('csv_rtk_export')
         main()
     except rospy.ROSInterruptException:
         rospy.loginfo("init failed")
