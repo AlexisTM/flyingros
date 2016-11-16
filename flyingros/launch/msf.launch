@@ -1,0 +1,27 @@
+<launch>
+    <!-- Pixhawk config -->
+    <arg name="fcu_url" default="serial:///dev/ttySAC0:921600" />
+    <arg name="gcs_url" default="udp://:14556@127.0.0.1:14550" />
+    <arg name="tgt_system" default="1" />
+    <arg name="tgt_component" default="50" />
+    <arg name="log_output" default="screen" />
+    <include file="$(find mavros)/launch/node.launch">
+      <arg name="pluginlists_yaml" value="$(find flyingros_pose)/cfg/pixhawk/px4_pluginlists.yaml" />
+      <arg name="config_yaml" value="$(find flyingros_pose)/cfg/pixhawk/px4_config.yaml" />
+      <arg name="fcu_url" value="$(arg fcu_url)" />
+      <arg name="gcs_url" value="$(arg gcs_url)" />
+      <arg name="tgt_system" value="$(arg tgt_system)" />
+      <arg name="tgt_component" value="$(arg tgt_component)" />
+      <arg name="log_output" value="$(arg log_output)" />
+    </include>
+    <!-- MSF config -->
+    <node name="msf_position_filter" pkg="msf_updates" type="position_sensor" clear_params="true" output="screen">
+        <remap from="msf_core/imu_state_input" to="/mavros/imu/data">
+        <remap from="msf_updates/position_input" to="/flyingros/rtk/position" />
+        <remap from="msf_updates/navsatfix_input" to="/mavros/global_position/global" />
+        <remap from="msf_updates/pressure_height" to="/flyingros/lasers/altitude" />
+        <rosparam file="$(find flyingros_pose)/cfg/msf/px4_fix.yaml"/>
+        <rosparam file="$(find flyingros_pose)/cfg/msf/pose_sensor.yaml"/>
+        <rosparam file="$(find flyingros_pose)/cfg/msf/position_sensor.yaml"/>
+    </node>
+</launch>

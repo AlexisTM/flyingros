@@ -1,0 +1,11 @@
+scale_init: 1
+data_playback: false
+
+#########IMU PARAMETERS#######
+####### pixhawk - MPU6050
+core/core_noise_acc: 0.003924    # [m/s^2/sqrt(Hz)] mpu6000 datasheet
+core/core_noise_gyr: 0.00008726  # [rad/s/sqrt(Hz)] mpu6000 datasheet
+core/core_fixed_bias: true
+core/core_noise_gyrbias: 0.0     # For fixed bias we do not need process noise.
+core/core_noise_accbias: 0.0     # For fixed bias we do not need process noise.
+
