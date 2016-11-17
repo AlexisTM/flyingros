@@ -30,7 +30,7 @@ Nodes implementing sensors `ethzasl_msf\msf_updates\src`
 * pose_pressure_msf
   * IMU
   * msf_pose_sensor
-  * msf_pose_pressure_sensor
+  * msf_pressure_sensor
 * position_msf
   * IMU
   * msf_position_sensor
@@ -41,11 +41,19 @@ Nodes implementing sensors `ethzasl_msf\msf_updates\src`
 * spherical_msf
   * IMU
   * msf_spherical_position (distance + 2 angle from an extern fixed point, pointing the copter.)
-* lasers_rtk_vision_msf (available in [AlexisTM/ethzasl_msf](https://github.com/AlexisTM/ethzasl_msf/))
+* pose_position_pressure_msf (available in [AlexisTM/ethzasl_msf](https://github.com/AlexisTM/ethzasl_msf/))
   * IMU 
   * msf_pose_sensor (vision)
   * msf_position_sensor (RTK position or GPS)
-  * msf_pose_pressure_sensor (altitude from lasers)
+  * msf_pressure_sensor (Altitude from lasers)
+* dual_position_msf (available in [AlexisTM/ethzasl_msf](https://github.com/AlexisTM/ethzasl_msf/))
+  * IMU 
+  * msf_position_sensor (RTK position or GPS)
+  * msf_position_sensor (RTK position or GPS)
+* position_pressure_msf (available in [AlexisTM/ethzasl_msf](https://github.com/AlexisTM/ethzasl_msf/))
+  * IMU 
+  * msf_position_sensor (RTK position or GPS)
+  * msf_pressure_sensor (Altitude from lasers)
 
 Additionnal informations 
 ----------------------
