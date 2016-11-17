@@ -75,6 +75,8 @@ add_dependencies(dual_position_sensor ${${PROJECT_NAME}_EXPORTED_TARGETS})
 
 Add the parameters for the second position input and change the name of the config (last line).
 
+**DO NOT FORGET `chmod +x DualPositionSensor.cfg`** else, it won't build.
+
 ```python
 #! /usr/bin/env python
 
