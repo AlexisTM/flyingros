@@ -9,17 +9,17 @@ Sensors implemented `ethzasl_msf\msf_updates\include`
 -----------------
 
 * msf_pose_pressure_sensor : altitude 
-  * <geometry_msgs::PointStamped> to `msf_updates/topic_namespace/pressure_height`
+  * &lt;geometry_msgs::PointStamped&gt; to `msf_updates/topic_namespace/pressure_height`
 * msf_position_sensor : position
-  * <geometry_msgs::PointStamped> to `msf_updates/topic_namespace/position_input`
-  * <geometry_msgs::TransformStamped> to `msf_updates/topic_namespace/transform_input`
-  * <sensor_msgs::NavSatFix> to `msf_updates/topic_namespace/navsatfix_input`
+  * &lt;geometry_msgs::PointStamped&gt; to `msf_updates/topic_namespace/position_input`
+  * &lt;geometry_msgs::TransformStamped&gt; to `msf_updates/topic_namespace/transform_input`
+  * &lt;sensor_msgs::NavSatFix&gt; to `msf_updates/topic_namespace/navsatfix_input`
 * msf_pose_sensor : position and orientation
-  * <geometry_msgs::PoseWithCovarianceStamped> to `msf_updates/topic_namespace/pose_with_covariance_input`
-  * <geometry_msgs::TransformStamped> to `msf_updates/topic_namespace/transform_input`
-  * <geometry_msgs::PoseStamped> to `msf_updates/topic_namespace/pose_input`
+  * &lt;geometry_msgs::PoseWithCovarianceStamped&gt; to `msf_updates/topic_namespace/pose_with_covariance_input`
+  * &lt;geometry_msgs::TransformStamped&gt; to `msf_updates/topic_namespace/transform_input`
+  * &lt;geometry_msgs::PoseStamped&gt; to `msf_updates/topic_namespace/pose_input`
 * msf_spherical_position : position from external pointing (2 angle as roll is useless) and a distance
-  * <geometry_msgs::PointStamped> to `msf_updates/topic_namespace/angle_input`
+  * &lt;geometry_msgs::PointStamped&gt; to `msf_updates/topic_namespace/angle_input`
 
 Nodes implementing sensors `ethzasl_msf\msf_updates\src`
 -----------------------
