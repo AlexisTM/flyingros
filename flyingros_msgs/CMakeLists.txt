@@ -57,6 +57,8 @@ add_message_files(
    Battery.msg
    Mission.msg
    Task.msg
+   PositionWithCovariance.msg
+   PositionWithCovarianceStamped.msg
 )
 
 ## Generate messages in the 'msg' folder
