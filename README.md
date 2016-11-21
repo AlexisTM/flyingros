@@ -78,14 +78,16 @@ In depth status
     individual tasks working well
 * flyingros_pose :  *To be reviewed & tested*
   - [x] laser_altitude *To be tested*
-  - [ ] rtk
-  - [ ] rtk_laser_fused
+  - [x] rtk *To be tested*
   - [x] six_lasers *To be tested*
 * flyingros_web :  *To be reviewed & tested*
   - [x] web_export
   - [x] website
+* [AlexisTM/ethzasl_msf](https://github.com/AlexisTM/ethzasl_msf) 
+  - [x] dual_position (rtk + lasers(position))
+  - [x] pose\_position\_pressure (camera + rtk + lasers(altitude))
+  - [x] position\_pressure (rtk + lasers(altitude))
 
-Do not forget tasks
------------
+#### Do not forget tasks 
 
-* High level launch file, one for all.
+* Verify convention on Laser algorithms
