@@ -1,0 +1,4 @@
+#pressure_sensor 
+#  0.01 = 1 cm std
+pressure_sensor/press_noise_meas_p: 0.01 
+pressure_sensor/press_noise_bias_p: 0.01
