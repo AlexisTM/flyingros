@@ -29,6 +29,6 @@
         <remap from="msf_core/imu_state_input" to="/mavros/imu/data"/>
         <remap from="msf_updates/position_input" to="/flyingros/rtk/position" />
         <rosparam file="$(find flyingros_pose)/cfg/msf/px4_fix.yaml"/>
-        <rosparam file="$(find flyingros_pose)/cfg/msf/position_sensor.yaml"/>
+        <rosparam file="$(find flyingros_pose)/cfg/msf/rtk_fix.yaml"/>
     </node>
 </launch>
