@@ -33,12 +33,15 @@ Software
 Goals
 ------------
 
-* Indoor Navigation
-* Outdoor Navigation
-* Payloads
-* Object tracking
+Actual goals:
+
+* Indoor Navigation (Pozyx -Decawave-, Camera, Lasers)
+* Outdoor Navigation (Camera, RTK-GPS)
+* Payloads 
+
+Future goals:
+* Object tracking 
 * SLAM
-* RTK-GPS
 * Simulation
 
 In depth status
