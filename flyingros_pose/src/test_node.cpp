@@ -1,7 +1,13 @@
 /*
- * six_lasers_algorithm.cpp
+ * test_node.cpp
  *
- * Localisation algorithm based on 6 fixed lasers.
+ * The test node helps to verify the algorithm by connecting the Pixhawk
+ *  and 6 lasers and printing at 1Hz:
+ *  - Initial position for each laser
+ *  - Initial orientation for each laser
+ *  - Actual position for each laser
+ *  - Actual orientation for each laser
+ *  - Actual orientation of the Pixhawk (roll, pitch, yaw)
  *
  * This file is a part of FlyingROS
  *
@@ -41,6 +47,12 @@ using namespace flyingros_pose;
 Laser lasers[6];
 tf::Quaternion q_imu(0,0,0,1);
 ros::Publisher position_publisher;
+double laser_measures_raw[6] = {0,0,0,0,0,0};
+double laser_measures_corrected[6] = {0,0,0,0,0,0};
+tf::Vector3 projected_position[6];
+tf::Vector3 projected_orientation[6];
+double projected_target[6] = {0,0,0,0,0,0};
+double projected_yaw[2] = {0,0};
 
 void callback_laser_raw(const flyingros_msgs::Distance::ConstPtr& msg){
   double roll, pitch, yaw;
@@ -48,7 +60,8 @@ void callback_laser_raw(const flyingros_msgs::Distance::ConstPtr& msg){
   // Correct offset
   double measures[6];
   for(int i = 0; i < 6; i++){
-      // measures are in cm 
+      laser_measures_raw = double(msg->lasers[i])/100.0;
+      // measures are in cm and have an offset
       measures[i] = double(msg->lasers[i])/100.0;
   }
 
@@ -70,8 +83,23 @@ void callback_laser_raw(const flyingros_msgs::Distance::ConstPtr& msg){
   tf::Quaternion q_correct = tf::createQuaternionFromRPY(roll, pitch, yaw_x);
   tf::Vector3 targets[6];
   for(int i = 0; i < 6; i ++){
-    targets[i] = lasers[i].project(measures[i], q_correct);
+    laser_measures_corrected = measures[i] - lasers[i].offset;
+    tf::Vector3 r_orientation = tf::quatRotate(q_correct, lasers[i].orientation);
+    tf::Vector3 r_position = tf::quatRotate(q_correct, lasers[i].position);
+    projected_orientation[i] = r_orientation;
+    projected_position[i] = r_position;
+    targets[i] = _measure*r_orientation + r_position;
   }
+
+  projected_target[0] = targets[0].x();
+  projected_target[1] = targets[1].x();
+  projected_target[2] = targets[2].y();
+  projected_target[3] = targets[3].y();
+  projected_target[4] = targets[4].z();
+  projected_target[5] = targets[5].z();
+
+  projected_yaw[0] = getYawFromTargets(target[0], target[1], 0, 1); // in X indices: atan2(x,y)
+  projected_yaw[1] = getYawFromTargets(target[2], target[3], 1, 0); // in X indices: atan2(y,x) 
 
   // publish
   geometry_msgs::Pose UAVPose;
@@ -84,10 +112,12 @@ void callback_laser_raw(const flyingros_msgs::Distance::ConstPtr& msg){
 
 void callback_imu(const sensor_msgs::Imu::ConstPtr& msg){
     // CAUTION : Pitch is reversed for good computation... :(
+    // Wrong projection? Should put : _measure*r_orientation - r_position; (note the -)?
+    // Should set the orientation as positive value?
     // q_c is the pitch corrected quaternion
     // To do it, we simply have change signs of y,z,w.
-    q_imu = tf::Quaternion(msg->orientation.x, - msg->orientation.y, - msg->orientation.z, - msg->orientation.w);
-    //tf::quaternionMsgToTF(msg->orientation, q_imu);
+    //q_imu = tf::Quaternion(msg->orientation.x, - msg->orientation.y, - msg->orientation.z, - msg->orientation.w);
+    tf::quaternionMsgToTF(msg->orientation, q_imu);
 }
 
 void reconfigure_lasers(){
@@ -122,23 +152,39 @@ void reconfigure_lasers(){
     }
 }
 
+void callback_print_data(const ros::TimerEvent){
+  for(int i = 0; i<6; i++){
+    ROS_DEBUG_STREAM("Laser: " << i);
+    ROS_DEBUG_STREAM("Position       xyz: " << std::setprecision(3) << lasers[i].position.x() << " \t" << lasers[i].position.y() << " \t" << lasers[i].position.z());
+    ROS_DEBUG_STREAM("Position_final xyz: " << std::setprecision(3) << projected_position.x() << " \t" << projected_position.y() << " \t" << projected_position.z());
+    ROS_DEBUG_STREAM("Orientation    xyz: " << std::setprecision(3) << lasers[i].orientation.x() << " \t" << lasers[i].orientation.y() << " \t" << lasers[i].orientation.z());
+    ROS_DEBUG_STREAM("Orientation_fi xyz: " << std::setprecision(3) << projected_orientation.x() << " \t" << projected_orientation.y() << " \t" << projected_orientation.z());
+  }
+
+  ROS_DEBUG_STREAM("Projected   xxyyzz: " << std::setprecision(3) << projected_target[0] << " \t"<< projected_target[1] << " \t" << projected_target[2] << " \t" << projected_target[3] << " \t" << projected_target[4] << " \t" << projected_target[5];
+  ROS_DEBUG_STREAM("YAW  X,Y: " << std::setprecision(3) << projected_yaw[0] << " \t"<< projected_yaw[1];
+  ROS_DEBUG_STREAM("--------- ");
+}
+
 int main(int argc, char **argv)
 {
-    ros::init(argc, argv, "laser_node_3D_algorithm_cpp");
-    ros::NodeHandle nh;
+  ros::init(argc, argv, "laser_node_test");
+  ros::NodeHandle nh;
 
-    // Reconfigure laser values (from ROS parameters) before using them.
-    reconfigure_lasers();
+  // Reconfigure laser values (from ROS parameters) before using them.
+  reconfigure_lasers();
 
-    std::string raw_laser_topic, position_pub_topic, imu_topic;
-    ros::param::param<std::string>("laser_raw_topic", raw_laser_topic, "/flyingros/lasers/raw");
-    ros::param::param<std::string>("laser_pose_topic", position_pub_topic, "/flyingros/lasers/pose");
-    ros::param::param<std::string>("imu_topic", imu_topic, "/mavros/imu/data");
+  std::string raw_laser_topic, position_pub_topic, imu_topic;
+  ros::param::param<std::string>("laser_raw_topic", raw_laser_topic, "/flyingros/lasers/raw");
+  ros::param::param<std::string>("laser_pose_topic", position_pub_topic, "/flyingros/lasers/pose");
+  ros::param::param<std::string>("imu_topic", imu_topic, "/mavros/imu/data");
 
-    ros::Subscriber raw_laser_sub = nh.subscribe(raw_laser_topic, 1, callback_laser_raw);
-    ros::Subscriber imu_sub = nh.subscribe(imu_topic, 1, callback_imu);
-    position_publisher = nh.advertise<geometry_msgs::Pose>(position_pub_topic, 1);
+  ros::Subscriber raw_laser_sub = nh.subscribe(raw_laser_topic, 1, callback_laser_raw);
+  ros::Subscriber imu_sub = nh.subscribe(imu_topic, 1, callback_imu);
+  position_publisher = nh.advertise<geometry_msgs::Pose>(position_pub_topic, 1);
 
-    ros::spin();
-    return 0;
+  ros::Timer ros::NodeHandle::createTimer(ros::Duration(1), callback_print_data, false);
+  
+  ros::spin();
+  return 0;
 }
