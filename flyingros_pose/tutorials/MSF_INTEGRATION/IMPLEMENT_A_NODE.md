@@ -3,6 +3,8 @@ Implement a MSF Node
 
 If your needs are not in the given nodes, you can implement yours. This example is to implement a dual position node integration.
 
+Please check [AlexisTM/ethzasl_msf](https://github.com/AlexisTM/ethzasl_msf/tree/master/msf_updates/src/dual_position_msf) for more nodes
+
 Data
 ----------
 
@@ -224,24 +226,6 @@ Final sensor manager file `msf_updates/src/dual_position_msf/dual_position_senso
 -------------------------------
 
 ```c++
-/*
- * Copyright (C) 2012-2013 Simon Lynen, ASL, ETH Zurich, Switzerland
- * You can contact the author at <slynen at ethz dot ch>
- * Copyright (C) 2011-2012 Stephan Weiss, ASL, ETH Zurich, Switzerland
- * You can contact the author at <stephan dot weiss at ieee dot org>
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 #ifndef DUAL_POSITION_MEASUREMENTMANAGER_H
 #define DUAL_POSITION_MEASUREMENTMANAGER_H
 
@@ -316,8 +300,8 @@ class DualPositionSensorManager : public msf_core::MSF_SensorManagerROS<
     config_ = config;
     position_handler_->SetNoises(config.position_noise_meas);
     position_handler_->SetDelay(config.position_delay);
-    position_handler2_->SetNoises(config.position_noise_meas2);
-    position_handler2_->SetDelay(config.position_delay2);
+    position_handler2_->SetNoises(config.position2_noise_meas);
+    position_handler2_->SetDelay(config.position2_delay);
     if ((level & msf_updates::DualPositionSensor_INIT_FILTER)
         && config.core_init_filter == true) {
       Init(1.0);
@@ -419,11 +403,15 @@ class DualPositionSensorManager : public msf_core::MSF_SensorManagerROS<
   virtual void CalculateQAuxiliaryStates(EKFState_T& state, double dt) const {
     const msf_core::Vector3 npipv = msf_core::Vector3::Constant(
         config_.position_noise_p_ip);
+    const msf_core::Vector3 npipv2 = msf_core::Vector3::Constant(
+        config_.position2_noise_p_ip);
 
     // Compute the blockwise Q values and store them with the states,
     //these then get copied by the core to the correct places in Qd.
     state.GetQBlock<StateDefinition_T::p_ip>() =
         (dt * npipv.cwiseProduct(npipv)).asDiagonal();
+    state.GetQBlock<StateDefinition_T::p_ip2>() =
+        (dt * npipv2.cwiseProduct(npipv2)).asDiagonal();
   }
 
   virtual void SetStateCovariance(
