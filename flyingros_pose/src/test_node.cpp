@@ -60,7 +60,7 @@ void callback_laser_raw(const flyingros_msgs::Distance::ConstPtr& msg){
   // Correct offset
   double measures[6];
   for(int i = 0; i < 6; i++){
-      laser_measures_raw = double(msg->lasers[i])/100.0;
+      laser_measures_raw[i] = double(msg->lasers[i])/100.0;
       // measures are in cm and have an offset
       measures[i] = double(msg->lasers[i])/100.0;
   }
@@ -83,12 +83,12 @@ void callback_laser_raw(const flyingros_msgs::Distance::ConstPtr& msg){
   tf::Quaternion q_correct = tf::createQuaternionFromRPY(roll, pitch, yaw_x);
   tf::Vector3 targets[6];
   for(int i = 0; i < 6; i ++){
-    laser_measures_corrected = measures[i] - lasers[i].offset;
+    laser_measures_corrected[i] = measures[i] - lasers[i].offset;
     tf::Vector3 r_orientation = tf::quatRotate(q_correct, lasers[i].orientation);
     tf::Vector3 r_position = tf::quatRotate(q_correct, lasers[i].position);
     projected_orientation[i] = r_orientation;
     projected_position[i] = r_position;
-    targets[i] = _measure*r_orientation + r_position;
+    targets[i] = measures[i]*r_orientation + r_position;
   }
 
   projected_target[0] = targets[0].x();
@@ -98,8 +98,8 @@ void callback_laser_raw(const flyingros_msgs::Distance::ConstPtr& msg){
   projected_target[4] = targets[4].z();
   projected_target[5] = targets[5].z();
 
-  projected_yaw[0] = getYawFromTargets(target[0], target[1], 0, 1); // in X indices: atan2(x,y)
-  projected_yaw[1] = getYawFromTargets(target[2], target[3], 1, 0); // in X indices: atan2(y,x) 
+  projected_yaw[0] = getYawFromTargets(targets[0], targets[1], 0, 1); // in X indices: atan2(x,y)
+  projected_yaw[1] = getYawFromTargets(targets[2], targets[3], 1, 0); // in X indices: atan2(y,x) 
 
   // publish
   geometry_msgs::Pose UAVPose;
@@ -156,13 +156,13 @@ void callback_print_data(const ros::TimerEvent){
   for(int i = 0; i<6; i++){
     ROS_DEBUG_STREAM("Laser: " << i);
     ROS_DEBUG_STREAM("Position       xyz: " << std::setprecision(3) << lasers[i].position.x() << " \t" << lasers[i].position.y() << " \t" << lasers[i].position.z());
-    ROS_DEBUG_STREAM("Position_final xyz: " << std::setprecision(3) << projected_position.x() << " \t" << projected_position.y() << " \t" << projected_position.z());
+    ROS_DEBUG_STREAM("Position_final xyz: " << std::setprecision(3) << projected_position[i].x() << " \t" << projected_position[i].y() << " \t" << projected_position[i].z());
     ROS_DEBUG_STREAM("Orientation    xyz: " << std::setprecision(3) << lasers[i].orientation.x() << " \t" << lasers[i].orientation.y() << " \t" << lasers[i].orientation.z());
-    ROS_DEBUG_STREAM("Orientation_fi xyz: " << std::setprecision(3) << projected_orientation.x() << " \t" << projected_orientation.y() << " \t" << projected_orientation.z());
+    ROS_DEBUG_STREAM("Orientation_fi xyz: " << std::setprecision(3) << projected_orientation[i].x() << " \t" << projected_orientation[i].y() << " \t" << projected_orientation[i].z());
   }
 
-  ROS_DEBUG_STREAM("Projected   xxyyzz: " << std::setprecision(3) << projected_target[0] << " \t"<< projected_target[1] << " \t" << projected_target[2] << " \t" << projected_target[3] << " \t" << projected_target[4] << " \t" << projected_target[5];
-  ROS_DEBUG_STREAM("YAW  X,Y: " << std::setprecision(3) << projected_yaw[0] << " \t"<< projected_yaw[1];
+  ROS_DEBUG_STREAM("Projected   xxyyzz: " << std::setprecision(3) << projected_target[0] << " \t"<< projected_target[1] << " \t" << projected_target[2] << " \t" << projected_target[3] << " \t" << projected_target[4] << " \t" << projected_target[5]);
+  ROS_DEBUG_STREAM("YAW  X,Y: " << std::setprecision(3) << projected_yaw[0] << " \t"<< projected_yaw[1]);
   ROS_DEBUG_STREAM("--------- ");
 }
 
@@ -183,7 +183,7 @@ int main(int argc, char **argv)
   ros::Subscriber imu_sub = nh.subscribe(imu_topic, 1, callback_imu);
   position_publisher = nh.advertise<geometry_msgs::Pose>(position_pub_topic, 1);
 
-  ros::Timer ros::NodeHandle::createTimer(ros::Duration(1), callback_print_data, false);
+  ros::Timer myTimer = nh.createTimer(ros::Duration(1), &callback_print_data, false);
   
   ros::spin();
   return 0;

@@ -54,7 +54,7 @@ catkin_python_setup()
 catkin_package(
   INCLUDE_DIRS include
 #  LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS flyingros_libs geometry_msgs flyingros_msgs mavros mavros-extras swiftnav_piksi tf roscpp sensor_msgs
+  CATKIN_DEPENDS flyingros_libs mavros mavros-extras swiftnav_piksi tf roscpp
 #  DEPENDS
 )
 
@@ -79,12 +79,13 @@ include_directories(include ${catkin_INCLUDE_DIRS})
 
 ## Declare a C++ executable
 add_executable(six_lasers_algorithm src/six_lasers_algorithm.cpp)
+add_executable(test_node src/test_node.cpp)
 add_executable(altitude_lasers src/altitude_lasers.cpp)
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
-add_dependencies(six_lasers_algorithm ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} flyingros_msgs_generate_messages_cpp flyingros_msgs)
-add_dependencies(altitude_lasers ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} flyingros_msgs_generate_messages_cpp flyingros_msgs)
+add_dependencies(six_lasers_algorithm ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} flyingros_msgs_generate_messages_cpp)
+add_dependencies(altitude_lasers ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} flyingros_msgs_generate_messages_cpp)
 
 
 ## Specify libraries to link a library or executable target against
