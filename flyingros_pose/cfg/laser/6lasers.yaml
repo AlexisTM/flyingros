@@ -17,6 +17,7 @@ lasers:
     - [0.0,0.0,0.0]
   # The orientation is written (-x, -y, -z) for a (x, y, z) real direction. 
   # It means the value will be POSITIVE to have a positive pointing vector.
+  # Therefore, we do not need to "reverse" all our measurements.
   # This should change but is not going to change while not needed. 
   # Implemented as: _measure*r_orientation + r_position;
   # The orientations are normalized upon initialisation.
