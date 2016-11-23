@@ -70,17 +70,18 @@ namespace flyingros_pose
     };
 
     // To deallocate the object
+    // Null function as we do not instantiate with malloc/new.
     ~Laser(){};
 
     void configure(tf::Vector3 _position, tf::Vector3 _orientation, double _offset){
       position = _position;
-      if(_orientation == tf::Vector3(0,0,0)) // This is bad... unhandled... division by 0
-         _orientation = tf::Vector3(1,0,0);
-      orientation = _orientation.normalize();
+      updateOrientation(_orientation.normalize());
       offset = _offset;
     };
     // Update the laser orientation quaternion
     void updateOrientation(tf::Vector3 _orientation){
+      if(_orientation == tf::Vector3(0,0,0)) // This is bad... unhandled... division by 0
+         _orientation = tf::Vector3(1,0,0);
       orientation = _orientation.normalize();
     };
 
