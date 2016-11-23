@@ -1,19 +1,26 @@
 lasers:
   count: 6
   positions:
+  # 
+  # _measure*r_orientation + r_position;
     - [0.0,0.0,0.0]
     - [0.0,0.0,0.0]
     - [0.0,0.0,0.0]
     - [0.0,0.0,0.0]
     - [0.0,0.0,0.0]
     - [0.0,0.0,0.0]
-  orientations:
+  # Orientations is the direction the laser is pointing to.
+  # Actually using (-x,-y,-z) while the the real direction is (x,y,z) with x,y,z negative.
+  # Therefore, we do not need to "reverse" all our measurements.
+  orientations: 
     - [1.0,0.0,0.0]
     - [1.0,0.0,0.0]
     - [0.0,1.0,0.0]
     - [0.0,1.0,0.0]
     - [0.0,0.0,1.0]
     - [0.0,0.0,1.0]
+  # If the lasers measures systematically 3 cm too much, the offset should be 0.03. 
+  # Used as : _measure = _measure - offset; 
   offsets:
     - 0.0
     - 0.0
