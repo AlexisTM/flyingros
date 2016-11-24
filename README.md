@@ -5,6 +5,8 @@ Around the Internet of robotics, there is a lot of open-source/open-hardware pro
 
 Flying Robot Operating System is designed to be the main **OPEN-SOURCE** package for your multicopter consumer application or closed-source commercial application.
 
+The way the packages are organized are available in the [Project architecture](PROJECT_ARCHITECTURE.MD) file.
+
 Installation
 ------------
 
@@ -21,6 +23,7 @@ Hardware
 * PixHawk (200$)
 * Odroid XU4 (79$ naked)
 * WiFi antenna (connect to external hotspot) or Modem (create an AP)
+* The localisation system you want (see the [flyingros_pose package](flyingros_pose))
 
 Software
 -----------
