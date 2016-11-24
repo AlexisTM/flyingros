@@ -86,6 +86,7 @@ add_executable(altitude_lasers src/altitude_lasers.cpp)
 ## same as for the library above
 add_dependencies(six_lasers_algorithm ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} flyingros_msgs_generate_messages_cpp)
 add_dependencies(altitude_lasers ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} flyingros_msgs_generate_messages_cpp)
+add_dependencies(test_node ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} flyingros_msgs_generate_messages_cpp)
 
 
 ## Specify libraries to link a library or executable target against
@@ -95,7 +96,9 @@ target_link_libraries(six_lasers_algorithm
 target_link_libraries(altitude_lasers
    ${catkin_LIBRARIES}
 )
-
+target_link_libraries(test_node
+   ${catkin_LIBRARIES}
+)
 #############
 ## Install ##
 #############
