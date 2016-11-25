@@ -113,7 +113,6 @@ script:
   - source /opt/ros/$ROS_DISTRO/setup.bash
   - cd ~/catkin_ws
   - catkin_make
-  - catkin_make run_tests
   # Run the tests, ensuring the path is set correctly.
-  # - source devel/setup.bash
-  # - catkin_make run_tests && catkin_make test
+  - source devel/setup.bash
+  - catkin_make run_tests && catkin_make test
