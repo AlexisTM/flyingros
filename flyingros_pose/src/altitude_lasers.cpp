@@ -50,7 +50,7 @@ void callback_laser_raw(const flyingros_msgs::Distance::ConstPtr& msg){
   double measures[6];
   for(int i = 0; i < laser_count; i++){
       // measures are in cm and have an offset
-      measures[i] = double(msg->lasers[i])/100.0 - lasers[i].offset;
+      measures[i] = double(msg->lasers[i])/100.0;
   }
 
   // Get position

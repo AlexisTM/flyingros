@@ -60,6 +60,9 @@ namespace flyingros_pose
   class Laser {
   public:
     // Initialisation
+    // Offset in meters.
+    // Position in meters
+    // Orientation is normalised on change.
     Laser(tf::Vector3 _position, tf::Vector3 _orientation, double _offset) {
       configure(_position, _orientation, _offset);
     };
@@ -85,12 +88,13 @@ namespace flyingros_pose
       orientation = _orientation.normalize();
     };
 
-    // Project the laser and returns the actual true measure
+    // Project the laser to the wall, we have one point, from the wall. 
+    // NOTE : The origin is based on the multicopter. So the position is "negative".
     tf::Vector3 project(double _measure, tf::Quaternion _q){
       _measure = _measure - offset;
       tf::Vector3 r_orientation = tf::quatRotate(_q, orientation);
       tf::Vector3 r_position = tf::quatRotate(_q, position);
-      return _measure*r_orientation + r_position;
+      return _measure*r_orientation - r_position;
     };
 
     // Last result
