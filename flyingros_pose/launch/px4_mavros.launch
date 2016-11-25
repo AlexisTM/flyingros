@@ -1,20 +1,22 @@
 <launch>
-  <!-- rosservice call /msf_pose_sensor/pose_sensor/initialize_msf_scale 1 -->
     <arg name="fcu_url" default="serial:///dev/ttySAC0:921600" />
-    <arg name="gcs_url" default="udp://:14556@127.0.0.1:14550" />
+    <!--arg name="gcs_url" default="udp:/127.0.0.1:14556@130.104.234.214:14550" /-->
+    <arg name="gcs_url" default="tcp-l://:14555" />
     <arg name="tgt_system" default="1" />
     <arg name="tgt_component" default="50" />
-    <arg name="log_output" default="screen" />
-
+    <arg name="log_output" default="log" />
     <!-- PX4 launch -->
     <include file="$(find mavros)/launch/node.launch">
       <arg name="pluginlists_yaml" value="$(find mavros)/launch/px4_pluginlists.yaml" />
       <arg name="config_yaml" value="$(find mavros)/launch/px4_config.yaml" />
-
       <arg name="fcu_url" value="$(arg fcu_url)" />
       <arg name="gcs_url" value="$(arg gcs_url)" />
       <arg name="tgt_system" value="$(arg tgt_system)" />
       <arg name="tgt_component" value="$(arg tgt_component)" />
       <arg name="log_output" value="$(arg log_output)" />
     </include>
+
+    <node name="flyingros" pkg="flyingros_pose" type="test_node" output="screen" >
+    <rosparam file="$(find flyingros_pose)/cfg/laser/6lasers.yaml"/>
+  </node>
 </launch>

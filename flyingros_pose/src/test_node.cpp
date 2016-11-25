@@ -40,6 +40,8 @@
 #include <sensor_msgs/Imu.h>
 #include "flyingros_pose/laser_algorithm_functions.h"
 #include "flyingros_msgs/Distance.h"
+#include <ros/console.h> 
+#include <cmath>
 
 using namespace std;
 using namespace flyingros_pose;
@@ -84,19 +86,19 @@ void callback_laser_raw(const flyingros_msgs::Distance::ConstPtr& msg){
   tf::Vector3 targets[6];
   for(int i = 0; i < 6; i ++){
     laser_measures_corrected[i] = measures[i] - lasers[i].offset;
-    tf::Vector3 r_orientation = tf::quatRotate(q_correct, lasers[i].orientation);
-    tf::Vector3 r_position = tf::quatRotate(q_correct, lasers[i].position);
+    tf::Vector3 r_orientation = tf::quatRotate(q_zero, lasers[i].orientation);
+    tf::Vector3 r_position = tf::quatRotate(q_zero, lasers[i].position);
     projected_orientation[i] = r_orientation;
     projected_position[i] = r_position;
-    targets[i] = measures[i]*r_orientation + r_position;
+    targets[i] = measures[i]*r_orientation - r_position;
   }
 
-  projected_target[0] = targets[0].x();
-  projected_target[1] = targets[1].x();
-  projected_target[2] = targets[2].y();
-  projected_target[3] = targets[3].y();
-  projected_target[4] = targets[4].z();
-  projected_target[5] = targets[5].z();
+  projected_target[0] = abs(targets[0].x());
+  projected_target[1] = abs(targets[1].x());
+  projected_target[2] = abs(targets[2].y());
+  projected_target[3] = abs(targets[3].y());
+  projected_target[4] = abs(targets[4].z());
+  projected_target[5] = abs(targets[5].z());
 
   projected_yaw[0] = getYawFromTargets(targets[0], targets[1], 0, 1); // in X indices: atan2(x,y)
   projected_yaw[1] = getYawFromTargets(targets[2], targets[3], 1, 0); // in X indices: atan2(y,x) 
@@ -111,12 +113,6 @@ void callback_laser_raw(const flyingros_msgs::Distance::ConstPtr& msg){
 }
 
 void callback_imu(const sensor_msgs::Imu::ConstPtr& msg){
-    // CAUTION : Pitch is reversed for good computation... :(
-    // Wrong projection? Should put : _measure*r_orientation - r_position; (note the -)?
-    // Should set the orientation as positive value?
-    // q_c is the pitch corrected quaternion
-    // To do it, we simply have change signs of y,z,w.
-    //q_imu = tf::Quaternion(msg->orientation.x, - msg->orientation.y, - msg->orientation.z, - msg->orientation.w);
     tf::quaternionMsgToTF(msg->orientation, q_imu);
 }
 
@@ -152,18 +148,27 @@ void reconfigure_lasers(){
     }
 }
 
-void callback_print_data(const ros::TimerEvent){
+void callback_print_data(){
+  double roll, pitch, yaw;
   for(int i = 0; i<6; i++){
-    ROS_DEBUG_STREAM("Laser: " << i);
-    ROS_DEBUG_STREAM("Position       xyz: " << std::setprecision(3) << lasers[i].position.x() << " \t" << lasers[i].position.y() << " \t" << lasers[i].position.z());
-    ROS_DEBUG_STREAM("Position_final xyz: " << std::setprecision(3) << projected_position[i].x() << " \t" << projected_position[i].y() << " \t" << projected_position[i].z());
-    ROS_DEBUG_STREAM("Orientation    xyz: " << std::setprecision(3) << lasers[i].orientation.x() << " \t" << lasers[i].orientation.y() << " \t" << lasers[i].orientation.z());
-    ROS_DEBUG_STREAM("Orientation_fi xyz: " << std::setprecision(3) << projected_orientation[i].x() << " \t" << projected_orientation[i].y() << " \t" << projected_orientation[i].z());
+    std::cout << "Laser: " << i << "\n";
+    std::cout << "Position       xyz: " << std::setprecision(3) << lasers[i].position.x() << " \t" << lasers[i].position.y() << " \t" << lasers[i].position.z() << "\n";
+    std::cout << "Position_final xyz: " << std::setprecision(3) << projected_position[i].x() << " \t" << projected_position[i].y() << " \t" << projected_position[i].z() << "\n";
+    std::cout << "Orientation    xyz: " << std::setprecision(3) << lasers[i].orientation.x() << " \t" << lasers[i].orientation.y() << " \t" << lasers[i].orientation.z() << "\n";
+    std::cout << "Orientation_fi xyz: " << std::setprecision(3) << projected_orientation[i].x() << " \t" << projected_orientation[i].y() << " \t" << projected_orientation[i].z() << "\n";
   }
 
-  ROS_DEBUG_STREAM("Projected   xxyyzz: " << std::setprecision(3) << projected_target[0] << " \t"<< projected_target[1] << " \t" << projected_target[2] << " \t" << projected_target[3] << " \t" << projected_target[4] << " \t" << projected_target[5]);
-  ROS_DEBUG_STREAM("YAW  X,Y: " << std::setprecision(3) << projected_yaw[0] << " \t"<< projected_yaw[1]);
-  ROS_DEBUG_STREAM("--------- ");
+  std::cout << "Quaternion xyzw: " << std::setprecision(3) << q_imu.x() << " \t"<< q_imu.y() << " \t" << q_imu.z() << " \t" << q_imu.w() << "\n";
+
+  tf::Matrix3x3 m(q_imu);
+  m.getRPY(roll, pitch, yaw);
+
+  std::cout << "Rotation sxyz  : " << std::setprecision(3) << roll << " \t"<< pitch << " \t" << yaw << "\n";
+
+
+  std::cout << "Projected   xxyyzz: " << std::setprecision(3) << projected_target[0] << " \t"<< projected_target[1] << " \t" << projected_target[2] << " \t" << projected_target[3] << " \t" << projected_target[4] << " \t" << projected_target[5] << "\n";
+  std::cout << "YAW  X,Y: " << std::setprecision(3) << projected_yaw[0] << " \t"<< projected_yaw[1] << "\n";
+  std::cout << "--------- \n" << "\n";
 }
 
 int main(int argc, char **argv)
@@ -183,8 +188,21 @@ int main(int argc, char **argv)
   ros::Subscriber imu_sub = nh.subscribe(imu_topic, 1, callback_imu);
   position_publisher = nh.advertise<geometry_msgs::Pose>(position_pub_topic, 1);
 
-  ros::Timer myTimer = nh.createTimer(ros::Duration(1), &callback_print_data, false);
-  
-  ros::spin();
+  double last = ros::Time::now().toSec();
+  double now = ros::Time::now().toSec();
+  while (ros::ok()){
+    ros::spinOnce();
+    now = ros::Time::now().toSec();
+    if(now - last > 2.0){
+      callback_print_data();
+      last = now;
+    }
+  }
   return 0;
 }
+
+
+/*
+ rostopic pub /flyingros/lasers/raw flyingros_msgs/Distance -- [1.0,1.0,1.0,1.0,1.0,1.0] [0,0,0,0,0,0]
+
+*/

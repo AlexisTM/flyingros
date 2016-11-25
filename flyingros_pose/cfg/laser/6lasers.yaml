@@ -3,31 +3,27 @@ lasers:
   count: 6
   # Position of all the lasers on the copter.
   # If your laser is 5 centimeters AWAY from the wall X, 
-  #   the position will be [-0.05,0.0,0.0] as the implementation shows
-  # To be revised. 
-  # This should be *I think* Measure*Orientation-Position 
-  # Located in include/flyingros_pose/laser_algorithm_functions.h
-  # Implemented as: _measure*r_orientation + r_position;
+  #   the position will be [0.05,0.0,0.0] as the implementation shows
+  # Implemented as: _measure*r_orientation - r_position
   positions:
-    - [0.0,0.0,0.0]
-    - [0.0,0.0,0.0]
-    - [0.0,0.0,0.0]
-    - [0.0,0.0,0.0]
-    - [0.0,0.0,0.0]
-    - [0.0,0.0,0.0]
-  # The orientation is written (-x, -y, -z) for a (x, y, z) real direction. 
-  # It means the value will be POSITIVE to have a positive pointing vector.
-  # Therefore, we do not need to "reverse" all our measurements.
-  # This should change but is not going to change while not needed. 
-  # Implemented as: _measure*r_orientation + r_position;
+    - [1.0,0.0,0.0]
+    - [0.0,1.0,0.0]
+    - [0.0,0.0,1.0]
+    - [1.0,1.0,0.0]
+    - [0.0,1.0,1.0]
+    - [1.0,1.0,1.0]
+  # The orientation of the laser.
+  # The orientation is NEGATIVE as you point the wall behind.
+  # We do need to "reverse" all our measurements, abs() is sufficient.
+  # Implemented as: _measure*r_orientation - r_position;
   # The orientations are normalized upon initialisation.
   orientations:
-    - [1.0,0.0,0.0]
-    - [1.0,0.0,0.0]
-    - [0.0,1.0,0.0]
-    - [0.0,1.0,0.0]
-    - [0.0,0.0,1.0]
-    - [0.0,0.0,1.0]
+    - [-1.0,0.0,0.0]
+    - [-1.0,0.0,0.0]
+    - [0.0,-1.0,0.0]
+    - [0.0,-1.0,0.0]
+    - [0.0,0.0,-1.0]
+    - [0.0,0.0,-1.0]
   # Offsets are the effective offset. Example: 
   # If I measure 3 centimeters too much, I put the offset to +0.03
   # If I measure 3 centimeters too few,  I put the offset to -0.03
@@ -39,3 +35,9 @@ lasers:
     - 0.0
     - 0.0
     - 0.0
+  # not yet used
+  yaw_indices:
+    - - lasers : [0,1]
+      - indices : [0,1]
+    - - lasers : [2,3]
+      - indices : [1,0]
