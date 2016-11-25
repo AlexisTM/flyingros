@@ -63,18 +63,18 @@ TEST(FlyingrosPose, LaserProjection)
 {
     // RPY = (15,-20,-7)
     // Measure1 = 9.396m
-    // Target1 = (10,1.17,6.443)
+    // Target1 = (-10,-1.1702,-6.443)
     // Measure2 = 11.368m
-    // Target2 = (10,-1.94,2.395)
-    Laser laser1(tf::Vector3(2,3,2), tf::Vector3(1,0,0), 0);
-    Laser laser2(tf::Vector3(-1,-1,-1), tf::Vector3(1,0,0), 0);
+    // Target2 = (-10,+1.94,-2.395)
+    Laser laser1(tf::Vector3(2,3,2), tf::Vector3(-1,0,0), 0);
+    Laser laser2(tf::Vector3(-1,-1,-1), tf::Vector3(-1,0,0), 0);
 
     tf::Quaternion q = tf::createQuaternionFromRPY(deg2radf(15),deg2radf(-20),deg2radf(-7));
 
     tf::Vector3 target = laser1.project(9.396, q);
-    isNearVector3(target, tf::Vector3(10,1.17,6.443));
+    isNearVector3(target, tf::Vector3(-10,-1.1702,-6.443));
     target = laser2.project(11.368, q);
-    isNearVector3(target, tf::Vector3(10,-1.94,2.395));
+    isNearVector3(target, tf::Vector3(-10,+1.94,-2.395));
 }
 
 // Verify we have the right Yaw from the targets only
@@ -82,19 +82,21 @@ TEST(FlyingrosPose, LaserProjection)
 TEST(FlyingrosPose, LaserYaw) {
     // RPY = (15,-20,-7)
     // Measure1 = 9.396m
-    // Target1 = (10,1.17,6.443)
+    // Target1 = (-10,-1.1702,-6.443)
     // Measure2 = 11.368m
-    // Target2 = (10,-1.94,2.395)
-    Laser laser1(tf::Vector3(2,3,2), tf::Vector3(1,0,0), 0);
-    Laser laser2(tf::Vector3(-1,-1,-1), tf::Vector3(1,0,0), 0);
+    // Target2 = (-10,+1.94,-2.395)
+    Laser laser1(tf::Vector3(2,3,2), tf::Vector3(-1,0,0), 0);
+    Laser laser2(tf::Vector3(-1,-1,-1), tf::Vector3(-1,0,0), 0);
     tf::Quaternion q = tf::createQuaternionFromRPY(deg2radf(15),deg2radf(-20),deg2radf(-7));
     tf::Quaternion q_no_yaw = nullYawQuaternion(q);
     tf::Vector3 target1 = laser1.project(9.396, q_no_yaw);
     tf::Vector3 target2 = laser2.project(11.368, q_no_yaw);
 
-    // The actual test
+    std::cout << "target1 : " << target1.x() << "\t" << target1.y() << "\t" << target1.z();
+    std::cout << "target2 : " << target2.x() << "\t" << target2.y() << "\t" << target2.z();
 
-    double yaw = getYawFromTargets(target2, target1, 0, 1);
+    // The actual test
+    double yaw = getYawFromTargets(target1, target2, 0, 1);
 
     EXPECT_NEAR(yaw, deg2radf(-7), 0.001);
     //tf::Quaternion q = tf::createQuaternionFromRPY(deg2radf(15),deg2radf(-20),deg2radf(-7));

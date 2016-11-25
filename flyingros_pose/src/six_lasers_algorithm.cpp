@@ -34,13 +34,15 @@
 #include <sensor_msgs/Imu.h>
 #include "flyingros_pose/laser_algorithm_functions.h"
 #include "flyingros_msgs/Distance.h"
+#include <ros/console.h> 
+#include <cmath>
 
 using namespace std;
 using namespace flyingros_pose;
 
 Laser lasers[6];
 tf::Quaternion q_imu(0,0,0,1);
-ros::Publisher position_publisher;
+ros::Publisher pose_publisher;
 
 void callback_laser_raw(const flyingros_msgs::Distance::ConstPtr& msg){
   double roll, pitch, yaw;
@@ -52,7 +54,7 @@ void callback_laser_raw(const flyingros_msgs::Distance::ConstPtr& msg){
       measures[i] = double(msg->lasers[i])/100.0;
   }
 
-  // Get pitch yaw roll from the PixHawk
+  // Get pitch yaw roll from the PixHawk and create a quaternion with no rotation
   tf::Matrix3x3 m(q_imu);
   m.getRPY(roll, pitch, yaw);
   tf::Quaternion q_zero = tf::createQuaternionFromRPY(roll, pitch, 0);
@@ -79,15 +81,12 @@ void callback_laser_raw(const flyingros_msgs::Distance::ConstPtr& msg){
   UAVPose.position.x = (targets[0].x() + targets[1].x())/2.0;
   UAVPose.position.y = (targets[2].y() + targets[3].y())/2.0;
   UAVPose.position.z = (targets[4].z() + targets[5].z())/2.0;
-  position_publisher.publish(UAVPose);
+  tf::quaternionTFToMsg(q_correct, UAVPose.orientation);
+  pose_publisher.publish(UAVPose);
 }
 
 void callback_imu(const sensor_msgs::Imu::ConstPtr& msg){
-    // CAUTION : Pitch is reversed for good computation... :(
-    // q_c is the pitch corrected quaternion
-    // To do it, we simply have change signs of y,z,w.
-    q_imu = tf::Quaternion(msg->orientation.x, - msg->orientation.y, - msg->orientation.z, - msg->orientation.w);
-    //tf::quaternionMsgToTF(msg->orientation, q_imu);
+    tf::quaternionMsgToTF(msg->orientation, q_imu);
 }
 
 void reconfigure_lasers(){
@@ -137,7 +136,7 @@ int main(int argc, char **argv)
 
     ros::Subscriber raw_laser_sub = nh.subscribe(raw_laser_topic, 1, callback_laser_raw);
     ros::Subscriber imu_sub = nh.subscribe(imu_topic, 1, callback_imu);
-    position_publisher = nh.advertise<geometry_msgs::Pose>(position_pub_topic, 1);
+    pose_publisher = nh.advertise<geometry_msgs::Pose>(position_pub_topic, 1);
 
     ros::spin();
     return 0;
