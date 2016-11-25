@@ -9,6 +9,8 @@ Simply install `usb-cam` from package or from source
 Mako G 131-b - Ethernet camera from Alliance Vision
 --------------
 
+Got problems (missing frames) with the XU4, even with 1FPS.
+
 ### Old Gige SDK
 
 Install the following packages:

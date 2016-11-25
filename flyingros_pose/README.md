@@ -1,24 +1,27 @@
-FlyingROS_pose
+Flyingros_pose
 ==============
 
-FlyingROS_pose is the localization package. You can add new localization method.
+Flyingros_pose is the localization package. You can add new localization method. As this the "main" part of an autonomous multicopter, there is a whole tutorial helping you to choose your localisation(s) method.
 
-Available localization methods
+Go check the [TUTORIALS](tutorials)
+
+Main idea
 --------
 
-* Six lasers, two in each direction, for rectangular fly space
-* GPS RTK
-* GPS RTK Fused with lasers for altitude
-* SLAM (rovio or PTAM), check [INSTALL notes](INSTALL.md)
+* Based on MSF (Multi Sensor Fusion - from ethzasl)
+* Merge IMU 
+* Merge Sensors
+* Output the position to `/mavros/mocap/pose`
 
 Available data
 ------
 
-* GPS RTK (as local NED)
-* Lasers, altitude or position
 * PixHawk IMU
+* GPS RTK (as local NED)
+* Lasers, altitude, position, yaw angle
 * Onboard GPS
-* Camera (to be selected)
+* Camera (SLAM)
+* Pozyx/Marvelmind
 
 Camera choice
 -----
@@ -26,14 +29,3 @@ Camera choice
 * mvBlueFOX-IGC200wG-1112 (~320 €)
 * Vimba on ARMv7 HF did not worked well for us on the Odroid, the frames where incomplete.
 * USB customer camera (Odorid 720p for example) : To avoid, too slow and no global shutter.
-
-TODO
-------
-
-* Find the right camera
-* Make a successfull use of `rpg_svo in` coordination with `ethzasl_msf`.
-
-Future
--------
-
-* Camera (SLAM or equivalent)

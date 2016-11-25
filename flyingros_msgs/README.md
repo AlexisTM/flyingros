@@ -6,10 +6,20 @@ FlyingROS_msgs is the messaging package. You can add new messages to use in othe
 Available messages
 --------
 
-* Report.msg - Report the drone status
-* Mission.msg - Mission, multiple tasks
-* Task.msg - Task to do by the UAV
-* Battery.msg - Battery status
-* RPYPose.msg - Roll Pitch Yaw Position 
-* Distance.msg - Raw laser messages
-* RPY.msg - Roll Pitch Yaw
+* [Report.msg](srv/Report.msg) - Report the drone status
+* [Mission.msg](srv/Mission.msg) - Mission, multiple tasks
+* [Task.msg](srv/Task.msg) - Task to do by the UAV
+* [Battery.msg](srv/Battery.msg) - Battery status
+* [RPYPose.msg](srv/RPYPose.msg) - Roll Pitch Yaw Position 
+* [Distance.msg](srv/Distance.msg) - Raw laser messages
+* [RPY.msg](srv/RPY.msg) - Roll Pitch Yaw
+* [PositionWithCovariance.msg](srv/PositionWithCovariance.msg) - Position with covariance (like PoseWithCovariance, without orientation)
+* [PositionWithCovarianceStamped.msg](srv/PositionWithCovarianceStamped.msg) - Position with covariance and stamp (like PoseWithCovarianceStamped, without orientation)
+
+Available services
+----------
+
+* [MissionHandle.srv](srv/MissionHandle.srv) - Ask to handle a mission (send a mission)
+* [MissionRequest.srv](srv/MissionRequest.srv) - Ask to give back a mission (get a mission)
+* [TaskHandle.srv](srv/TaskHandle.srv) - Ask to handle a task (send a task)
+* [TaskRequest.srv](srv/TaskRequest.srv) - Ask to give back a task (get a task) 

@@ -26,7 +26,7 @@ Pose Sensor (6DOF, 4DOF)
   * Range: 300m
   * Rate: 100Hz
   * 3,4,6 DOF
-* VICON and MOCAP:
+* VICON and MOCAP systems:
   * Price: 60k$ to 120k$
   * Precision:  +/- 2cm
   * Range: 10x10x10m
