@@ -10,7 +10,7 @@ The way the packages are organized are available in the [Project architecture](P
 Installation
 ------------
 
-See [INSTALL](tree/master/INSTALL.md)
+See [INSTALL](INSTALL.md)
 
 Actual status
 ------------
