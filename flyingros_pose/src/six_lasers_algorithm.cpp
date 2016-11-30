@@ -30,7 +30,7 @@
 #include <iostream>
 #include "ros/ros.h"
 #include <tf/transform_datatypes.h>
-#include <geometry_msgs/Pose.h>
+#include <geometry_msgs/PoseStamped.h>
 #include <sensor_msgs/Imu.h>
 #include "flyingros_pose/laser_algorithm_functions.h"
 #include "flyingros_msgs/Distance.h"
@@ -43,6 +43,9 @@ using namespace flyingros_pose;
 Laser lasers[6];
 tf::Quaternion q_imu(0,0,0,1);
 ros::Publisher pose_publisher;
+uint32_t sequence_count;
+
+geometry_msgs::PoseStamped UAVPose;
 
 void callback_laser_raw(const flyingros_msgs::Distance::ConstPtr& msg){
   double roll, pitch, yaw;
@@ -76,13 +79,14 @@ void callback_laser_raw(const flyingros_msgs::Distance::ConstPtr& msg){
   }
 
   // publish
-  geometry_msgs::Pose UAVPose;
-  tf::quaternionTFToMsg(q_correct, UAVPose.orientation);
-  UAVPose.position.x = (targets[0].x() + targets[1].x())/2.0;
-  UAVPose.position.y = (targets[2].y() + targets[3].y())/2.0;
-  UAVPose.position.z = (targets[4].z() + targets[5].z())/2.0;
-  tf::quaternionTFToMsg(q_correct, UAVPose.orientation);
+  UAVPose.header.seq = sequence_count;
+  UAVPose.header.stamp = ros::Time::now();
+  tf::quaternionTFToMsg(q_correct, UAVPose.pose.orientation);
+  UAVPose.pose.position.x = (targets[0].x() + targets[1].x())/2.0;
+  UAVPose.pose.position.y = (targets[2].y() + targets[3].y())/2.0;
+  UAVPose.pose.position.z = (targets[4].z() + targets[5].z())/2.0;
   pose_publisher.publish(UAVPose);
+  sequence_count += 1;
 }
 
 void callback_imu(const sensor_msgs::Imu::ConstPtr& msg){
@@ -126,6 +130,10 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "laser_node_3D_algorithm_cpp");
     ros::NodeHandle nh;
 
+    // Initialization
+    sequence_count = 0;
+    UAVPose.header.frame_id = "/lasers_4D";
+
     // Reconfigure laser values (from ROS parameters) before using them.
     reconfigure_lasers();
 
@@ -136,7 +144,7 @@ int main(int argc, char **argv)
 
     ros::Subscriber raw_laser_sub = nh.subscribe(raw_laser_topic, 1, callback_laser_raw);
     ros::Subscriber imu_sub = nh.subscribe(imu_topic, 1, callback_imu);
-    pose_publisher = nh.advertise<geometry_msgs::Pose>(position_pub_topic, 1);
+    pose_publisher = nh.advertise<geometry_msgs::PoseStamped>(position_pub_topic, 1);
 
     ros::spin();
     return 0;
