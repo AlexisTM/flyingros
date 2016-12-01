@@ -6,24 +6,24 @@ lasers:
   #   the position will be [0.05,0.0,0.0] as the implementation shows
   # Implemented as: _measure*r_orientation - r_position
   positions:
-    - [1.0,0.0,0.0]
-    - [0.0,1.0,0.0]
-    - [0.0,0.0,1.0]
-    - [1.0,1.0,0.0]
-    - [0.0,1.0,1.0]
-    - [1.0,1.0,1.0]
+    - [ 15.0,  -25.0,  -2.0]
+    - [-15.0,   25.0,  -2.0]
+    - [-25.1,  -21.5,  -18.5]
+    - [-25.1,   21.5,  -18.5]
+    - [-15.0,   0.0,   -15.5]
+    - [ 15.0,   0.0,   -15.5]
   # The orientation of the laser.
   # The orientation is NEGATIVE as you point the wall behind.
   # We do need to "reverse" all our measurements, abs() is sufficient.
   # Implemented as: _measure*r_orientation - r_position;
   # The orientations are normalized upon initialisation.
   orientations:
-    - [-1.0,0.0,0.0]
-    - [-1.0,0.0,0.0]
-    - [0.0,-1.0,0.0]
-    - [0.0,-1.0,0.0]
-    - [0.0,0.0,-1.0]
-    - [0.0,0.0,-1.0]
+    - [-1.0,  0.0,   0.0]
+    - [-1.0,  0.0,   0.0]
+    - [0.0,  -1.0,   0.0]
+    - [0.0,  -1.0,   0.0]
+    - [0.0,   0.0,  -1.0]
+    - [0.0,   0.0,  -1.0]
   # Offsets are the effective offset. Example: 
   # If I measure 3 centimeters too much, I put the offset to +0.03
   # If I measure 3 centimeters too few,  I put the offset to -0.03
