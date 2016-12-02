@@ -6,4 +6,5 @@ uint8 RESET_PENDING = 80,       // Wait 15ms after you reset the Lidar, we are w
 uint8 ACQUISITION_IN_PROGRESS = 64, // The acquisition in on progress
 
 int16[] measures # Data
+uint8[] strength # Reading strength
 uint8[] status # Laser status
