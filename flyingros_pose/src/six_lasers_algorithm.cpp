@@ -33,7 +33,7 @@
 #include <geometry_msgs/PoseStamped.h>
 #include <sensor_msgs/Imu.h>
 #include "flyingros_pose/laser_algorithm_functions.h"
-#include "flyingros_msgs/Distance.h"
+#include "flyingros_msgs/MultiEcho.h"
 #include <ros/console.h> 
 #include <cmath>
 
@@ -47,14 +47,14 @@ uint32_t sequence_count;
 
 geometry_msgs::PoseStamped UAVPose;
 
-void callback_laser_raw(const flyingros_msgs::Distance::ConstPtr& msg){
+void callback_laser_raw(const flyingros_msgs::MultiEcho::ConstPtr& msg){
   double roll, pitch, yaw;
 
   // Correct offset
   double measures[6];
   for(int i = 0; i < 6; i++){
       // measures are in cm 
-      measures[i] = double(msg->lasers[i])/100.0;
+      measures[i] = double(msg->measures[i])/100.0;
   }
 
   // Get pitch yaw roll from the PixHawk and create a quaternion with no rotation

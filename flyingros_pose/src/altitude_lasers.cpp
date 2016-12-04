@@ -33,7 +33,7 @@
 #include <geometry_msgs/Pose.h>
 #include <sensor_msgs/Imu.h>
 #include "flyingros_pose/laser_algorithm_functions.h"
-#include "flyingros_msgs/Distance.h"
+#include "flyingros_msgs/MultiEcho.h"
 
 using namespace std;
 using namespace flyingros_pose;
@@ -43,14 +43,14 @@ tf::Quaternion q_imu(0,0,0,1);
 ros::Publisher position_publisher;
 int laser_count;
 
-void callback_laser_raw(const flyingros_msgs::Distance::ConstPtr& msg){
+void callback_laser_raw(const flyingros_msgs::MultiEcho::ConstPtr& msg){
   double roll, pitch, yaw;
 
   // Correct offset
   double measures[6];
   for(int i = 0; i < laser_count; i++){
       // measures are in cm and have an offset
-      measures[i] = double(msg->lasers[i])/100.0;
+      measures[i] = double(msg->measures[i])/100.0;
   }
 
   // Get position

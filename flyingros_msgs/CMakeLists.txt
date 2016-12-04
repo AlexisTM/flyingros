@@ -56,6 +56,7 @@ add_message_files(
    RPYPose.msg
    Battery.msg
    Mission.msg
+   MultiEcho.msg
    Task.msg
    PositionWithCovariance.msg
    PositionWithCovarianceStamped.msg
