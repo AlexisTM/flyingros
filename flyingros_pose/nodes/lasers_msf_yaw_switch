@@ -52,8 +52,8 @@ def init():
 
     rospy.init_node('lasers_msf_yaw_switch')
     # Subscribers & Publishers
-    # altitude_pub     = rospy.Publisher('flyingros/lasers/altitude', Float64, queue_size=1)
-    # lasers_sub     = rospy.Subscriber('flyingros/lasers/raw', Distance, raw_lasers_callback)
+    altitude_pub     = rospy.Publisher('flyingros/lasers/altitude', Float64, queue_size=1)
+    lasers_sub       = rospy.Subscriber('flyingros/lasers/raw', Distance, raw_lasers_callback)
 
     rospy.spin()
 

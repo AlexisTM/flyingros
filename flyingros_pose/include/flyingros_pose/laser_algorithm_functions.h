@@ -91,10 +91,15 @@ namespace flyingros_pose
     // Project the laser to the wall, we have one point, from the wall. 
     // NOTE : The origin is based on the multicopter. So the position is "negative".
     tf::Vector3 project(double _measure, tf::Quaternion _q){
+      // Offset is something we have too much from the measure 
+      // "3 centimeter offset, means I measured 3 centimeters more than I expected"
+      // We have to remove it.
       _measure = _measure - offset;
       tf::Vector3 r_orientation = tf::quatRotate(_q, orientation);
       tf::Vector3 r_position = tf::quatRotate(_q, position);
-      return _measure*r_orientation - r_position;
+      // Position is something missing, an additionnal deplacement we didn't yet took in account.
+      // Therefore, we have to add it.
+      return _measure*r_orientation + r_position;
     };
 
     // Last result

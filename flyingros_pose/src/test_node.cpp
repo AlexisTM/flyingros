@@ -54,9 +54,9 @@ double laser_measures_corrected[6] = {0,0,0,0,0,0};
 tf::Vector3 projected_position[6];
 tf::Vector3 projected_orientation[6];
 double projected_target[6] = {0,0,0,0,0,0};
-double projected_yaw[2] = {0,0};
+double projected_yaw[8] = {0,0,0,0,0,0,0,0};
 
-void callback_laser_raw(const flyingros_msgs::Distance::ConstPtr& msg){
+void callback_laser_raw(const flyingros_msgs::MultiEcho::ConstPtr& msg){
   double roll, pitch, yaw;
 
   // Correct offset
@@ -101,14 +101,24 @@ void callback_laser_raw(const flyingros_msgs::Distance::ConstPtr& msg){
   projected_target[5] = abs(targets[5].z());
 
   projected_yaw[0] = getYawFromTargets(targets[0], targets[1], 0, 1); // in X indices: atan2(x,y)
-  projected_yaw[1] = getYawFromTargets(targets[2], targets[3], 1, 0); // in X indices: atan2(y,x) 
+  projected_yaw[1] = getYawFromTargets(targets[0], targets[1], 1, 0); // in X indices: atan2(x,y)
+  projected_yaw[2] = getYawFromTargets(targets[1], targets[0], 0, 1); // in X indices: atan2(x,y)
+  projected_yaw[3] = getYawFromTargets(targets[1], targets[0], 1, 0); // in X indices: atan2(x,y)
+  projected_yaw[4] = getYawFromTargets(targets[2], targets[3], 1, 0); // in X indices: atan2(y,x) 
+  projected_yaw[5] = getYawFromTargets(targets[2], targets[3], 0, 1); // in X indices: atan2(y,x) 
+  projected_yaw[6] = getYawFromTargets(targets[3], targets[2], 1, 0); // in X indices: atan2(y,x) 
+  projected_yaw[7] = getYawFromTargets(targets[3], targets[2], 0, 1); // in X indices: atan2(y,x) 
+
+  for(int i = 0; i < 8; i++){
+    projected_yaw[i] = projected_yaw[i]*180/3.14159265358979323846;
+  }
 
   // publish
   geometry_msgs::Pose UAVPose;
   tf::quaternionTFToMsg(q_correct, UAVPose.orientation);
-  UAVPose.position.x = (targets[0].x() + targets[1].x())/2.0;
-  UAVPose.position.y = (targets[2].y() + targets[3].y())/2.0;
-  UAVPose.position.z = (targets[4].z() + targets[5].z())/2.0;
+  UAVPose.position.x = -(targets[0].x() + targets[1].x())/2.0;
+  UAVPose.position.y = -(targets[2].y() + targets[3].y())/2.0;
+  UAVPose.position.z = -(targets[4].z() + targets[5].z())/2.0;
   position_publisher.publish(UAVPose);
 }
 
@@ -167,7 +177,7 @@ void callback_print_data(){
 
 
   std::cout << "Projected   xxyyzz: " << std::setprecision(3) << projected_target[0] << " \t"<< projected_target[1] << " \t" << projected_target[2] << " \t" << projected_target[3] << " \t" << projected_target[4] << " \t" << projected_target[5] << "\n";
-  std::cout << "YAW  X,Y: " << std::setprecision(3) << projected_yaw[0] << " \t"<< projected_yaw[1] << "\n";
+  std::cout << "YAW  X,Y: " << std::setprecision(3) << projected_yaw[0] << " \t"<< projected_yaw[1] << " \t"<< projected_yaw[2] << " \t"<< projected_yaw[3] << " \t"<< projected_yaw[4] << " \t"<< projected_yaw[5] << " \t"<< projected_yaw[6] << " \t"<< projected_yaw[7] << "\n";
   std::cout << "--------- \n" << "\n";
 }
 
