@@ -62,17 +62,17 @@ void callback_laser_raw(const flyingros_msgs::MultiEcho::ConstPtr& msg){
   m.getRPY(roll, pitch, yaw);
   tf::Quaternion q_zero = tf::createQuaternionFromRPY(roll, pitch, 0);
 
-  // Get yaw
+  // Get yaw, use test_node to get the right convention (depending on your laser configuration)
   tf::Vector3 targetx1 = lasers[0].project(measures[0], q_zero);
   tf::Vector3 targetx2 = lasers[1].project(measures[1], q_zero);
-  double yaw_x = getYawFromTargets(targetx2, targetx1,0,1);
+  double yaw_x = getYawFromTargets(targetx1, targetx2, 0, 1);
 
   tf::Vector3 targety1 = lasers[2].project(measures[2], q_zero);
   tf::Vector3 targety2 = lasers[3].project(measures[3], q_zero);
-  double yaw_y = getYawFromTargets(targety2, targety1,1,0);
+  double yaw_y = getYawFromTargets(targety2, targety1, 1, 0);
 
   // Get position
-  tf::Quaternion q_correct = tf::createQuaternionFromRPY(roll, pitch, yaw_x);
+  tf::Quaternion q_correct = tf::createQuaternionFromRPY(roll, pitch, (yaw_x+yaw_y)/2);
   tf::Vector3 targets[6];
   for(int i = 0; i < 6; i ++){
     targets[i] = lasers[i].project(measures[i], q_correct);

@@ -6,12 +6,12 @@ lasers:
   #   the position will be [0.05,0.0,0.0] as the implementation shows
   # Implemented as: _measure*r_orientation - r_position
   positions:
-    - [-0.251,  -0.215,  -0.185] # Laser X
-    - [-0.251,   0.215,  -0.185] # Laser Z
+    - [-0.045,  -0.215,  -0.185] # Laser X
+    - [-0.060,   0.205,  -0.185] # Laser Z
     - [ 0.150,  -0.250,  -0.020] # Laser A
     - [-0.150,  -0.250,  -0.020] # Laser Y
-    - [-0.150,   0.00,   -0.155] # Laser W
-    - [ 0.150,   0.00,   -0.155] # Laser B
+    - [-0.150,   0.00,   -0.164] # Laser W
+    - [ 0.150,   0.00,   -0.164] # Laser B
   # The orientation of the laser.
   # The orientation is NEGATIVE as you point the wall behind.
   # We do need to "reverse" all our measurements, abs() is sufficient.
@@ -29,10 +29,10 @@ lasers:
   # If I measure 3 centimeters too few,  I put the offset to -0.03
   # Implemented as: _measure = _measure - offset;
   offsets:
-    - 0.15
-    - -0.02
-    - 0.09
-    - -0.11
+    - 0.23
+    - -0.00 # perfect offset ?
+    - 0.08
+    - -0.04
     - 0.04
     - 0.09
   # not yet used
