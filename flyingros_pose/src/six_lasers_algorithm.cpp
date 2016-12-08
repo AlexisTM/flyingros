@@ -43,9 +43,19 @@ using namespace flyingros_pose;
 Laser lasers[6];
 tf::Quaternion q_imu(0,0,0,1);
 ros::Publisher pose_publisher;
+ros::Publisher lowFrequency_publisher;
 uint32_t sequence_count;
+uint32_t lowf_sequence;
+static geometry_msgs::PoseStamped UAVPose;
+static geometry_msgs::PoseStamped UAVPoseLowf;
 
-geometry_msgs::PoseStamped UAVPose;
+void lowFrequency_pub(){
+  UAVPoseLowf = UAVPose;
+  UAVPoseLowf.header.seq = lowf_sequence;
+  UAVPoseLowf.header.stamp = ros::Time::now();
+  lowFrequency_publisher.publish(UAVPoseLowf);
+  lowf_sequence++;
+}
 
 void callback_laser_raw(const flyingros_msgs::MultiEcho::ConstPtr& msg){
   double roll, pitch, yaw;
@@ -81,7 +91,6 @@ void callback_laser_raw(const flyingros_msgs::MultiEcho::ConstPtr& msg){
   // publish
   UAVPose.header.seq = sequence_count;
   UAVPose.header.stamp = ros::Time::now();
-  ROS_DEBUG_STREAM("some debug :" << targets[0].x() << "\t" << targets[1].x() << "\t" << -(targets[0].x() + targets[1].x())/2.0);
   tf::quaternionTFToMsg(q_correct, UAVPose.pose.orientation);
   UAVPose.pose.position.x = -(targets[0].x() + targets[1].x())/2.0;
   UAVPose.pose.position.y = -(targets[2].y() + targets[3].y())/2.0;
@@ -128,25 +137,39 @@ void reconfigure_lasers(){
 
 int main(int argc, char **argv)
 {
-    ros::init(argc, argv, "laser_node_3D_algorithm_cpp");
-    ros::NodeHandle nh;
+  ros::init(argc, argv, "laser_node_3D_algorithm_cpp");
+  ros::NodeHandle nh;
 
-    // Initialization
-    sequence_count = 0;
-    UAVPose.header.frame_id = "/lasers_4D";
+  // Initialization
+  sequence_count = 0;
 
-    // Reconfigure laser values (from ROS parameters) before using them.
-    reconfigure_lasers();
+  lowf_sequence = 0;
+  UAVPose.header.frame_id = "/lasers_4D";
 
-    std::string raw_laser_topic, position_pub_topic, imu_topic;
-    ros::param::param<std::string>("laser_raw_topic", raw_laser_topic, "/flyingros/lasers/raw");
-    ros::param::param<std::string>("laser_pose_topic", position_pub_topic, "/flyingros/lasers/pose");
-    ros::param::param<std::string>("imu_topic", imu_topic, "/mavros/imu/data");
+  // Reconfigure laser values (from ROS parameters) before using them.
+  reconfigure_lasers();
 
-    ros::Subscriber raw_laser_sub = nh.subscribe(raw_laser_topic, 1, callback_laser_raw);
-    ros::Subscriber imu_sub = nh.subscribe(imu_topic, 1, callback_imu);
-    pose_publisher = nh.advertise<geometry_msgs::PoseStamped>(position_pub_topic, 1);
+  std::string raw_laser_topic, position_pub_topic, imu_topic;
+  int lowrate;
+  ros::param::param<int>("low_frequency_rate", lowrate, 8);
+  ros::param::param<std::string>("laser_raw_topic", raw_laser_topic, "/flyingros/lasers/raw");
+  ros::param::param<std::string>("laser_pose_topic", position_pub_topic, "/flyingros/lasers/pose");
+  ros::param::param<std::string>("imu_topic", imu_topic, "/mavros/imu/data");
 
-    ros::spin();
-    return 0;
+  ros::Subscriber raw_laser_sub = nh.subscribe(raw_laser_topic, 1, callback_laser_raw);
+  ros::Subscriber imu_sub = nh.subscribe(imu_topic, 1, callback_imu);
+  pose_publisher = nh.advertise<geometry_msgs::PoseStamped>(position_pub_topic, 1);
+  lowFrequency_publisher = nh.advertise<geometry_msgs::PoseStamped>("/flyingros/lasers/pose2mocap", 1);
+
+  ros::Duration lowfrequencyduration(1.0/double(lowrate));
+  ros::Time last = ros::Time::now();
+  while(ros::ok()){
+    if(ros::Time::now() - last > lowfrequencyduration){
+      last = ros::Time::now();
+      lowFrequency_pub();
+    }
+
+    ros::spinOnce();
+  }
+  return 0;
 }
