@@ -16,3 +16,4 @@ Additionnal information
 * [Pixhawk specific informations](SPECIFIC_PIXHAWK.md)
 * [Python interface dependancies](PYTHON_INTERFACE.md)
 * [Luaros informations](luaros.md)
+* [External tools (Arduino scripts for example)](external/README.md)
