@@ -15,7 +15,8 @@ void setup() {
   Serial.println(F("To start the programmation, connect pin 9 to ESC signal (orange or yellow)"));
   Serial.println(F("                                      GND to esc GND (brown)"));
   Serial.println(F("Then, send a PWM of 2000 and power on the ESC. "));
-  Serial.println(F("It will not rotate and you will hear bips according to your ESC."));
+  Serial.println(F("It will not rotate and you will hear bips according to your ESC.\n\n"));
+  Serial.println(F("Waiting your command (send an int though serial from 900 to 2000).\n\n"));
 }
 
 void loop() {
