@@ -1,7 +1,4 @@
 <launch>
-  <!-- Pixhawk config -->
-  <arg name="gcs_url" default="tcp-l://:14555" />
-
   <!-- Rosbridge config -->
   <arg name="certfile" default=""/>
   <arg name="keyfile" default="" />
@@ -28,16 +25,17 @@
   </node-->
 
   <!-- PX4 launch -->
-  <include file="$(find mavros)/launch/node.launch">
-    <arg name="pluginlists_yaml" value="$(find flyingros_pose)/cfg/pixhawk/px4_pluginlists.yaml" />
-    <arg name="config_yaml" value="$(find flyingros_pose)/cfg/pixhawk/px4_config.yaml" />
 
-    <arg name="fcu_url" value="serial:///dev/ttySAC0:921600" />
-    <arg name="gcs_url" value="$(arg gcs_url)" />
-    <arg name="tgt_system" value="1" />
-    <arg name="tgt_component" value="50" />
-    <arg name="log_output" value="log" />
-  </include>
+  <node pkg="mavros" type="mavros_node" name="mavros" required="true" clear_params="true" output="screen">
+    <param name="fcu_url" value="serial:///dev/ttySAC0:921600" />
+    <param name="gcs_url" value="tcp-l://:14555" />
+    <param name="target_system_id" value="1" />
+    <param name="target_component_id" value="1" />
+
+    <!-- load blacklist, config -->
+    <rosparam command="load" file="$(find flyingros_pose)/cfg/pixhawk/px4_pluginlists.yaml" />
+    <rosparam command="load" file="$(find flyingros_pose)/cfg/pixhawk/px4_config.yaml" />
+  </node>
 
 <!--
   <node name="rosbridge_websocket" pkg="rosbridge_server" type="rosbridge_websocket" output="screen">
