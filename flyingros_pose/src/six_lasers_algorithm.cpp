@@ -46,13 +46,45 @@ ros::Publisher pose_publisher;
 ros::Publisher lowFrequency_publisher;
 uint32_t sequence_count;
 uint32_t lowf_sequence;
+static tf::Vector3 lastPosition[3];
+static int lastPositionIndex = 0; // 0,1,2
 static geometry_msgs::PoseStamped UAVPose;
 static geometry_msgs::PoseStamped UAVPoseLowf;
 
+void filterPosition(tf::Vector3 * p)
+{
+  int index = lastPositionIndex;
+
+  *p = lastPosition[index]*0.6;
+
+  index -= 1;
+  if(index < 0){
+    index = 2;
+  }
+
+  *p += lastPosition[index]*0.3;
+
+  index -= 1;
+  if(index < 0){
+    index = 2;
+  }
+
+  *p += lastPosition[index]*0.1;
+}
+
+
 void lowFrequency_pub(){
-  UAVPoseLowf = UAVPose;
+  UAVPoseLowf.pose.orientation = UAVPose.pose.orientation;
   UAVPoseLowf.header.seq = lowf_sequence;
-  UAVPoseLowf.header.stamp = ros::Time::now();
+  UAVPoseLowf.header.stamp = ros::Time::now();  
+
+  tf::Vector3 filteredPosition;
+  filterPosition(&filteredPosition);
+
+  UAVPoseLowf.pose.position.x = filteredPosition.x();
+  UAVPoseLowf.pose.position.y = filteredPosition.y();
+  UAVPoseLowf.pose.position.z = filteredPosition.z();
+  
   lowFrequency_publisher.publish(UAVPoseLowf);
   lowf_sequence++;
 }
@@ -79,7 +111,7 @@ void callback_laser_raw(const flyingros_msgs::MultiEcho::ConstPtr& msg){
 
   tf::Vector3 targety1 = lasers[2].project(measures[2], q_zero);
   tf::Vector3 targety2 = lasers[3].project(measures[3], q_zero);
-  double yaw_y = getYawFromTargets(targety2, targety1, 1, 0);
+  double yaw_y = -getYawFromTargets(targety2, targety1, 1, 0);
 
   // Get position
   tf::Quaternion q_correct = tf::createQuaternionFromRPY(roll, pitch, (yaw_x+yaw_y)/2);
@@ -92,9 +124,17 @@ void callback_laser_raw(const flyingros_msgs::MultiEcho::ConstPtr& msg){
   UAVPose.header.seq = sequence_count;
   UAVPose.header.stamp = ros::Time::now();
   tf::quaternionTFToMsg(q_correct, UAVPose.pose.orientation);
-  UAVPose.pose.position.x = -(targets[0].x() + targets[1].x())/2.0;
-  UAVPose.pose.position.y = -(targets[2].y() + targets[3].y())/2.0;
-  UAVPose.pose.position.z = -(targets[4].z() + targets[5].z())/2.0;
+
+  lastPosition[lastPositionIndex].setX(-(targets[0].x() + targets[1].x())/2.0);
+  lastPosition[lastPositionIndex].setY(-(targets[2].y() + targets[3].y())/2.0);
+  //lastPosition[lastPositionIndex].setZ(-(targets[4].z() + targets[5].z())/2.0);
+  lastPosition[lastPositionIndex].setZ(-targets[4].z());
+  UAVPose.pose.position.x = lastPosition[lastPositionIndex].x();
+  UAVPose.pose.position.y = lastPosition[lastPositionIndex].y();
+  UAVPose.pose.position.z = lastPosition[lastPositionIndex].z();
+
+  lastPositionIndex = (lastPositionIndex+1)%3;
+
   pose_publisher.publish(UAVPose);
   sequence_count += 1;
 }

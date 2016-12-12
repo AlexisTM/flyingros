@@ -19,10 +19,10 @@
   <node pkg="rosserial_python" type="message_info_service.py" name="rosserial_message_info" />
 
   <node name="flyingros" pkg="flyingros_pose" type="six_lasers_algorithm" output="screen" >
+    <remap from="/flyingros/lasers/pose2mocap" to="/mavros/vision_pose/pose" />
     <rosparam file="$(find flyingros_pose)/cfg/laser/6lasers.yaml"/>
   </node> 
 
-  <node name="flyingros_switch" pkg="flyingros_pose" type="lasers_msf_yaw_switch" output="screen" />
   <!-- Tasks node launch -->
   <!--node name="task_node" pkg="flyingros_nav" type="task_node" output="screen" >
   </node-->
