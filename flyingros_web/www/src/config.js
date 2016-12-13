@@ -12,7 +12,7 @@ var config = {
     ratio : 1
   },
   ros : {
-    ip : "130.104.96.231",
+    ip : "192.168.0.101",
     safetyZone : {
       from : {
         x : 100,
