@@ -21,6 +21,7 @@ var taskHelper = new function(){
   },
 
   self.getMissionFromSelect = function(select){
+    console.log(select);
     var name = select.selectedOptions[0].value.toUpperCase();
     mission_type = self.type[name];
     mission_type = mission_type ? mission_type : self.type.TEST;

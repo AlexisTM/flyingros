@@ -160,16 +160,15 @@ function paper_init(){
 }
 
 function moveUAV(x,y,z,yaw){
-  console.log(x,y,z,yaw)
-  p.o.UAV.position = new paper.Point(250,250);
+  p.o.UAV.position = new paper.Point(x,y);
   p.o.UAV.rotation = yaw;
-  p.o.altitude.content = 'actual altitude : ' + z + 'm';
+  p.o.altitude.content = 'actual altitude : ' + z.toFixed(3) + 'm';
 }
 
 function moveSetpoint(x,y,z,yaw){
-  p.o.setpoint.position = new paper.Point(250,250);
+  p.o.setpoint.position = new paper.Point(x,y);
   p.o.setpoint.rotation = yaw;
-  p.o.altitude_setpoint.content = 'altitude setpoint : ' + z + 'm';
+  p.o.altitude_setpoint.content = 'altitude setpoint : ' + z.toFixed(3) + 'm';
 }
 
 function changeRosStatus(status){
@@ -181,4 +180,3 @@ function changeRosStatus(status){
     p.o.ros_status.fillColor = 'red';
   }
 }
-

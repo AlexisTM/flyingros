@@ -88,9 +88,9 @@ function dom_init() {
     this.querySelector('.name').value = "";
     this.querySelector('.data').value = "";
     this.querySelector('.yaw').value = "";
-    this.querySelector('.type').selectedIndex = 0;
+    this.querySelector('.selecttype').selectedIndex = 0;
   }).on('onConfirm', function(){
-    var mission_type = taskHelper.getMissionFromSelect(this.querySelector('.type'));
+    var mission_type = taskHelper.getMissionFromSelect(document.querySelector('.selecttype'));
     var data = this.querySelector('.data').value;
     data = data ? JSON.parse(data) : [];
     data = Array.isArray(data) ? data : [];
@@ -191,18 +191,27 @@ function dom_init() {
   };
 
   document.getElementById("clickTbody").addEventListener('click', function(e){
-    task = getClicked(event);
+    task = getClicked(e);
     modal.removeTask.showData(task)
   });
 
 
   document.querySelector('input.alti').addEventListener('change', function(e){
-    document.querySelector('label.alti').innerHTML = 'Altitude ' + e.srcElement.value + 'm';
+      if(e.srcElement)
+        document.querySelector('label.alti').innerHTML = 'Altitude ' + e.srcElement.value + 'm';
+      else
+        document.querySelector('label.alti').innerHTML = 'Altitude ' + e.originalTarget.value + 'm';
+          
   });
 }
 
-var getClicked = function (event) {
-  var tr = event.srcElement.closest('tr');
+var getClicked = function (e) {
+  var tr;
+  if(e.srcElement)
+    tr = e.srcElement.closest('tr');
+  else
+    tr = e.originalTarget.closest('tr');
+  
   var a = tr.getElementsByClassName('ID');
   if (a.length == 1) {
     var b = mission.get('ID', a[0].innerText)
