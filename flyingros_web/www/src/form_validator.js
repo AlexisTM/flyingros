@@ -2,11 +2,15 @@
 
 var form_validator_init = function(){
    var _m = modal.addTask.modal;
-  _m.querySelector('.type').addEventListener('change', validator);
+  _m.querySelector('.selecttype').addEventListener('change', validator);
 }; 
 
 var validator = function(e){
-    var mission_type = taskHelper.getMissionFromSelect(e.srcElement);
+    var mission_type = "";
+    if(e.srcElement)
+      mission_type = taskHelper.getMissionFromSelect(e.srcElement);
+    else
+      mission_type = taskHelper.getMissionFromSelect(e.originalTarget);
     var _m = modal.addTask.modal;
     switch(mission_type){
       case taskHelper.type.TARGET : {
