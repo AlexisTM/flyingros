@@ -155,23 +155,23 @@ void callback_laser_raw(const flyingros_msgs::MultiEcho::ConstPtr& msg){
     lastPosition[lastPositionIndex].setX(-targets[0].x());
   }
 
-  lastPosition[lastPositionIndex].setY(-(targets[2].x() + targets[3].x())/2.0);
+  lastPosition[lastPositionIndex].setY(-(targets[2].y() + targets[3].y())/2.0);
   if(fails[2] & fails[3]){
     lastPosition[lastPositionIndex].setY(lastPosition[(lastPositionIndex-1 >= 0)?lastPositionIndex-1 : 0].y());
   } else if (fails[2]) {
-    lastPosition[lastPositionIndex].setY(-targets[3].x());
+    lastPosition[lastPositionIndex].setY(-targets[3].y());
   } else if (fails[3]) {
-    lastPosition[lastPositionIndex].setY(-targets[2].x());
+    lastPosition[lastPositionIndex].setY(-targets[2].y());
   }
 
 
-  lastPosition[lastPositionIndex].setZ(-(targets[4].x() + targets[5].x())/2.0);
+  lastPosition[lastPositionIndex].setZ(-(targets[4].z() + targets[5].z())/2.0);
   if(fails[4] & fails[5]){
     lastPosition[lastPositionIndex].setZ(lastPosition[(lastPositionIndex-1 >= 0)?lastPositionIndex-1 : 0].z());
   } else if (fails[4]) {
-    lastPosition[lastPositionIndex].setZ(-targets[5].x());
+    lastPosition[lastPositionIndex].setZ(-targets[5].z());
   } else if (fails[5]) {
-    lastPosition[lastPositionIndex].setZ(-targets[4].x());
+    lastPosition[lastPositionIndex].setZ(-targets[4].z());
   }
 
   UAVPose.pose.position.x = lastPosition[lastPositionIndex].x();
