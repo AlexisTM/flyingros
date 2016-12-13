@@ -21,8 +21,8 @@
   </node> 
 
   <!-- Tasks node launch -->
-  <!--node name="task_node" pkg="flyingros_nav" type="task_node" output="screen" >
-  </node-->
+  <node name="task_node" pkg="flyingros_nav" type="task_node" output="screen">
+  </node>
 
   <!-- PX4 launch -->
 
@@ -37,7 +37,7 @@
     <rosparam command="load" file="$(find flyingros_pose)/cfg/pixhawk/px4_config.yaml" />
   </node>
 
-<!--
+
   <node name="rosbridge_websocket" pkg="rosbridge_server" type="rosbridge_websocket" output="screen">
     <param name="authenticate" value="$(arg authenticate)" />
     <param name="port" value="9090"/>
@@ -47,7 +47,12 @@
     <param name="delay_between_messages" value="0"/>
     <param name="max_message_size" value="$(arg max_message_size)"/>
   </node>
-  <node name="rosapi" pkg="rosapi" type="rosapi_node" />-->
+  <node name="rosapi" pkg="rosapi" type="rosapi_node" />
+
+  <node name="web_report_node" pkg="flyingros_web" type="web_export" output="screen">
+  </node>
+
+
   <!--rosrun dynamic_reconfigure dynparam set /pose/pose_sensor core_init_filter true -->
 
   <!--node name="pose" pkg="msf_updates" type="pose_sensor" clear_params="true" output="screen">

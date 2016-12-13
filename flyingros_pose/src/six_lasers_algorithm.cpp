@@ -89,8 +89,20 @@ void lowFrequency_pub(){
   lowf_sequence++;
 }
 
+bool laserFailing(int measure){
+  return measure > 900;
+}
+
 void callback_laser_raw(const flyingros_msgs::MultiEcho::ConstPtr& msg){
   double roll, pitch, yaw;
+  static bool fails[6];
+  static bool yawfails[2];
+
+  for(int i = 0; i < 6; i++){
+    fails[i] = laserFailing(msg->measures[i]);
+  }
+  yawfails[0] = fails[0] | fails[1];
+  yawfails[1] = fails[2] | fails[3];
 
   // Correct offset
   double measures[6];
@@ -113,8 +125,17 @@ void callback_laser_raw(const flyingros_msgs::MultiEcho::ConstPtr& msg){
   tf::Vector3 targety2 = lasers[3].project(measures[3], q_zero);
   double yaw_y = -getYawFromTargets(targety2, targety1, 1, 0);
 
+  double yaw_final =  (yaw_x+yaw_y)/2;
+  if(yawfails[0] & yawfails[1]){
+    yaw_final = 0.0;
+  } else if (yawfails[0]) {
+    yaw_final = yaw_y;
+  } else if (yawfails[1]) {
+    yaw_final = yaw_x;
+  }
+
   // Get position
-  tf::Quaternion q_correct = tf::createQuaternionFromRPY(roll, pitch, (yaw_x+yaw_y)/2);
+  tf::Quaternion q_correct = tf::createQuaternionFromRPY(roll, pitch,yaw_final);
   tf::Vector3 targets[6];
   for(int i = 0; i < 6; i ++){
     targets[i] = lasers[i].project(measures[i], q_correct);
@@ -126,9 +147,33 @@ void callback_laser_raw(const flyingros_msgs::MultiEcho::ConstPtr& msg){
   tf::quaternionTFToMsg(q_correct, UAVPose.pose.orientation);
 
   lastPosition[lastPositionIndex].setX(-(targets[0].x() + targets[1].x())/2.0);
-  lastPosition[lastPositionIndex].setY(-(targets[2].y() + targets[3].y())/2.0);
-  //lastPosition[lastPositionIndex].setZ(-(targets[4].z() + targets[5].z())/2.0);
-  lastPosition[lastPositionIndex].setZ(-targets[4].z());
+  if(fails[0] & fails[1]){
+    lastPosition[lastPositionIndex].setX(lastPosition[(lastPositionIndex-1 >= 0)?lastPositionIndex-1 : 0].x());
+  } else if (fails[0]) {
+    lastPosition[lastPositionIndex].setX(-targets[1].x());
+  } else if (fails[1]) {
+    lastPosition[lastPositionIndex].setX(-targets[0].x());
+  }
+
+  lastPosition[lastPositionIndex].setY(-(targets[2].x() + targets[3].x())/2.0);
+  if(fails[2] & fails[3]){
+    lastPosition[lastPositionIndex].setY(lastPosition[(lastPositionIndex-1 >= 0)?lastPositionIndex-1 : 0].y());
+  } else if (fails[2]) {
+    lastPosition[lastPositionIndex].setY(-targets[3].x());
+  } else if (fails[3]) {
+    lastPosition[lastPositionIndex].setY(-targets[2].x());
+  }
+
+
+  lastPosition[lastPositionIndex].setZ(-(targets[4].x() + targets[5].x())/2.0);
+  if(fails[4] & fails[5]){
+    lastPosition[lastPositionIndex].setZ(lastPosition[(lastPositionIndex-1 >= 0)?lastPositionIndex-1 : 0].z());
+  } else if (fails[4]) {
+    lastPosition[lastPositionIndex].setZ(-targets[5].x());
+  } else if (fails[5]) {
+    lastPosition[lastPositionIndex].setZ(-targets[4].x());
+  }
+
   UAVPose.pose.position.x = lastPosition[lastPositionIndex].x();
   UAVPose.pose.position.y = lastPosition[lastPositionIndex].y();
   UAVPose.pose.position.z = lastPosition[lastPositionIndex].z();

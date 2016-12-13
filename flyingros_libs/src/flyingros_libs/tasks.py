@@ -206,7 +206,6 @@ class UAV:
             rospy.wait_for_service('mavros/set_mode')
             self.set_mode_client = rospy.ServiceProxy('mavros/set_mode', SetMode)
 
-        # self.laser_position_sub  = rospy.Subscriber('/lasers/filtered', PoseStamped, self.laser_position_sender)
         # Setpoints
         self.setpoint_rate = rospy.Rate(setpoint_rate)
         self.setPointsCount = 0
@@ -686,7 +685,7 @@ class test(task, object):
 
 # Not optimized
 class init_UAV(task, object):
-    """The init_UAV class is a task. It wait the UAV to be initialized, set home and set the setpoint to hom"""
+    """The init_UAV class is a task. It wait the UAV to be initialized, set home and set the setpoint to home"""
     def __init__(self, name, sleep = 5):
         self.sleep = sleep
         self.rate = rospy.Rate(1.0/sleep)

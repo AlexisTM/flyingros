@@ -30,13 +30,13 @@ import rospy
 import mavros
 from flyingros_libs.getch import *
 from threading import Thread
-from flyingros_msgs.msg import Report, RPYPose, Battery, Distance, RPY
+from flyingros_msgs.msg import Report, RPYPose, Battery, MultiEcho, RPY
 from geometry_msgs.msg import PoseStamped, Point, Vector3, TwistStamped
 from std_msgs.msg import Header
-from mavros_msgs.msg import BatteryStatus, State, PositionTarget
+from mavros_msgs.msg import State, PositionTarget
 from flyingros_libs.transformations import euler_from_quaternion
 from flyingros_libs.algorithm_functions import rad2degf, deg2radf
-from sensor_msgs.msg import Imu, NavSatFix
+from sensor_msgs.msg import Imu, NavSatFix, BatteryState
 from nav_msgs.msg import Odometry
 
 def report_sender():
@@ -80,7 +80,7 @@ def local_callback(data):
 
 def lasers_raw_callback(data):
     global report
-    report.lasers_raw = data
+    #report.lasers_raw = data
 
 def state_callback(data):
     global report
@@ -93,7 +93,7 @@ def battery_callback(data):
     global report
     report.battery.voltage = data.voltage
     report.battery.current = data.current
-    report.battery.remaining = data.remaining
+    report.battery.remaining = data.percentage
 
 def imu_callback(data):
     global report
@@ -141,9 +141,9 @@ def subscribers():
     setpoint_position_sub = rospy.Subscriber('mavros/setpoint_position/local', PoseStamped, setpoint_callback)
     mocap_sub             = rospy.Subscriber('mavros/mocap/pose', PoseStamped, mocap_callback)
     local_position_sub    = rospy.Subscriber('mavros/local_position/pose', PoseStamped, local_callback)
-    raw_lasers            = rospy.Subscriber('flyingros/lasers/raw', Distance, lasers_raw_callback)
+    raw_lasers            = rospy.Subscriber('flyingros/lasers/raw', MultiEcho, lasers_raw_callback)
     state_sub             = rospy.Subscriber('mavros/state', State, state_callback)
-    battery_sub           = rospy.Subscriber('mavros/battery', BatteryStatus, battery_callback)
+    battery_sub           = rospy.Subscriber('mavros/battery', BatteryState, battery_callback)
     velocity_sub          = rospy.Subscriber('mavros/local_position/velocity', TwistStamped, velocity_callback)
     imu_sub               = rospy.Subscriber('mavros/imu', Imu, imu_callback)
     sub_gps_odometry      = rospy.Subscriber('gps/rtkfix', Odometry, gps_odometry_callback)
