@@ -5,6 +5,8 @@ The Piksi RTK GPS was a cheap RTK (500$) which is now 6 time the price (3000$). 
 
 Guide : http://wiki.ros.org/swiftnav_piksi
 
+> Warning : RTK only works (give 2cm precision) if you get a fixed position (instead of float) which is achieved only on a clear field.
+
 Dependencies
 -------------
 
@@ -35,6 +37,8 @@ Start
 -------------
 
 ```bash
+roscore
 rosrun flyingros_web rtk_csv
 rosrun swiftnav_piksi piksi_node 
 ```
+

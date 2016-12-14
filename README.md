@@ -7,15 +7,10 @@ Flying Robot Operating System is designed to be the main **OPEN-SOURCE** package
 
 The way the packages are organized are available in the [Project architecture](PROJECT_ARCHITECTURE.MD) file.
 
-Installation
-------------
-
-See [INSTALL](INSTALL.md)
-
 Actual status
 ------------
 
-Experimental, do not use unless you want to develop with us (Thanks :D)
+Experimental, do not use unless you want to develop with us.
 
 Hardware
 ------------
@@ -38,9 +33,9 @@ Goals
 
 Actual goals:
 
-* Indoor Navigation (Pozyx -Decawave-, Camera, Lasers)
+* Indoor Navigation (Pozyx -Decawave-, Camera, Fixed lasers)
 * Outdoor Navigation (Camera, RTK-GPS)
-* Payloads 
+* Payloads (different PID configurations depending on the weigth of the multicopter, what it lifts)
 
 Future goals:
 
@@ -50,51 +45,23 @@ Future goals:
 
 In depth status
 ------------
+* `flyingros_libs/tasks.py` : Tested
+    * Can be used as python scenarios or using the task node (preferred)
+    * Can use position setpoints and raw setpoints (not tested on 1.5, was not working on 1.3 Firmware but should be working by now).
+    * TODO 
+        * Update tasks to avoid the use of sleep function
+* `flyingros_nav/task_node` : Tested 
+    * Able to manage tasks using Tasks.py library, from ROS and the web interface
+    * Provide the current task
+    * Can be paused (To be implemented in the web interface)
+    * TODO 
+        * add a Try Catch to avoid wrong data from user (to be implemented in )
+* `flyingros_nav/control_thread.py` : Tested
+    * "Manual" offboard control : (control)
+* `flyingros_pose/six_lasers_algorithm`
+    * Working well
+* `flyingros_web/www` : 
+    * TODO 
+        * Allow to pause/unpause the task execution
+        * Add a emergency button
 
-* flyingros_msgs
-  - [x] messages
-    * Battery     (battery status)
-    * Distance    (array of laser measures with the status **could change on demand**)
-    * Mission     (Task array)
-    * RPY         (Roll Pitch Yaw)
-    * RPYPose     (Roll Pitch Yaw + X Y Z)
-    * Report      (The whole UAV status)
-    * Task        (A task the UAV has to do)
-  - [x] services
-    * MissionHandle  (send a mission & receive string)
-    * MissionRequest (send string & receive mission)
-    * TaskHandle     (send task & receive string)
-    * TaskRequest    (send string & receive task)
-* flyingros_libs  
-  - [x] lasers : *Replaced by `flyingros_pose/cfg/laser/2lasers.yaml & 6lasers.yaml`*
-  - [x] taskController
-  - [x] UAV : *Test the raw_setpoint to takeoff from offboard*
-  - [x] task : *easy to add new tasks*
-    * ARM : *to be reviewed, change timeout method*
-    * DISARM : *to be reviewed, change timeout method*
-    * INIT_UAV : *to be reviewed, change timeout method*
-    * LOITER
-    * TAKEOFF : **TO BE TESTED**
-    * LAND : **TO BE TESTED**
-    * TARGET
-    * GRAB : **TO BE IMPLEMENTED**
-* flyingros_nav
-  - [x] Task_node : Start & manage the task controller *missing get & send current task*
-  - [ ] Nav\_application : Using task\_node, it adds the ability to stop the task spinning and take back manual control over the multicopter  **Work in progress**
-  - [ ] Manual_node : bypass the controller 
-    individual tasks working well
-* flyingros_pose :  *To be reviewed & tested*
-  - [x] laser_altitude *To be tested*
-  - [x] rtk *To be tested*
-  - [x] six_lasers *To be tested*
-* flyingros_web :  *To be reviewed & tested*
-  - [x] web_export
-  - [x] website
-* [AlexisTM/ethzasl_msf](https://github.com/AlexisTM/ethzasl_msf) 
-  - [x] dual_position (rtk + lasers(position))
-  - [x] pose\_position\_pressure (camera + rtk + lasers(altitude))
-  - [x] position\_pressure (rtk + lasers(altitude))
-
-#### Do not forget tasks 
-
-* Verify convention on Laser algorithms
