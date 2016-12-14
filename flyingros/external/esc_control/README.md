@@ -1,4 +1,4 @@
-ESC Control
+ESC Control with an Arduino
 ================
 
 ESC control is used to have a raw control of the ESC.

@@ -1,14 +1,14 @@
-FlyingROS_libs
+Flyingros_libs
 ==============
 
-FlyingROS_libs is the library package. You can add new libraries to use them somewhere else.
+Flyingros_libs is the library package. You can add new libraries to use them somewhere else.
 
 Available libraries
 --------
 
-* transformations.py - Quaternion transformations
-* tasks.py - Task controller to use the UAV
-* getch.py - gives a simple way to add a user interface with the keyboard
+* transformations.py - Quaternion transformations in python 
+* tasks.py - Tasks to use the UAV (UAV representation, Controller and tasks)
+* getch.py - Gives a simple way to add a user interface with the keyboard
 * algotithm_functions.py - helper functions used in the localization algotithms 
 
 DEPRECATED

@@ -438,4 +438,5 @@ class DualPositionSensorManager : public msf_core::MSF_SensorManagerROS<
 };
 }
 #endif  // DUAL_POSITION_MEASUREMENTMANAGER_H
+
 ```
