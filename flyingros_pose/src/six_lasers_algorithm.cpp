@@ -127,6 +127,7 @@ void callback_laser_raw(const flyingros_msgs::MultiEcho::ConstPtr& msg){
   double yaw_y = -getYawFromTargets(targety2, targety1, 1, 0);
 
   double yaw_final =  (yaw_x*0.3+yaw_y*0.7); // yaw_y is better
+
   if(yawfails[0] & yawfails[1]){
     yaw_final = 0.0;
   } else if (yawfails[0]) {
@@ -134,6 +135,10 @@ void callback_laser_raw(const flyingros_msgs::MultiEcho::ConstPtr& msg){
   } else if (yawfails[1]) {
     yaw_final = yaw_x;
   }
+
+  /* CAUTION Mavros 0.18.4 error in ENU -> NED fix BEGIN*/
+  yaw_final = 180 + yaw_final;
+  /* CAUTION Mavros 0.18.4 error in ENU -> NED fix END*/
 
   // Get position
   tf::Quaternion q_correct = tf::createQuaternionFromRPY(roll, pitch,yaw_final);

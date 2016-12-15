@@ -29,12 +29,12 @@ lasers:
   # If I measure 3 centimeters too few,  I put the offset to -0.03
   # Implemented as: _measure = _measure - offset;
   offsets:
-    - 0.23
-    - -0.00 # perfect offset ?
-    - 0.08
-    - -0.04
-    - 0.04
-    - 0.09
+    - 0.215
+    - -0.013
+    - 0.052
+    - -0.045
+    - 0.0
+    - 0.058
   # not yet used
   yaw_indices:
     - - lasers : [0,1]
