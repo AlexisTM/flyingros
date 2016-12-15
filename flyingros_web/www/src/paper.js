@@ -91,7 +91,7 @@ function paper_init(){
   var tx = new paper.PointText(p.o.origin.add(i,-20));
   tx.justification = 'center';
   tx.fillColor = 'black';
-  tx.content = 'x(m)';
+  tx.content = 'y(m)';
   tx.fontFamily = 'Courier New';
   tx.fontWeight = 'bold';
   tx.fontSize = 25;
@@ -99,7 +99,7 @@ function paper_init(){
   var ty = new paper.PointText(p.o.origin.add(-20,i));
   ty.justification = 'center';
   ty.fillColor = 'black';
-  ty.content = 'y(m)';
+  ty.content = 'x(m)';
   ty.fontFamily = 'Courier New';
   ty.fontWeight = 'bold';
   ty.fontSize = 25
@@ -160,14 +160,14 @@ function paper_init(){
 }
 
 function moveUAV(x,y,z,yaw){
-  p.o.UAV.position = new paper.Point(x,y);
-  p.o.UAV.rotation = yaw;
+  p.o.UAV.position = p.o.origin.add(y*100, x*100);
+  p.o.UAV.rotation = -yaw*57.3;
   p.o.altitude.content = 'actual altitude : ' + z.toFixed(3) + 'm';
 }
 
 function moveSetpoint(x,y,z,yaw){
-  p.o.setpoint.position = new paper.Point(x,y);
-  p.o.setpoint.rotation = yaw;
+  p.o.setpoint.position = p.o.origin.add(y*100, x*100);
+  p.o.setpoint.rotation = -yaw*57.3;
   p.o.altitude_setpoint.content = 'altitude setpoint : ' + z.toFixed(3) + 'm';
 }
 

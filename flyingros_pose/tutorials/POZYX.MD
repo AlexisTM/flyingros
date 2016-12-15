@@ -7,3 +7,4 @@ It is 135$ per sensor (anchor or tag) and for 3D positionning you need AT LEAST 
 
 If you want to make a sensor with the position only (no incorporated IMU), it will cost about 5 Arduinos clones, one PCB (dirty PCB) and 25$ DWM1000 chip for about 160$ for the whole product.
 
+For comercial application, you should use the Pozyx. For customers, you should make your own hardware.

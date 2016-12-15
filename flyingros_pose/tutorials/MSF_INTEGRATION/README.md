@@ -1,25 +1,25 @@
-MSF_INTEGRATION
+Sensor fusion with MSF
 ================
 
 MSF is a **modular** framework used to fuse data from multiple sensors. It actulally can merge the IMU, GPS, Altitude, Position, Pose (position + orientation) and a spherical position.
 
-You can check [MSF.MD](MSF.MD) for more detailed *informations* about the framework and the *installation*.
+MSF is is **modular** as you can make a node which integrates implemented sensors. This node has to be implemented by yourself if no existing node works for you.
 
 Sensors implemented `ethzasl_msf\msf_updates\include`
 -----------------
 
-* msf_pose_pressure_sensor : altitude 
+* msf\_pose\_pressure\_sensor : altitude 
   * &lt;geometry_msgs::PointStamped&gt; to `msf_updates/topic_namespace/pressure_height`
-* msf_position_sensor : position
-  * &lt;geometry_msgs::PointStamped&gt; to `msf_updates/topic_namespace/position_input`
-  * &lt;geometry_msgs::TransformStamped&gt; to `msf_updates/topic_namespace/transform_input`
-  * &lt;sensor_msgs::NavSatFix&gt; to `msf_updates/topic_namespace/navsatfix_input`
-* msf_pose_sensor : position and orientation
-  * &lt;geometry_msgs::PoseWithCovarianceStamped&gt; to `msf_updates/topic_namespace/pose_with_covariance_input`
-  * &lt;geometry_msgs::TransformStamped&gt; to `msf_updates/topic_namespace/transform_input`
-  * &lt;geometry_msgs::PoseStamped&gt; to `msf_updates/topic_namespace/pose_input`
-* msf_spherical_position : position from external pointing (2 angle as roll is useless) and a distance
-  * &lt;geometry_msgs::PointStamped&gt; to `msf_updates/topic_namespace/angle_input`
+* msf\_position\_sensor : position
+  * &lt;geometry\_msgs::PointStamped&gt; to `msf_updates/topic_namespace/position_input`
+  * &lt;geometry\_msgs::TransformStamped&gt; to `msf_updates/topic_namespace/transform_input`
+  * &lt;sensor\_msgs::NavSatFix&gt; to `msf_updates/topic_namespace/navsatfix_input`
+* msf\__pose\__sensor : position and orientation
+  * &lt;geometry\__msgs::PoseWithCovarianceStamped&gt; to `msf_updates/topic_namespace/pose_with_covariance_input`
+  * &lt;geometry\__msgs::TransformStamped&gt; to `msf_updates/topic_namespace/transform_input`
+  * &lt;geometry\__msgs::PoseStamped&gt; to `msf_updates/topic_namespace/pose_input`
+* msf_spherical\__position : position from external pointing (2 angle as roll is useless) and a distance
+  * &lt;geometry\__msgs::PointStamped&gt; to `msf_updates/topic_namespace/angle_input`
 
 Nodes implementing sensors `ethzasl_msf\msf_updates\src`
 -----------------------
@@ -107,8 +107,90 @@ Note the dynamic\_reconfigure command can be called from rqt\_reconfigure instea
 rosrun dynamic_reconfigure dynparam set node_name/type_name param data
 ```
 
-Additionnal informations 
-----------------------
 
-* [MSF.MD](MSF.MD) - Generic informations
-* [IMPLEMENT_A_NODE.MD](MSF.MD) - Implement your node (simplest way)
+Configurations 
+-----------
+
+### Pixhawk configuration 
+
+from [google groups](https://groups.google.com/forum/#!topic/px4users/Nv5nZ8PrsKM)
+
+```yaml
+scale_init: 1
+data_playback: false
+
+#########IMU PARAMETERS#######
+####### pixhawk - MPU6050
+core/core_noise_acc: 0.003924    # [m/s^2/sqrt(Hz)] mpu6000 datasheet
+core/core_noise_gyr: 0.00008726  # [rad/s/sqrt(Hz)] mpu6000 datasheet
+core/core_fixed_bias: true
+core/core_noise_gyrbias: 0.0     # For fixed bias we do not need process noise.
+core/core_noise_accbias: 0.0     # For fixed bias we do not need process noise.
+
+
+####### Pose sensor
+pose_sensor/pose_fixed_scale: false
+pose_sensor/pose_noise_scale: 0.0
+pose_sensor/pose_noise_p_wv: 0.0
+pose_sensor/pose_noise_q_wv: 0.0
+pose_sensor/pose_noise_q_ic: 0.0
+pose_sensor/pose_noise_p_ic: 0.0
+pose_sensor/pose_delay: 0.02
+pose_sensor/pose_noise_meas_p: 0.005
+pose_sensor/pose_noise_meas_q: 0.02
+pose_sensor/pose_initial_scale: 1
+
+# q_ic is the quaternion representing the rotation of the camera in IMU frame. Unit quaternion here as we rotate the coordinate frames in SVO parameters.
+pose_sensor/init/q_ic/w: 1.0
+pose_sensor/init/q_ic/x: 0.0
+pose_sensor/init/q_ic/y: 0.0
+pose_sensor/init/q_ic/z: 0.0
+
+# p_ic is the translation between the IMU and the camera in meters.
+pose_sensor/init/p_ic/x: 0.0  
+pose_sensor/init/p_ic/y: 0.0
+pose_sensor/init/p_ic/z: 0.0
+
+pose_sensor/pose_absolute_measurements: true
+pose_sensor/pose_use_fixed_covariance: true
+pose_sensor/pose_measurement_world_sensor: false # we do not publish the world in camera frame as set in SVO parameters.
+
+pose_sensor/pose_fixed_scale: false
+pose_sensor/pose_fixed_p_ic: true
+pose_sensor/pose_fixed_q_ic: true
+pose_sensor/pose_fixed_p_wv: false
+pose_sensor/pose_fixed_q_wv: false
+
+
+####### Position sensor
+position_pose_sensor/pose_fixed_scale: false
+position_pose_sensor/pose_fixed_p_ic: false
+position_pose_sensor/pose_fixed_q_ic: false
+position_pose_sensor/pose_fixed_p_wv: false
+position_pose_sensor/pose_fixed_q_wv: false
+
+position_sensor/position_absolute_measurements: true
+position_sensor/position_use_fixed_covariance: true
+position_sensor/position_measurement_world_sensor: true
+
+#init position offset prism imu
+position_sensor/init/p_ip/x: 0.00
+position_sensor/init/p_ip/y: 0.00
+position_sensor/init/p_ip/z: 0.00
+
+position_sensor/position_absolute_measurements: true
+position_sensor/position_use_fixed_covariance: true
+position_sensor/position_measurement_world_sensor: true  # selects if sensor measures its position w.r.t. world (true, e.g. Vicon) or the position of the world coordinate system w.r.t. the sensor (false, e.g. ethzasl_ptam)
+
+####### Position presure sensor (altitude)
+```` 
+
+Installation 
+-------------
+
+```bash
+cd ~/Workspace/Catkin/src
+git clone https://github.com/ethz-asl/ethzasl_msf
+cd ~/Workspace/Catkin
+catkin_make -j1 # On the Odroid, don't build with too many cores or it will probably freeze and you will have to reboot. You may need to add some swap.
+```

@@ -6,14 +6,15 @@ FlyingROS_msgs is the messaging package. You can add new messages to use in othe
 Available messages
 --------
 
-* [Report.msg](srv/Report.msg) - Report the drone status
-* [Mission.msg](srv/Mission.msg) - Mission, multiple tasks
-* [Task.msg](srv/Task.msg) - Task to do by the UAV
-* [Battery.msg](srv/Battery.msg) - Battery status
-* [RPYPose.msg](srv/RPYPose.msg) - Roll Pitch Yaw Position 
-* [Distance.msg](srv/Distance.msg) - Raw laser messages
-* [RPY.msg](srv/RPY.msg) - Roll Pitch Yaw
-* [PositionWithCovariance.msg](srv/PositionWithCovariance.msg) - Position with covariance (like PoseWithCovariance, without orientation)
+* [Report.msg](msg/Report.msg) - Report the drone status
+* [Mission.msg](msg/Mission.msg) - Mission, multiple tasks
+* [Task.msg](msg/Task.msg) - Task to do by the UAV
+* [Battery.msg](msg/Battery.msg) - Battery status
+* [RPYPose.msg](msg/RPYPose.msg) - Roll Pitch Yaw Position 
+* [Distance.msg](msg/Distance.msg) - Raw laser messages (deprecated, replaced by MultiEcho)
+* [MultiEcho.msg](msg/MultiEcho.msg) - Laser measures and strength
+* [RPY.msg](msg/RPY.msg) - Roll Pitch Yaw
+* [PositionWithCovariance.msg](msg/PositionWithCovariance.msg) - Position with covariance (like PoseWithCovariance, without orientation)
 * [PositionWithCovarianceStamped.msg](srv/PositionWithCovarianceStamped.msg) - Position with covariance and stamp (like PoseWithCovarianceStamped, without orientation)
 
 Available services

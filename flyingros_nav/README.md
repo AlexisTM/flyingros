@@ -7,26 +7,34 @@ flyingros_nav is the navigation package. This is still **experimental** and is s
 Navigation methods
 -------------
 
-* Tasklist
-* Manual control (with minimal user interface)
+* `rosrun flyingros_nav task_node` 
+    * Uses tasks.py
+    * ROS interface
+    * Only sends setpoints
+    * Works better with the web interface using rosbridge 
+*  `rosrun flyingros_nav nav_application`
+    * Uses tasks.py
+    * Uses task_node (should be started first)
+    * Runs on the odroid and uses URWID to give a SSH friendly interface 
+* `rosrun flyingros_nav control_thread.py` 
+    * Minimal offboard interface
+    * Only uses the python console 
+    * Great for debugging and testing
 
-Available nodes
+
+How it works
+---------------
+
+* Navigation nodes should be able to : 
+    * Arm/Disarm
+    * Can implement landing/takeoff methods
+    * Send setpoints to `mavros/setpoint_position/local` or any `mavros/setpoint_*/local`. 
+
+
+Available JSON scenari
 -------------
 
-* task_node - Allow to manage tasks from another nodes or (with rosbridge) from distant computer
-* nav_application - Using task\_node, is an onboard application (to launch through ssh) with a basic URWID interface
-* manual_node - Use the multicopter though SSH without high level tasks. (Direct access of the `/mavros/local_setpoint/pose`)
+JSON missions are sent though the web application (flyingros\_web) via the task_node
 
-Available scenari
--------------
-
-### Standalone in Python (direct access to tasks.py, no node)
-
-* [scenario_circle](scenari/scenari_py/scenario_circle) - Make a circle (standalone)
-* [scenario_square](scenari/scenari_py/scenario_square) - Make a square
-* [scenario_stairway](scenari/scenari_py/scenario_stairway) - Make a stairway
-
-### Though task_node via the web application (flyingros\_pose) 
-
-* [scenario_web_circle.json](scenari/scenari_web/scenario_web_circle.json) - Make a circle (standalone)
-* [scenario_web_square.json](scenari/scenari_web/scenario_web_square.json) - Make a square
+* [scenario_web_circle.json](https://github.com/AlexisTM/flyingros/tree/master/flyingros_nav/scenari/scenari_web/scenario_web_circle.json) - Make a circle
+* [scenario_web_square.json](https://github.com/AlexisTM/flyingros/tree/master/flyingros_nav/scenari/scenari_web/scenario_web_square.json) - Make a square
