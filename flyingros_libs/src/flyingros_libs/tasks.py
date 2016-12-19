@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 tasks.py
-
+ 
 This is a task implementation initialy used to control an UAV.
 Successfuly tested with high number of tasks (5k tasks).
 

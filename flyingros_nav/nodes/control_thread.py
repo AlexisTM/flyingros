@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 send_setpoint.py
-
+ 
 This script sends positions to control the UAV in X, Y, Z
 
 ILPS is free software: you can redistribute it and/or modify
@@ -35,13 +35,13 @@ import tf
 import numpy as np
 from flyingros_libs.getch import *
 from threading import Thread
+from mavros.utils import *
 from geometry_msgs.msg import PoseStamped, Point, Pose
 from sensor_msgs.msg import Imu
 from mavros_msgs.srv import SetMode
 from mavros_msgs.msg import State, PositionTarget
 from mavros_msgs.srv import CommandBool
 from sensor_msgs.msg import Range
-from mavros.utils import *
 from flyingros_libs.algorithm_functions import rad2degf, deg2radf
 from flyingros_libs.transformations import *
 

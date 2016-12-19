@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 task_node
-
+ 
 The task node instanciate tasks.py (taskController) and gives 
 the ability to add/remove/pull tasks and missions.
 
