@@ -3,7 +3,7 @@ lasers:
   # PI/2 = 1.5707963267948966192313216916398
   yaw_diff: 1.5707963267948966192313216916398
   # Count of the lasers we use
-  count: 6
+  count: 6 
   # Position of all the lasers on the copter.
   # If your laser is 5 centimeters AWAY from the wall X, 
   #   the position will be [0.05,0.0,0.0] as the implementation shows

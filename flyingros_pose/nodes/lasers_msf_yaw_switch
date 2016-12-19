@@ -8,7 +8,7 @@ Lasers have the right mean yaw, while IMU have the right variations of the yaw.
 Meanwhile, the yaw received by the Pixhawk will be corrected by lasers and take 
 some seconds to be correct (same mean). Therefore, we need to start MSF (input the IMU) 
 AFTER the IMU converged.
-
+ 
 Method : 
 
 1 : Start Mavros & Lasers

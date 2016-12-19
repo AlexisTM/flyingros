@@ -4,7 +4,7 @@
  * Localisation algorithm based on 6 fixed lasers.
  *
  * This file is a part of FlyingROS
- *
+ * 
  * FlyingROS free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -23,7 +23,7 @@
  * project financed by the MIT Seed Fund
  *
  * Copyright (c) Alexis Paques 2016
- *
+ * 
  */
 
 #include <typeinfo>
