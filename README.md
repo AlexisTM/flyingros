@@ -12,6 +12,16 @@ Actual status
 
 Experimental, do not use unless you want to develop with us.
 
+What you can expect from the project?
+
+* A good starting point
+* Every part of the software explained
+* An architecture to follow to create your own package
+* Explainations on [almost] every "cheap" localisation system you need/want to use
+* Many tutorials
+* A [great testing node](https://github.com/AlexisTM/flyingros/blob/master/flyingros_nav/nodes/control_thread.py) in Python
+
+
 Hardware
 ------------
 
