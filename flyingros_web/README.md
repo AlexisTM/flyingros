@@ -12,13 +12,13 @@ To build the website, you need NodeJS, NPM and gulp. This is as a dependency for
 
 Then go into the `www` folder.
 
-´´´bash
+```
 sudo apt-get install nodejs-legacy
 sudo apt-get install npm
 npm install -g gulp
 npm install
 gulp build # or simply gulp to develop 
-´´´
+```
 
 The output is in the `dist` folder. Open `index.html` in your browser.
 
