@@ -1,4 +1,4 @@
-Flyingros\_web
+lyingros\_web
 =========
 
 Flyingros\_web package allows the user to control, configure and monitor the multicopter from the web.
@@ -17,8 +17,7 @@ sudo apt-get install nodejs-legacy
 sudo apt-get install npm
 npm install -g gulp
 npm install
-gulp build 
-# or simply gulp to develop 
+gulp build # or simply gulp to develop 
 ´´´
 
 The output is in the `dist` folder. Open `index.html` in your browser.
