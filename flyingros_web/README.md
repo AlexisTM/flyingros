@@ -1,4 +1,4 @@
-lyingros\_web
+Flyingros\_web
 =========
 
 Flyingros\_web package allows the user to control, configure and monitor the multicopter from the web.
