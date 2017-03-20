@@ -10,13 +10,10 @@ The way the packages are organized are available in the [Project architecture](P
 Actual status
 ------------
 
-Experimental, do not use unless you want to develop with us.
+Due to time restriction, the project is not plug'n'play. Therefore, what you can expect from the project?
 
-What you can expect from the project?
-
-* A good starting point
-* Every part of the software explained
 * An architecture to follow to create your own package
+* Every part of the software is explained
 * Explainations on [almost] every "cheap" localisation system you need/want to use
 * Many tutorials
 * A [great testing node](https://github.com/AlexisTM/flyingros/blob/master/flyingros_nav/nodes/control_thread.py) in Python
