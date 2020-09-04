@@ -40,7 +40,7 @@
     "gulp-util": "^3.0.7",
     "jade": "^1.11.0",
     "merge-stream": "^1.0.0",
-    "node-sass": "^3.10.1",
+    "node-sass": "^4.14.1",
     "pump": "^1.0.1"
   }
 }
